@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>Fitness Tracker</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap');
@@ -195,10 +195,10 @@ body.light input[type=time]{color-scheme:light}
 .summary-stat-val{font-size:18px;font-weight:500;font-family:'DM Mono',monospace}
 
 /* Combo box (input + dropdown) */
-.combo-box{display:flex;align-items:center;border-radius:var(--radius-sm);overflow:visible;flex:1}
+.combo-box{display:flex;align-items:center;border-radius:var(--radius-sm);overflow:visible;flex:1;touch-action:manipulation}
 .combo-box.sel-blue{background:var(--bg3);border:0.5px solid rgba(96,165,250,0.5);color:#60a5fa;box-shadow:0 0 0 2px rgba(96,165,250,0.08)}
 .combo-box.sel-green{background:var(--bg3);border:0.5px solid rgba(74,222,128,0.5);color:#4ade80;box-shadow:0 0 0 2px rgba(74,222,128,0.08)}
-.combo-input{flex:1;background:transparent;border:none;color:inherit;font-family:'DM Mono',monospace;font-size:15px;padding:9px 4px 9px 12px;outline:none;width:100%;min-width:0}
+.combo-input{flex:1;background:transparent;border:none;color:inherit;font-family:'DM Mono',monospace;font-size:16px;padding:9px 4px 9px 12px;outline:none;width:100%;min-width:0;touch-action:manipulation;-webkit-user-select:none;user-select:none}
 .combo-input::-webkit-inner-spin-button{opacity:.5}
 .combo-arrow-btn{background:none;border:none;border-left:0.5px solid rgba(255,255,255,0.1);color:inherit;cursor:pointer;font-size:10px;padding:9px 12px;opacity:.6;transition:opacity .2s;line-height:1;flex-shrink:0}
 .combo-arrow-btn:hover{opacity:1}
@@ -273,18 +273,18 @@ body.light .combo-arrow-btn{border-left-color:rgba(0,0,0,0.1)}
 /* Numpad overlay */
 .numpad-overlay{position:fixed;inset:0;display:none;align-items:flex-end;justify-content:center;background:rgba(0,0,0,0.6);z-index:300;padding:0}
 .numpad-overlay.show{display:flex}
-.numpad-box{background:var(--bg2);border:0.5px solid var(--border2);border-radius:20px 20px 0 0;padding:1.25rem 1rem 2rem;width:100%;max-width:480px;animation:slideUp .25s cubic-bezier(.34,1.2,.64,1)}
-.numpad-header{text-align:center;margin-bottom:1rem}
-.numpad-field-label{font-size:12px;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:6px}
-.numpad-display{font-size:48px;font-weight:600;font-family:'DM Mono',monospace;color:var(--text);letter-spacing:2px;min-height:60px;line-height:1}
+.numpad-box{background:var(--bg2);border:0.5px solid var(--border2);border-radius:20px 20px 0 0;padding:1rem 1rem 1.5rem;width:100%;max-width:480px;animation:slideUp .25s cubic-bezier(.34,1.2,.64,1)}
+.numpad-header{text-align:center;margin-bottom:0.75rem}
+.numpad-field-label{font-size:12px;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:4px}
+.numpad-display{font-size:36px;font-weight:600;font-family:'DM Mono',monospace;color:var(--text);letter-spacing:2px;min-height:44px;line-height:1}
 .numpad-display.blue{color:#60a5fa}
 .numpad-display.green{color:#4ade80}
-.numpad-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:10px}
-.numpad-btn{background:var(--bg3);border:0.5px solid var(--border);border-radius:var(--radius);font-size:24px;font-family:'DM Mono',monospace;font-weight:500;color:var(--text);padding:18px 0;cursor:pointer;transition:background .1s,transform .08s;-webkit-tap-highlight-color:transparent}
+.numpad-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:8px}
+.numpad-btn{background:var(--bg3);border:0.5px solid var(--border);border-radius:var(--radius);font-size:20px;font-family:'DM Mono',monospace;font-weight:500;color:var(--text);padding:13px 0;cursor:pointer;transition:background .1s,transform .08s;-webkit-tap-highlight-color:transparent}
 .numpad-btn:active{background:var(--border2);transform:scale(0.95)}
-.numpad-btn.del{font-size:20px;color:var(--text2)}
+.numpad-btn.del{font-size:18px;color:var(--text2)}
 .numpad-btn.zero{grid-column:span 2}
-.numpad-confirm{width:100%;padding:16px;background:#22c55e;color:#fff;border:none;border-radius:var(--radius);font-size:17px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;transition:opacity .15s}
+.numpad-confirm{width:100%;padding:13px;background:#22c55e;color:#fff;border:none;border-radius:var(--radius);font-size:16px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;transition:opacity .15s}
 .numpad-confirm:active{opacity:.85}
 
 /* Help overlay */
@@ -389,7 +389,7 @@ body.light .combo-arrow-btn{border-left-color:rgba(0,0,0,0.1)}
       <!-- Date -->
       <div class="input-row" style="margin-bottom:8px">
         <label style="font-size:13px;color:var(--text2);min-width:95px">Datum</label>
-        <input type="date" id="inp-date" style="flex:1;background:var(--bg3);border:0.5px solid var(--border2);border-radius:var(--radius-sm);color:var(--text);font-family:'DM Mono',monospace;font-size:13px;padding:7px 10px;outline:none" />
+        <input type="date" id="inp-date" style="flex:1;background:var(--bg3);border:0.5px solid var(--border2);border-radius:var(--radius-sm);color:var(--text);font-family:'DM Mono',monospace;font-size:16px;padding:7px 10px;outline:none" />
       </div>
 
       <div class="input-row">
