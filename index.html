@@ -85,15 +85,15 @@ header p{font-size:12px;color:var(--text2);margin-top:2px}
 .wsum-sub{font-size:10px;color:var(--text3);margin-top:3px}
 
 /* Progress bar */
-.progress-card{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radius);padding:1rem 1.25rem;margin-bottom:8px}
-.progress-header{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px}
+.progress-card{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radius);padding:0.7rem 1.25rem;margin-bottom:8px}
+.progress-header{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px}
 .progress-title{font-size:12px;font-weight:500;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px}
 .progress-nums{font-size:13px;font-family:'DM Mono',monospace}
-.progress-track{height:12px;background:var(--bg3);border-radius:6px;overflow:hidden;position:relative}
-.progress-fill{height:100%;border-radius:6px;transition:width .6s cubic-bezier(.34,1.2,.64,1);position:relative}
+.progress-track{height:10px;background:var(--bg3);border-radius:5px;overflow:hidden;position:relative}
+.progress-fill{height:100%;border-radius:5px;transition:width .6s cubic-bezier(.34,1.2,.64,1);position:relative}
 .progress-fill::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,0.3) 50%,transparent 100%);animation:shimmer 2s infinite}
 @keyframes shimmer{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
-.progress-label{font-size:11px;color:var(--text3);margin-top:6px;text-align:right}
+.progress-label{font-size:11px;color:var(--text3);margin-top:4px;text-align:right}
 
 /* Card */
 .card{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radius);padding:1rem 1.25rem;margin-bottom:12px}
@@ -309,7 +309,7 @@ body.light .combo-arrow-btn{border-left-color:rgba(0,0,0,0.1)}
     </div>
 
     <!-- Progress -->
-    <div class="progress-card" id="progress-card-push">
+    <div class="progress-card" id="progress-card-push" style="margin-bottom:0;border-bottom:none;border-radius:var(--radius) var(--radius) 0 0">
       <div class="progress-header">
         <span class="progress-title">Tagesziel Liegestütze</span>
         <span class="progress-nums" id="progress-nums-push">0 / 130</span>
@@ -319,7 +319,7 @@ body.light .combo-arrow-btn{border-left-color:rgba(0,0,0,0.1)}
       </div>
       <div class="progress-label" id="progress-label-push">0% erreicht</div>
     </div>
-    <div class="progress-card" id="progress-card-pull" style="margin-top:-4px">
+    <div class="progress-card" id="progress-card-pull" style="margin-bottom:8px;border-top:none;border-radius:0 0 var(--radius) var(--radius);padding-top:0.5rem">
       <div class="progress-header">
         <span class="progress-title">Tagesziel Klimmzüge</span>
         <span class="progress-nums" id="progress-nums-pull">0 / 20</span>
@@ -1543,17 +1543,19 @@ function importData(event){
       // Restore settings if present
       if(data.settings){
         settings={...settings,...data.settings};
-        localStorage.setItem('ft_settings',JSON.stringify(settings));
+        appReady=false;
         cdropSelect('goal-push',settings.goalPush||0);
         cdropSelect('goal-pull',settings.goalPull||0);
+        appReady=true;
+        localStorage.setItem('ft_settings',JSON.stringify(settings));
         document.getElementById('toggle-goal-push').checked=settings.showGoalPush;
         document.getElementById('toggle-goal-pull').checked=settings.showGoalPull;
         document.getElementById('toggle-dark').checked=settings.darkMode;
         document.getElementById('toggle-badges').checked=settings.showBadges!==false;
         applyTheme();
       }
-      if(typeof data.xp==='number'){
-        setTotalXP(data.xp);
+      if(data.xp !== undefined && data.xp !== null && parseInt(data.xp) > 0){
+        setTotalXP(parseInt(data.xp));
       } else {
         // Altes Backup ohne XP → retroaktiv berechnen
         const gPush = data.settings?.goalPush||0;
@@ -1573,6 +1575,12 @@ function importData(event){
         setTotalXP(retroXP);
       }
       if(data.name) {localStorage.setItem('ft_name',data.name);loadName();}
+      // showBadges: wenn nicht im Backup, auf true setzen
+      if(!data.settings||data.settings.showBadges===undefined){
+        settings.showBadges=true;
+        document.getElementById('toggle-badges').checked=true;
+        localStorage.setItem('ft_settings',JSON.stringify(settings));
+      }
       // Restore body/profile if present
       if(data.body&&Object.keys(data.body).length){
         localStorage.setItem('ft_body',JSON.stringify(data.body));
@@ -1607,8 +1615,10 @@ function deleteAll(){
   localStorage.setItem('ft_goals_v2','1');
 
   // Reset goal dropdowns
+  appReady=false;
   cdropSelect('goal-push',0);
   cdropSelect('goal-pull',0);
+  appReady=true;
 
   // Reset toggles
   document.getElementById('toggle-goal-push').checked=true;
@@ -1639,6 +1649,10 @@ function deleteAll(){
   // Reset training input dropdowns
   cdropSelect('push',0);
   cdropSelect('pull',0);
+
+  // Reset name
+  document.getElementById('inp-name').value='';
+  renderLevelCard();
 
   // Reset date to today
   document.getElementById('inp-date').value=todayStr();
