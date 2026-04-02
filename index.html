@@ -257,6 +257,36 @@ body.light .combo-arrow-btn{border-left-color:rgba(0,0,0,0.1)}
 .level-legend-xp{font-size:12px;font-family:'DM Mono',monospace;color:var(--text3);flex-shrink:0}
 .level-legend-current-tag{font-size:10px;background:var(--accent);color:#fff;border-radius:10px;padding:2px 7px;margin-left:6px;vertical-align:middle}
 
+/* Date toggle */
+.date-today-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.date-today-badge{display:flex;align-items:center;gap:8px}
+.date-today-dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);flex-shrink:0;animation:dotPulse 2s ease-in-out infinite}
+@keyframes dotPulse{0%,100%{opacity:1}50%{opacity:0.4}}
+.date-today-label{font-size:15px;font-weight:500}
+.date-today-sub{font-size:12px;color:var(--text3);margin-left:16px;margin-top:-6px}
+.date-other-btn{font-size:12px;color:var(--accent);background:none;border:none;cursor:pointer;padding:0;font-family:'DM Sans',sans-serif;font-weight:500}
+.date-other-btn:hover{opacity:.75}
+.date-picker-row{display:none;margin-bottom:10px;gap:8px;align-items:center}
+.date-picker-row.show{display:flex}
+.date-back-btn{font-size:12px;color:var(--accent);background:none;border:none;cursor:pointer;padding:0;font-family:'DM Sans',sans-serif;white-space:nowrap}
+
+/* Numpad overlay */
+.numpad-overlay{position:fixed;inset:0;display:none;align-items:flex-end;justify-content:center;background:rgba(0,0,0,0.6);z-index:300;padding:0}
+.numpad-overlay.show{display:flex}
+.numpad-box{background:var(--bg2);border:0.5px solid var(--border2);border-radius:20px 20px 0 0;padding:1.25rem 1rem 2rem;width:100%;max-width:480px;animation:slideUp .25s cubic-bezier(.34,1.2,.64,1)}
+.numpad-header{text-align:center;margin-bottom:1rem}
+.numpad-field-label{font-size:12px;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:6px}
+.numpad-display{font-size:48px;font-weight:600;font-family:'DM Mono',monospace;color:var(--text);letter-spacing:2px;min-height:60px;line-height:1}
+.numpad-display.blue{color:#60a5fa}
+.numpad-display.green{color:#4ade80}
+.numpad-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:10px}
+.numpad-btn{background:var(--bg3);border:0.5px solid var(--border);border-radius:var(--radius);font-size:24px;font-family:'DM Mono',monospace;font-weight:500;color:var(--text);padding:18px 0;cursor:pointer;transition:background .1s,transform .08s;-webkit-tap-highlight-color:transparent}
+.numpad-btn:active{background:var(--border2);transform:scale(0.95)}
+.numpad-btn.del{font-size:20px;color:var(--text2)}
+.numpad-btn.zero{grid-column:span 2}
+.numpad-confirm{width:100%;padding:16px;background:#22c55e;color:#fff;border:none;border-radius:var(--radius);font-size:17px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;transition:opacity .15s}
+.numpad-confirm:active{opacity:.85}
+
 /* Help overlay */
 .help-overlay{position:fixed;inset:0;display:none;align-items:flex-end;justify-content:center;background:rgba(0,0,0,0.7);z-index:200;padding:0}
 .help-overlay.show{display:flex}
@@ -355,16 +385,19 @@ body.light .combo-arrow-btn{border-left-color:rgba(0,0,0,0.1)}
     <!-- Entry -->
     <div class="card">
       <div class="card-title">Einheit eintragen</div>
-      <div class="input-row">
-        <label>Datum</label>
-        <input type="date" id="inp-date" />
+
+      <!-- Date -->
+      <div class="input-row" style="margin-bottom:8px">
+        <label style="font-size:13px;color:var(--text2);min-width:95px">Datum</label>
+        <input type="date" id="inp-date" style="flex:1;background:var(--bg3);border:0.5px solid var(--border2);border-radius:var(--radius-sm);color:var(--text);font-family:'DM Mono',monospace;font-size:13px;padding:7px 10px;outline:none" />
       </div>
+
       <div class="input-row">
         <label>Liegestütze</label>
         <div class="cdrop-wrap" id="cdrop-wrap-push" style="position:relative;flex:1;display:flex">
-          <div class="combo-box sel-blue" style="flex:1">
-            <input type="number" id="inp-push" class="combo-input" min="0" max="500" value="0" placeholder="0" oninput="syncFromInput('push')">
-            <button class="combo-arrow-btn" onclick="cdropToggle('push')">▼</button>
+          <div class="combo-box sel-blue" style="flex:1;cursor:pointer" onclick="openNumpad('push')">
+            <input type="number" id="inp-push" class="combo-input" min="0" max="500" value="0" placeholder="0"
+              oninput="syncFromInput('push')" readonly style="cursor:pointer">
           </div>
           <div class="cdrop-menu" id="cdrop-menu-push"></div>
         </div>
@@ -372,9 +405,9 @@ body.light .combo-arrow-btn{border-left-color:rgba(0,0,0,0.1)}
       <div class="input-row">
         <label>Klimmzüge</label>
         <div class="cdrop-wrap" id="cdrop-wrap-pull" style="position:relative;flex:1;display:flex">
-          <div class="combo-box sel-green" style="flex:1">
-            <input type="number" id="inp-pull" class="combo-input" min="0" max="500" value="0" placeholder="0" oninput="syncFromInput('pull')">
-            <button class="combo-arrow-btn" onclick="cdropToggle('pull')">▼</button>
+          <div class="combo-box sel-green" style="flex:1;cursor:pointer" onclick="openNumpad('pull')">
+            <input type="number" id="inp-pull" class="combo-input" min="0" max="500" value="0" placeholder="0"
+              oninput="syncFromInput('pull')" readonly style="cursor:pointer">
           </div>
           <div class="cdrop-menu" id="cdrop-menu-pull"></div>
         </div>
@@ -486,18 +519,18 @@ body.light .combo-arrow-btn{border-left-color:rgba(0,0,0,0.1)}
       <div class="card-title">Tagesziel</div>
       <div class="input-row">
         <label>Liegestütze</label>
-        <div class="cdrop-wrap" id="cdrop-wrap-goal-push">
-          <div class="cdrop-display sel-blue" id="cdrop-disp-goal-push" onclick="cdropToggle('goal-push')">
-            <span id="cdrop-val-goal-push">0</span><span class="cdrop-arrow">▼</span>
+        <div class="cdrop-wrap" id="cdrop-wrap-goal-push" style="position:relative;flex:1;display:flex">
+          <div class="combo-box sel-blue" style="flex:1;cursor:pointer" onclick="openNumpad('goal-push')">
+            <input type="number" id="inp-goal-push" class="combo-input" min="0" max="500" value="0" placeholder="0" readonly style="cursor:pointer">
           </div>
           <div class="cdrop-menu" id="cdrop-menu-goal-push"></div>
         </div>
       </div>
       <div class="input-row">
         <label>Klimmzüge</label>
-        <div class="cdrop-wrap" id="cdrop-wrap-goal-pull">
-          <div class="cdrop-display sel-green" id="cdrop-disp-goal-pull" onclick="cdropToggle('goal-pull')">
-            <span id="cdrop-val-goal-pull">0</span><span class="cdrop-arrow">▼</span>
+        <div class="cdrop-wrap" id="cdrop-wrap-goal-pull" style="position:relative;flex:1;display:flex">
+          <div class="combo-box sel-green" style="flex:1;cursor:pointer" onclick="openNumpad('goal-pull')">
+            <input type="number" id="inp-goal-pull" class="combo-input" min="0" max="500" value="0" placeholder="0" readonly style="cursor:pointer">
           </div>
           <div class="cdrop-menu" id="cdrop-menu-goal-pull"></div>
         </div>
@@ -644,6 +677,30 @@ body.light .combo-arrow-btn{border-left-color:rgba(0,0,0,0.1)}
     </div>
 
   </div>
+
+<!-- Numpad Overlay -->
+<div class="numpad-overlay" id="numpad-overlay" onclick="numpadClickOutside(event)">
+  <div class="numpad-box">
+    <div class="numpad-header">
+      <div class="numpad-field-label" id="numpad-label">Liegestütze</div>
+      <div class="numpad-display blue" id="numpad-display">0</div>
+    </div>
+    <div class="numpad-grid">
+      <button class="numpad-btn" onclick="numpadInput('1')">1</button>
+      <button class="numpad-btn" onclick="numpadInput('2')">2</button>
+      <button class="numpad-btn" onclick="numpadInput('3')">3</button>
+      <button class="numpad-btn" onclick="numpadInput('4')">4</button>
+      <button class="numpad-btn" onclick="numpadInput('5')">5</button>
+      <button class="numpad-btn" onclick="numpadInput('6')">6</button>
+      <button class="numpad-btn" onclick="numpadInput('7')">7</button>
+      <button class="numpad-btn" onclick="numpadInput('8')">8</button>
+      <button class="numpad-btn" onclick="numpadInput('9')">9</button>
+      <button class="numpad-btn del" onclick="numpadDelete()">⌫</button>
+      <button class="numpad-btn zero" onclick="numpadInput('0')">0</button>
+    </div>
+    <button class="numpad-confirm" onclick="numpadConfirm()">✓ Übernehmen</button>
+  </div>
+</div>
 
 <!-- Level Legend Overlay -->
 <div class="level-overlay" id="level-overlay">
@@ -824,6 +881,69 @@ function showLevelLegend(){
 }
 function closeLevelLegend(){
   document.getElementById('level-overlay').classList.remove('show');
+}
+
+// ── Date toggle ───────────────────────────────────────────────────────────────
+function toggleDatePicker(){
+  const row=document.getElementById('date-picker-row');
+  const heute=document.getElementById('date-heute-row');
+  const isOpen=row.style.display==='flex';
+  if(isOpen){
+    row.style.display='none';
+    heute.style.display='flex';
+  } else {
+    document.getElementById('inp-date').value=todayStr();
+    row.style.display='flex';
+    heute.style.display='none';
+  }
+}
+function resetToToday(){
+  document.getElementById('inp-date').value=todayStr();
+  document.getElementById('date-picker-row').style.display='none';
+  document.getElementById('date-heute-row').style.display='flex';
+}
+function getEntryDate(){
+  return document.getElementById('inp-date').value||todayStr();
+}
+function initDateDisplay(){
+  const sub=document.getElementById('date-today-sub');
+  if(sub){const d=new Date();sub.textContent=d.toLocaleDateString('de-DE',{weekday:'long',day:'numeric',month:'long'})}
+  document.getElementById('inp-date').value=todayStr();
+}
+
+// ── Numpad ────────────────────────────────────────────────────────────────────
+let numpadType='push';
+let numpadVal='0';
+function openNumpad(type){
+  numpadType=type;
+  numpadVal=String(cdropSelected[type]||0);
+  const isGoal=type==='goal-push'||type==='goal-pull';
+  const isPull=type==='pull'||type==='goal-pull';
+  const disp=document.getElementById('numpad-display');
+  disp.className='numpad-display '+(isPull?'green':'blue');
+  const labels={'push':'Liegestütze','pull':'Klimmzüge','goal-push':'Tagesziel Liegestütze','goal-pull':'Tagesziel Klimmzüge'};
+  document.getElementById('numpad-label').textContent=labels[type]||type;
+  disp.textContent=numpadVal==='0'?'0':numpadVal;
+  document.getElementById('numpad-overlay').classList.add('show');
+}
+function numpadInput(d){
+  if(numpadVal==='0') numpadVal=d;
+  else numpadVal+=d;
+  if(parseInt(numpadVal)>500) numpadVal='500';
+  document.getElementById('numpad-display').textContent=numpadVal;
+}
+function numpadDelete(){
+  numpadVal=numpadVal.length>1?numpadVal.slice(0,-1):'0';
+  document.getElementById('numpad-display').textContent=numpadVal;
+}
+function numpadConfirm(){
+  const val=Math.min(500,parseInt(numpadVal)||0);
+  cdropSelect(numpadType,val);
+  document.getElementById('numpad-overlay').classList.remove('show');
+}
+function numpadClickOutside(e){
+  if(e.target===document.getElementById('numpad-overlay'))
+    document.getElementById('numpad-overlay').classList.remove('show');
 }
 
 function showHelp(){document.getElementById('help-overlay').classList.add('show')}
@@ -1117,10 +1237,34 @@ function neonColor(pct){
   return 'linear-gradient(90deg,#ff0080,#ff6600)';
 }
 function updateProgress(todayPush, todayPull){
-  // Liegestütze bar
   const cardPush=document.getElementById('progress-card-push');
-  cardPush.style.display=settings.showGoalPush?'block':'none';
-  if(settings.showGoalPush){
+  const cardPull=document.getElementById('progress-card-pull');
+  const showPush=settings.showGoalPush;
+  const showPull=settings.showGoalPull;
+
+  // Border-radius & borders je nach Kombination
+  if(showPush && showPull){
+    cardPush.style.borderRadius='var(--radius) var(--radius) 0 0';
+    cardPush.style.borderBottom='none';
+    cardPush.style.marginBottom='0';
+    cardPull.style.borderRadius='0 0 var(--radius) var(--radius)';
+    cardPull.style.borderTop='none';
+    cardPull.style.paddingTop='0.5rem';
+    cardPull.style.marginBottom='8px';
+  } else if(showPush){
+    cardPush.style.borderRadius='var(--radius)';
+    cardPush.style.borderBottom='';
+    cardPush.style.marginBottom='8px';
+  } else if(showPull){
+    cardPull.style.borderRadius='var(--radius)';
+    cardPull.style.borderTop='';
+    cardPull.style.paddingTop='0.7rem';
+    cardPull.style.marginBottom='8px';
+  }
+
+  // Liegestütze bar
+  cardPush.style.display=showPush?'block':'none';
+  if(showPush){
     const pct=Math.min(100,Math.round((todayPush/settings.goalPush)*100));
     const fill=document.getElementById('progress-fill-push');
     fill.style.width=pct+'%';
@@ -1131,9 +1275,8 @@ function updateProgress(todayPush, todayPull){
     if(pct>=100 && settings.goalPush>0) checkGoalCelebration('push', todayPush);
   }
   // Klimmzüge bar
-  const cardPull=document.getElementById('progress-card-pull');
-  cardPull.style.display=settings.showGoalPull?'block':'none';
-  if(settings.showGoalPull){
+  cardPull.style.display=showPull?'block':'none';
+  if(showPull){
     const pct=Math.min(100,Math.round((todayPull/settings.goalPull)*100));
     const fill=document.getElementById('progress-fill-pull');
     fill.style.width=pct+'%';
@@ -1537,18 +1680,22 @@ function syncFromInput(type){
 
 function cdropSelect(type, val){
   cdropSelected[type]=val;
-  // combo inputs (push/pull entry)
-  if(type==='push'||type==='pull'){
+  if(type==='push'||type==='pull'||type==='goal-push'||type==='goal-pull'){
     const inp=document.getElementById('inp-'+type);
     if(inp) inp.value=val;
   } else {
-    document.getElementById('cdrop-val-'+type).textContent=val;
-    document.getElementById('cdrop-disp-'+type).classList.remove('open');
+    const valEl=document.getElementById('cdrop-val-'+type);
+    const dispEl=document.getElementById('cdrop-disp-'+type);
+    if(valEl) valEl.textContent=val;
+    if(dispEl) dispEl.classList.remove('open');
   }
-  document.getElementById('cdrop-menu-'+type).classList.remove('open');
-  document.getElementById('cdrop-menu-'+type).querySelectorAll('.cdrop-item').forEach(el=>{
-    el.classList.toggle('active', parseInt(el.textContent)===val);
-  });
+  const menu=document.getElementById('cdrop-menu-'+type);
+  if(menu){
+    menu.classList.remove('open');
+    menu.querySelectorAll('.cdrop-item').forEach(el=>{
+      el.classList.toggle('active', parseInt(el.textContent)===val);
+    });
+  }
   if(appReady && (type==='goal-push'||type==='goal-pull')) saveSettings();
   if(type==='body-age'||type==='body-height'||type==='body-weight') calcKcal();
 }
@@ -1565,7 +1712,7 @@ document.addEventListener('click', function(e){
   });
 });
 function addEntry(){
-  const date=document.getElementById('inp-date').value||todayStr();
+  const date=getEntryDate();
   const push=cdropSelected.push;
   const pull=cdropSelected.pull;
   if(push===0&&pull===0){toast('Bitte einen Wert auswählen');return}
@@ -1760,6 +1907,7 @@ cdropSelect('goal-push', settings.goalPush);
 cdropSelect('goal-pull', settings.goalPull);
 loadBodyData();
 loadName();
+initDateDisplay();
 render();
 renderLevelCard();
 appReady = true;
