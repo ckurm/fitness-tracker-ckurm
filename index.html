@@ -88,7 +88,27 @@ header p{font-size:12px;color:var(--text2);margin-top:2px}
 .wsum-card.wpurple .wsum-val{color:#a78bfa}
 .wsum-sub{font-size:10px;color:var(--text3);margin-top:3px}
 
-/* Progress bar */
+/* Trend arrow */
+.stat-trend{font-size:11px;font-family:'DM Mono',monospace;position:absolute;bottom:12px;left:0;right:0;text-align:center;opacity:0.8}
+.trend-up{color:#4ade80}
+.trend-down{color:#f87171}
+.trend-equal{color:var(--text3)}
+
+/* Goal mini card */
+.stat-goal-card{border-color:rgba(251,146,60,0.2)!important;justify-content:space-around;gap:6px}
+.stat-goal-card::before{background:linear-gradient(90deg,#ea580c,#fb923c)!important}
+.goal-mini-block{width:100%}
+.goal-mini-row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:3px}
+.goal-mini-label{font-size:10px;font-weight:600;color:var(--text2);letter-spacing:0.5px}
+.goal-mini-nums{font-size:10px;font-family:'DM Mono',monospace;color:var(--text2)}
+.goal-mini-track{height:6px;background:var(--bg3);border-radius:3px;overflow:hidden}
+.goal-mini-fill{height:100%;border-radius:3px;width:0%;transition:width .6s cubic-bezier(.34,1.2,.64,1);position:relative}
+.goal-mini-fill::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.45),transparent);animation:shimmer 1.8s infinite}
+.goal-mini-fill-blue{background:linear-gradient(90deg,#3b82f6,#60a5fa);box-shadow:0 0 6px #60a5fa}
+.goal-mini-fill-green{background:linear-gradient(90deg,#16a34a,#4ade80);box-shadow:0 0 6px #4ade80}
+.goal-mini-empty{font-size:10px;color:var(--text3);text-align:center;width:100%}
+
+/* Progress bar (kept for backwards compat) */
 .progress-card{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radius);padding:0.7rem 1.25rem;margin-bottom:8px}
 .progress-header{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px}
 .progress-title{font-size:12px;font-weight:500;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px}
@@ -354,36 +374,36 @@ body.light .combo-arrow-btn{border-left-color:rgba(0,0,0,0.1)}
   <div class="tab-content active" id="tab-training">
 
     <div class="stat-grid">
-      <div class="stat stat-blue"><div class="stat-label">Liegestütze heute</div><div class="stat-val" id="today-push">0</div></div>
-      <div class="stat stat-green"><div class="stat-label">Klimmzüge heute</div><div class="stat-val" id="today-pull">0</div></div>
-      <div class="stat stat-orange"><div class="stat-label">Tage in Folge</div><div class="stat-val streak-val" id="streak-val">0</div></div>
+      <div class="stat stat-blue" style="position:relative;min-height:80px"><div class="stat-label" style="position:relative;z-index:1">Liegestütze heute</div><div class="stat-val" id="today-push" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center">0</div><div class="stat-trend" id="trend-push"></div></div>
+      <div class="stat stat-green" style="position:relative;min-height:80px"><div class="stat-label" style="position:relative;z-index:1">Klimmzüge heute</div><div class="stat-val" id="today-pull" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center">0</div><div class="stat-trend" id="trend-pull"></div></div>
+      <div class="stat stat-goal-card" id="stat-goal-card" style="display:none">
+        <div class="stat-label">Tagesziel</div>
+        <div class="goal-mini-block" id="goal-mini-push">
+          <div class="goal-mini-row">
+            <span class="goal-mini-label">LS</span>
+            <span class="goal-mini-nums" id="goal-nums-push">0/0</span>
+          </div>
+          <div class="goal-mini-track">
+            <div class="goal-mini-fill goal-mini-fill-blue" id="goal-fill-push"></div>
+          </div>
+        </div>
+        <div class="goal-mini-block" id="goal-mini-pull">
+          <div class="goal-mini-row">
+            <span class="goal-mini-label">KZ</span>
+            <span class="goal-mini-nums" id="goal-nums-pull">0/0</span>
+          </div>
+          <div class="goal-mini-track">
+            <div class="goal-mini-fill goal-mini-fill-green" id="goal-fill-pull"></div>
+          </div>
+        </div>
+        <div class="goal-mini-empty" id="goal-mini-empty">Kein Ziel gesetzt</div>
+      </div>
+      <div class="stat stat-orange" id="stat-streak-card"><div class="stat-label">Tage in Folge</div><div class="stat-val streak-val" id="streak-val">0</div></div>
     </div>
     <div class="stat-grid divider">
       <div class="stat stat-purple"><div class="stat-label">Liegestütze gesamt</div><div class="stat-val" id="total-push">0</div></div>
       <div class="stat stat-teal"><div class="stat-label">Klimmzüge gesamt</div><div class="stat-val" id="total-pull">0</div></div>
       <div class="stat stat-pink"><div class="stat-label">Trainingstage</div><div class="stat-val" id="total-days">0</div></div>
-    </div>
-
-    <!-- Progress -->
-    <div class="progress-card" id="progress-card-push" style="margin-bottom:0;border-bottom:none;border-radius:var(--radius) var(--radius) 0 0">
-      <div class="progress-header">
-        <span class="progress-title">Tagesziel Liegestütze</span>
-        <span class="progress-nums" id="progress-nums-push">0 / 130</span>
-      </div>
-      <div class="progress-track">
-        <div class="progress-fill" id="progress-fill-push" style="width:0%"></div>
-      </div>
-      <div class="progress-label" id="progress-label-push">0% erreicht</div>
-    </div>
-    <div class="progress-card" id="progress-card-pull" style="margin-bottom:8px;border-top:none;border-radius:0 0 var(--radius) var(--radius);padding-top:0.5rem">
-      <div class="progress-header">
-        <span class="progress-title">Tagesziel Klimmzüge</span>
-        <span class="progress-nums" id="progress-nums-pull">0 / 20</span>
-      </div>
-      <div class="progress-track">
-        <div class="progress-fill" id="progress-fill-pull" style="width:0%"></div>
-      </div>
-      <div class="progress-label" id="progress-label-pull">0% erreicht</div>
     </div>
 
     <!-- Entry -->
@@ -525,26 +545,6 @@ body.light .combo-arrow-btn{border-left-color:rgba(0,0,0,0.1)}
           </div>
           <div class="cdrop-menu" id="cdrop-menu-goal-pull"></div>
         </div>
-      </div>
-      <div class="setting-row" style="margin-top:8px">
-        <div>
-          <div class="setting-label">Liegestütze-Balken anzeigen</div>
-          <div class="setting-sub">Fortschrittsbalken im Training einblenden</div>
-        </div>
-        <label class="toggle">
-          <input type="checkbox" id="toggle-goal-push" checked onchange="saveSettings()">
-          <span class="toggle-slider"></span>
-        </label>
-      </div>
-      <div class="setting-row">
-        <div>
-          <div class="setting-label">Klimmzüge-Balken anzeigen</div>
-          <div class="setting-sub">Fortschrittsbalken im Training einblenden</div>
-        </div>
-        <label class="toggle">
-          <input type="checkbox" id="toggle-goal-pull" checked onchange="saveSettings()">
-          <span class="toggle-slider"></span>
-        </label>
       </div>
     </div>
 
@@ -742,8 +742,8 @@ body.light .combo-arrow-btn{border-left-color:rgba(0,0,0,0.1)}
       <div class="help-section">
         <div class="help-icon">🎯</div>
         <div>
-          <div class="help-h">Fortschrittsbalken</div>
-          <div class="help-p">Der Neon-Balken zeigt wie nah du deinem Tagesziel bist. Er wechselt von Rot über Gelb zu Grün. Bei Erreichen des Ziels gibt es ein Feuerwerk!</div>
+          <div class="help-h">Tagesziel & Fortschrittsbalken</div>
+          <div class="help-p">Sobald du in den Einstellungen ein Tagesziel setzt, erscheint im dritten Kasten oben ein Fortschrittsbalken – blau für Liegestütze, grün für Klimmzüge. Bei Erreichen des Ziels gibt es ein Feuerwerk! Die Pfeile ↑ ↓ in den Stat-Karten zeigen den Vergleich mit gestern.</div>
         </div>
       </div>
 
@@ -767,7 +767,7 @@ body.light .combo-arrow-btn{border-left-color:rgba(0,0,0,0.1)}
         <div class="help-icon">⚙️</div>
         <div>
           <div class="help-h">Einstellungen</div>
-          <div class="help-p">Hier kannst du dein Tagesziel für Liegestütze und Klimmzüge festlegen und den Fortschrittsbalken ein- oder ausschalten. Die Datensicherung befindet sich ebenfalls unter Einstellungen – exportiere deine Daten als Backup und importiere sie auf einem neuen Gerät.</div>
+          <div class="help-p">Hier kannst du dein Tagesziel für Liegestütze und Klimmzüge festlegen. Sobald ein Ziel gesetzt ist, erscheint im Training-Tab automatisch ein Fortschrittsbalken im Tagesziel-Kasten. Die Datensicherung befindet sich ebenfalls hier – exportiere deine Daten als Backup und importiere sie auf einem neuen Gerät.</div>
         </div>
       </div>
 
@@ -843,8 +843,6 @@ function save(){localStorage.setItem('training_log',JSON.stringify(entries))}
 function saveSettings(){
   settings.goalPush=cdropSelected['goal-push']??0;
   settings.goalPull=cdropSelected['goal-pull']??0;
-  settings.showGoalPush=document.getElementById('toggle-goal-push').checked;
-  settings.showGoalPull=document.getElementById('toggle-goal-pull').checked;
   localStorage.setItem('ft_settings',JSON.stringify(settings));
   render();
 }
@@ -1252,55 +1250,43 @@ function neonColor(pct){
   if(pct>=25)  return 'linear-gradient(90deg,#ff6600,#ffee00)';
   return 'linear-gradient(90deg,#ff0080,#ff6600)';
 }
+// ── Progress (mini goal card in stat grid) ────────────────────────────────────
 function updateProgress(todayPush, todayPull){
-  const cardPush=document.getElementById('progress-card-push');
-  const cardPull=document.getElementById('progress-card-pull');
-  const showPush=settings.showGoalPush;
-  const showPull=settings.showGoalPull;
+  const hasPush=settings.goalPush>0;
+  const hasPull=settings.goalPull>0;
+  const goalCard=document.getElementById('stat-goal-card');
+  const streakCard=document.getElementById('stat-streak-card');
 
-  // Border-radius & borders je nach Kombination
-  if(showPush && showPull){
-    cardPush.style.borderRadius='var(--radius) var(--radius) 0 0';
-    cardPush.style.borderBottom='none';
-    cardPush.style.marginBottom='0';
-    cardPull.style.borderRadius='0 0 var(--radius) var(--radius)';
-    cardPull.style.borderTop='none';
-    cardPull.style.paddingTop='0.5rem';
-    cardPull.style.marginBottom='8px';
-  } else if(showPush){
-    cardPush.style.borderRadius='var(--radius)';
-    cardPush.style.borderBottom='';
-    cardPush.style.marginBottom='8px';
-  } else if(showPull){
-    cardPull.style.borderRadius='var(--radius)';
-    cardPull.style.borderTop='';
-    cardPull.style.paddingTop='0.7rem';
-    cardPull.style.marginBottom='8px';
-  }
+  // Show goal card only if at least one goal is set
+  if(goalCard) goalCard.style.display=(hasPush||hasPull)?'flex':'none';
+  if(streakCard) streakCard.style.display=(hasPush||hasPull)?'none':'flex';
 
-  // Liegestütze bar
-  cardPush.style.display=showPush?'block':'none';
-  if(showPush){
+  // Empty state
+  const emptyEl=document.getElementById('goal-mini-empty');
+  if(emptyEl) emptyEl.style.display=(hasPush||hasPull)?'none':'block';
+
+  // Push mini bar
+  const pushBlock=document.getElementById('goal-mini-push');
+  if(pushBlock) pushBlock.style.display=hasPush?'block':'none';
+  if(hasPush){
     const pct=Math.min(100,Math.round((todayPush/settings.goalPush)*100));
-    const fill=document.getElementById('progress-fill-push');
-    fill.style.width=pct+'%';
-    fill.style.background=neonColor(pct);
-    fill.style.boxShadow=pct>0?'0 0 8px '+(pct>=100?'#00ff88':pct>=50?'#aaff00':'#ff6600'):'none';
-    document.getElementById('progress-nums-push').textContent=todayPush+' / '+settings.goalPush;
-    document.getElementById('progress-label-push').textContent=pct+'% erreicht'+(pct>=100?' 🎯':'');
-    if(pct>=100 && settings.goalPush>0) checkGoalCelebration('push', todayPush);
+    const fill=document.getElementById('goal-fill-push');
+    if(fill) fill.style.width=pct+'%';
+    const nums=document.getElementById('goal-nums-push');
+    if(nums) nums.textContent=todayPush+'/'+settings.goalPush;
+    if(pct>=100) checkGoalCelebration('push',todayPush);
   }
-  // Klimmzüge bar
-  cardPull.style.display=showPull?'block':'none';
-  if(showPull){
+
+  // Pull mini bar
+  const pullBlock=document.getElementById('goal-mini-pull');
+  if(pullBlock) pullBlock.style.display=hasPull?'block':'none';
+  if(hasPull){
     const pct=Math.min(100,Math.round((todayPull/settings.goalPull)*100));
-    const fill=document.getElementById('progress-fill-pull');
-    fill.style.width=pct+'%';
-    fill.style.background=neonColorPull(pct);
-    fill.style.boxShadow=pct>0?'0 0 8px '+(pct>=100?'#4ade80':pct>=50?'#22d3ee':'#60a5fa'):'none';
-    document.getElementById('progress-nums-pull').textContent=todayPull+' / '+settings.goalPull;
-    document.getElementById('progress-label-pull').textContent=pct+'% erreicht'+(pct>=100?' 🎯':'');
-    if(pct>=100 && settings.goalPull>0) checkGoalCelebration('pull', todayPull);
+    const fill=document.getElementById('goal-fill-pull');
+    if(fill) fill.style.width=pct+'%';
+    const nums=document.getElementById('goal-nums-pull');
+    if(nums) nums.textContent=todayPull+'/'+settings.goalPull+(pct>=100?' 🎯':'');
+    if(pct>=100) checkGoalCelebration('pull',todayPull);
   }
 }
 
@@ -1631,6 +1617,23 @@ function render(){
   document.getElementById('total-pull').textContent=entries.reduce((a,e)=>a+e.pull,0);
   document.getElementById('total-days').textContent=new Set(entries.map(e=>e.date)).size;
   document.getElementById('streak-val').textContent=calcStreak();
+
+  // Trend: vergleich mit gestern
+  const yesterday=addDays(today,-1);
+  const ye=entries.filter(e=>e.date===yesterday);
+  const yesPush=ye.reduce((a,e)=>a+e.push,0);
+  const yesPull=ye.reduce((a,e)=>a+e.pull,0);
+  function setTrend(id,today,yesterday){
+    const el=document.getElementById(id);if(!el)return;
+    if(yesterday===0&&today===0){el.textContent='';return;}
+    const diff=today-yesterday;
+    if(diff>0){el.textContent='↑ +'+diff;el.className='stat-trend trend-up';}
+    else if(diff<0){el.textContent='↓ '+diff;el.className='stat-trend trend-down';}
+    else{el.textContent='→ ±0';el.className='stat-trend trend-equal';}
+  }
+  setTrend('trend-push',todayPush,yesPush);
+  setTrend('trend-pull',todayPull,yesPull);
+
   updateProgress(todayPush, todayPull);
   if(document.getElementById('log-overlay').classList.contains('show')) renderLog();
   return {todayPush, todayPull};
@@ -1817,8 +1820,6 @@ function importData(event){
       cdropSelect('goal-push',settings.goalPush||0);
       cdropSelect('goal-pull',settings.goalPull||0);
       appReady=true;
-      document.getElementById('toggle-goal-push').checked=settings.showGoalPush;
-      document.getElementById('toggle-goal-pull').checked=settings.showGoalPull;
       document.getElementById('toggle-dark').checked=settings.darkMode;
       document.getElementById('toggle-badges').checked=settings.showBadges!==false;
       loadName();
@@ -1858,17 +1859,13 @@ function deleteAll(){
   appReady=true;
 
   // Reset toggles
-  document.getElementById('toggle-goal-push').checked=true;
-  document.getElementById('toggle-goal-pull').checked=true;
   document.getElementById('toggle-dark').checked=true;
 
   // Reset progress bars
-  document.getElementById('progress-fill-push').style.width='0%';
-  document.getElementById('progress-fill-push').style.background='';
-  document.getElementById('progress-nums-push').textContent='0 / 0';
-  document.getElementById('progress-fill-pull').style.width='0%';
-  document.getElementById('progress-fill-pull').style.background='';
-  document.getElementById('progress-nums-pull').textContent='0 / 0';
+  const gfp=document.getElementById('goal-fill-push');if(gfp)gfp.style.width='0%';
+  const gfpl=document.getElementById('goal-fill-pull');if(gfpl)gfpl.style.width='0%';
+  const gnp=document.getElementById('goal-nums-push');if(gnp)gnp.textContent='0/0';
+  const gnpl=document.getElementById('goal-nums-pull');if(gnpl)gnpl.textContent='0/0';
 
   // Reset profile / body data
   cdropSelected['body-age']=null;
@@ -1904,8 +1901,6 @@ function deleteAll(){
 
 // ── Init ──────────────────────────────────────────────────────────────────────
 document.getElementById('inp-date').value=todayStr();
-document.getElementById('toggle-goal-push').checked=settings.showGoalPush;
-document.getElementById('toggle-goal-pull').checked=settings.showGoalPull;
 document.getElementById('toggle-badges').checked=settings.showBadges!==false;
 applyTheme();
 cdropBuild('push');
