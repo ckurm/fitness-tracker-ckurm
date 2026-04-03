@@ -572,11 +572,16 @@ body.light .combo-arrow-btn{border-left-color:rgba(0,0,0,0.1)}
   <div class="tab-content" id="tab-koerper">
 
     <!-- Level Card -->
-    <div class="level-card" id="level-card" style="cursor:pointer;position:relative">
-      <button class="settings-icon-btn" onclick="openNameEdit(event)" style="position:absolute;top:18px;right:20px;z-index:2" title="Name bearbeiten">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="9" r="3"/><path d="M6.5 19c0-3 2.5-5 5.5-5s5.5 2 5.5 5"/></svg>
-      </button>
-      <div id="level-card-inner" onclick="showLevelLegend()">
+    <div class="level-card" id="level-card" style="position:relative">
+      <div style="position:absolute;top:18px;right:20px;z-index:2;display:flex;gap:8px;align-items:center">
+        <button class="settings-icon-btn" onclick="showLevelLegend()" title="Level-Erklärung">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+        </button>
+        <button class="settings-icon-btn" onclick="openNameEdit(event)" title="Name bearbeiten">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="9" r="3"/><path d="M6.5 19c0-3 2.5-5 5.5-5s5.5 2 5.5 5"/></svg>
+        </button>
+      </div>
+      <div id="level-card-inner" style="pointer-events:none">
         <div class="level-disabled">Abzeichen-System deaktiviert.<br>In den Einstellungen aktivieren.</div>
       </div>
     </div>
@@ -1224,7 +1229,7 @@ function renderLevelCard(){
   }
   const name = localStorage.getItem('ft_name')||'';
   inner.innerHTML=`
-    <div class="level-top">
+    <div class="level-top" style="pointer-events:none">
       <div class="level-badge">${info.emoji}</div>
       <div class="level-info">
         ${name?'<div style="font-size:15px;font-weight:600;margin-bottom:2px">'+name+'</div>':''}
