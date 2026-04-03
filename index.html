@@ -104,8 +104,9 @@ header p{font-size:12px;color:var(--text2);margin-top:2px}
 .goal-mini-empty{font-size:10px;color:var(--text3);text-align:center;width:100%}
 
 /* Progress bar (kept for backwards compat) */
-.progress-card{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radius);padding:0.7rem 1.25rem;margin-bottom:8px}
-.progress-header{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px}
+.progress-card{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radius);padding:0.5rem 1.25rem;margin-bottom:4px}
+.progress-header{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px}
+.progress-title{font-size:11px;font-weight:500;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px}
 .progress-title{font-size:12px;font-weight:500;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px}
 .progress-nums{font-size:13px;font-family:'DM Mono',monospace}
 .progress-track{height:10px;background:var(--bg3);border-radius:5px;overflow:hidden;position:relative}
@@ -113,6 +114,18 @@ header p{font-size:12px;color:var(--text2);margin-top:2px}
 .progress-fill::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,0.3) 50%,transparent 100%);animation:shimmer 2s infinite}
 @keyframes shimmer{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
 .progress-label{font-size:11px;color:var(--text3);margin-top:4px;text-align:right}
+
+/* Combined progress card */
+.progress-combined{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radius);padding:8px 14px;margin-top:4px;margin-bottom:14px;display:flex;flex-direction:column;gap:6px}
+.progress-row{display:flex;flex-direction:column;gap:3px}
+.progress-row-header{display:flex;align-items:center;gap:6px}
+.progress-row-title{font-size:10px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px;min-width:72px}
+.progress-row-nums{font-size:11px;font-family:'DM Mono',monospace;color:var(--text2);flex:1}
+.progress-row-pct{font-size:10px;font-family:'DM Mono',monospace;color:var(--text3)}
+.progress-track-sm{height:7px;background:var(--bg3);border-radius:4px;overflow:hidden;position:relative}
+.progress-divider{height:0.5px;background:var(--border);margin:0 -2px}
+
+/* Progress bar (legacy kept) */
 
 /* Card */
 .card{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radius);padding:1rem 1.25rem;margin-bottom:12px}
@@ -372,29 +385,7 @@ body.light .combo-arrow-btn{border-left-color:rgba(0,0,0,0.1)}
     <div class="stat-grid">
       <div class="stat stat-blue"><div class="stat-label">LS heute</div><div class="stat-val" id="today-push">0</div></div>
       <div class="stat stat-green"><div class="stat-label">KZ heute</div><div class="stat-val" id="today-pull">0</div></div>
-      <div class="stat stat-goal-card" id="stat-goal-card" style="display:none">
-        <div class="stat-label">Tagesziel</div>
-        <div class="goal-mini-block" id="goal-mini-push">
-          <div class="goal-mini-row">
-            <span class="goal-mini-label">LS</span>
-            <span class="goal-mini-nums" id="goal-nums-push">0/0</span>
-          </div>
-          <div class="goal-mini-track">
-            <div class="goal-mini-fill goal-mini-fill-blue" id="goal-fill-push"></div>
-          </div>
-        </div>
-        <div class="goal-mini-block" id="goal-mini-pull">
-          <div class="goal-mini-row">
-            <span class="goal-mini-label">KZ</span>
-            <span class="goal-mini-nums" id="goal-nums-pull">0/0</span>
-          </div>
-          <div class="goal-mini-track">
-            <div class="goal-mini-fill goal-mini-fill-green" id="goal-fill-pull"></div>
-          </div>
-        </div>
-        <div class="goal-mini-empty" id="goal-mini-empty">Kein Ziel gesetzt</div>
-      </div>
-      <div class="stat stat-orange" id="stat-streak-card"><div class="stat-label">Tage in Folge</div><div class="stat-val streak-val" id="streak-val">0</div></div>
+      <div class="stat stat-orange"><div class="stat-label">Tage in Folge</div><div class="stat-val streak-val" id="streak-val">0</div></div>
     </div>
     <div class="stat-grid divider">
       <div class="stat stat-purple"><div class="stat-label">LS gesamt</div><div class="stat-val" id="total-push">0</div></div>
@@ -402,9 +393,40 @@ body.light .combo-arrow-btn{border-left-color:rgba(0,0,0,0.1)}
       <div class="stat stat-pink"><div class="stat-label">Trainingstage</div><div class="stat-val" id="total-days">0</div></div>
     </div>
 
+    <!-- Progress -->
+    <div class="progress-combined" id="progress-combined" style="display:none">
+      <div style="font-size:11px;font-weight:500;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:8px">Tagesziel</div>
+      <div class="progress-row" id="progress-row-push">
+        <div class="progress-row-header">
+          <span class="progress-row-title">Liegestütze</span>
+          <span class="progress-row-nums" id="progress-nums-push">0 / 0</span>
+          <span class="progress-row-pct" id="progress-label-push">0%</span>
+        </div>
+        <div class="progress-track-sm">
+          <div class="progress-fill" id="progress-fill-push" style="width:0%"></div>
+        </div>
+      </div>
+      <div class="progress-divider" id="progress-divider" style="display:none"></div>
+      <div class="progress-row" id="progress-row-pull">
+        <div class="progress-row-header">
+          <span class="progress-row-title">Klimmzüge</span>
+          <span class="progress-row-nums" id="progress-nums-pull">0 / 0</span>
+          <span class="progress-row-pct" id="progress-label-pull">0%</span>
+        </div>
+        <div class="progress-track-sm">
+          <div class="progress-fill" id="progress-fill-pull" style="width:0%"></div>
+        </div>
+      </div>
+    </div>
+
     <!-- Entry -->
     <div class="card">
-      <div class="card-title">Einheit eintragen</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
+        <span class="card-title" style="margin-bottom:0">Einheit eintragen</span>
+        <button class="settings-icon-btn" onclick="openLog()" title="Verlauf">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </button>
+      </div>
 
       <!-- Date -->
       <div class="input-row" style="margin-bottom:8px">
@@ -433,7 +455,6 @@ body.light .combo-arrow-btn{border-left-color:rgba(0,0,0,0.1)}
         </div>
       </div>
       <button class="btn btn-green" onclick="addEntry()">+ Eintragen</button>
-      <button class="btn" onclick="openLog()" style="margin-top:6px;background:var(--bg3);color:var(--text2);border:0.5px solid var(--border2);font-size:14px">📋 Verlauf anzeigen</button>
     </div>
 
   </div>
@@ -517,6 +538,16 @@ body.light .combo-arrow-btn{border-left-color:rgba(0,0,0,0.1)}
         </div>
         <label class="toggle">
           <input type="checkbox" id="toggle-badges" checked onchange="saveBadgesSetting()">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+      <div class="setting-row">
+        <div>
+          <div class="setting-label">🔊 Töne</div>
+          <div class="setting-sub">Sound bei Meilensteinen & Zielen</div>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" id="toggle-sound" checked onchange="saveSoundSetting()">
           <span class="toggle-slider"></span>
         </label>
       </div>
@@ -826,7 +857,7 @@ function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t
 
 // ── State ─────────────────────────────────────────────────────────────────────
 let entries=[];
-let settings={goalPush:0,goalPull:0,darkMode:true,showGoalPush:true,showGoalPull:true,showBadges:true};
+let settings={goalPush:0,goalPull:0,darkMode:true,showGoalPush:true,showGoalPull:true,showBadges:true,soundEnabled:true};
 try{entries=JSON.parse(localStorage.getItem('training_log')||'[]')}catch(e){entries=[]}
 try{
   const s=JSON.parse(localStorage.getItem('ft_settings')||'{}');
@@ -991,6 +1022,7 @@ const MILESTONE_DATA={
 };
 // ── Sounds (Web Audio API) ────────────────────────────────────────────────────
 function playMilestoneSound(){
+  if(!settings.soundEnabled) return;
   try{
     const ctx=new (window.AudioContext||window.webkitAudioContext)();
     const notes=[523,659,784,1047]; // C5 E5 G5 C6
@@ -1009,6 +1041,7 @@ function playMilestoneSound(){
   }catch(e){}
 }
 function playGoalSound(){
+  if(!settings.soundEnabled) return;
   try{
     const ctx=new (window.AudioContext||window.webkitAudioContext)();
     // Fanfare: aufsteigende Akkorde + finaler hoher Ton
@@ -1132,12 +1165,17 @@ function renderLevelCard(){
     <div class="level-hint">${level>=101?'🌟 Höchstes Level erreicht – du bist ein Mythos!':level===100?'Noch '+xpToNext+' XP bis 🌟 Mythos':'Noch '+xpToNext+' XP bis Level '+(level+1)}</div>
   `;
 }
+function saveSoundSetting(){
+  settings.soundEnabled=document.getElementById('toggle-sound').checked;
+  localStorage.setItem('ft_settings',JSON.stringify(settings));
+}
 function saveBadgesSetting(){
   settings.showBadges = document.getElementById('toggle-badges').checked;
   localStorage.setItem('ft_settings',JSON.stringify(settings));
   renderLevelCard();
 }
 function playLevelUpSound(){
+  if(!settings.soundEnabled) return;
   try{
     const ctx=new (window.AudioContext||window.webkitAudioContext)();
     const notes=[523,659,784,1047,1319];
@@ -1253,42 +1291,44 @@ function neonColor(pct){
 }
 // ── Progress (mini goal card in stat grid) ────────────────────────────────────
 function updateProgress(todayPush, todayPull){
+  const combined=document.getElementById('progress-combined');
+  const rowPush=document.getElementById('progress-row-push');
+  const rowPull=document.getElementById('progress-row-pull');
+  const divider=document.getElementById('progress-divider');
   const hasPush=settings.goalPush>0;
   const hasPull=settings.goalPull>0;
-  const goalCard=document.getElementById('stat-goal-card');
-  const streakCard=document.getElementById('stat-streak-card');
 
-  // Show goal card only if at least one goal is set
-  if(goalCard) goalCard.style.display=(hasPush||hasPull)?'flex':'none';
-  if(streakCard) streakCard.style.display=(hasPush||hasPull)?'none':'flex';
+  if(!hasPush&&!hasPull){combined.style.display='none';return;}
+  combined.style.display='flex';
 
-  // Empty state
-  const emptyEl=document.getElementById('goal-mini-empty');
-  if(emptyEl) emptyEl.style.display=(hasPush||hasPull)?'none':'block';
-
-  // Push mini bar
-  const pushBlock=document.getElementById('goal-mini-push');
-  if(pushBlock) pushBlock.style.display=hasPush?'block':'none';
+  // Push row
   if(hasPush){
+    rowPush.style.display='flex';
     const pct=Math.min(100,Math.round((todayPush/settings.goalPush)*100));
-    const fill=document.getElementById('goal-fill-push');
-    if(fill) fill.style.width=pct+'%';
-    const nums=document.getElementById('goal-nums-push');
-    if(nums) nums.textContent=todayPush+'/'+settings.goalPush;
+    const fill=document.getElementById('progress-fill-push');
+    fill.style.width=pct+'%';
+    fill.style.background='linear-gradient(90deg,#3b82f6,#60a5fa)';
+    fill.style.boxShadow=pct>0?'0 0 8px #60a5fa':'none';
+    document.getElementById('progress-nums-push').textContent=todayPush+'/'+settings.goalPush;
+    document.getElementById('progress-label-push').textContent=pct+'%'+(pct>=100?' 🎯':'');
     if(pct>=100) checkGoalCelebration('push',todayPush);
-  }
+  } else rowPush.style.display='none';
 
-  // Pull mini bar
-  const pullBlock=document.getElementById('goal-mini-pull');
-  if(pullBlock) pullBlock.style.display=hasPull?'block':'none';
+  // Divider only when both visible
+  if(divider) divider.style.display=(hasPush&&hasPull)?'block':'none';
+
+  // Pull row
   if(hasPull){
+    rowPull.style.display='flex';
     const pct=Math.min(100,Math.round((todayPull/settings.goalPull)*100));
-    const fill=document.getElementById('goal-fill-pull');
-    if(fill) fill.style.width=pct+'%';
-    const nums=document.getElementById('goal-nums-pull');
-    if(nums) nums.textContent=todayPull+'/'+settings.goalPull;
+    const fill=document.getElementById('progress-fill-pull');
+    fill.style.width=pct+'%';
+    fill.style.background='linear-gradient(90deg,#16a34a,#4ade80)';
+    fill.style.boxShadow=pct>0?'0 0 8px #4ade80':'none';
+    document.getElementById('progress-nums-pull').textContent=todayPull+'/'+settings.goalPull;
+    document.getElementById('progress-label-pull').textContent=pct+'%'+(pct>=100?' 🎯':'');
     if(pct>=100) checkGoalCelebration('pull',todayPull);
-  }
+  } else rowPull.style.display='none';
 }
 
 function neonColorPull(pct){
@@ -1806,6 +1846,7 @@ function importData(event){
       appReady=true;
       document.getElementById('toggle-dark').checked=settings.darkMode;
       document.getElementById('toggle-badges').checked=settings.showBadges!==false;
+document.getElementById('toggle-sound').checked=settings.soundEnabled!==false;
       loadName();
       loadBodyData();
       render();
@@ -1846,10 +1887,9 @@ function deleteAll(){
   document.getElementById('toggle-dark').checked=true;
 
   // Reset progress bars
-  const gfp=document.getElementById('goal-fill-push');if(gfp)gfp.style.width='0%';
-  const gfpl=document.getElementById('goal-fill-pull');if(gfpl)gfpl.style.width='0%';
-  const gnp=document.getElementById('goal-nums-push');if(gnp)gnp.textContent='0/0';
-  const gnpl=document.getElementById('goal-nums-pull');if(gnpl)gnpl.textContent='0/0';
+  const fp=document.getElementById('progress-fill-push');if(fp){fp.style.width='0%';fp.style.background='';}
+  const fpl=document.getElementById('progress-fill-pull');if(fpl){fpl.style.width='0%';fpl.style.background='';}
+  const pc=document.getElementById('progress-combined');if(pc)pc.style.display='none';
 
   // Reset profile / body data
   cdropSelected['body-age']=null;
@@ -1886,6 +1926,7 @@ function deleteAll(){
 // ── Init ──────────────────────────────────────────────────────────────────────
 document.getElementById('inp-date').value=todayStr();
 document.getElementById('toggle-badges').checked=settings.showBadges!==false;
+document.getElementById('toggle-sound').checked=settings.soundEnabled!==false;
 applyTheme();
 cdropBuild('push');
 cdropBuild('pull');
