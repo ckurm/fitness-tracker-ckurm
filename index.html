@@ -311,6 +311,7 @@ body.light .combo-arrow-btn{border-left-color:rgba(0,0,0,0.1)}
 .numpad-display{font-size:36px;font-weight:600;font-family:'DM Mono',monospace;color:var(--text);letter-spacing:2px;min-height:44px;line-height:1}
 .numpad-display.blue{color:#60a5fa}
 .numpad-display.green{color:#4ade80}
+.numpad-display.purple{color:#a78bfa}
 .numpad-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:8px}
 .numpad-btn{background:var(--bg3);border:0.5px solid var(--border);border-radius:var(--radius);font-size:20px;font-family:'DM Mono',monospace;font-weight:500;color:var(--text);padding:13px 0;cursor:pointer;transition:background .1s,transform .08s;-webkit-tap-highlight-color:transparent}
 .numpad-btn:active{background:var(--border2);transform:scale(0.95)}
@@ -610,64 +611,6 @@ body.light .combo-arrow-btn{border-left-color:rgba(0,0,0,0.1)}
       </div>
     </div>
 
-    <div class="card">
-      <div class="card-title">Meine Vitaldaten</div>
-      <div class="input-row">
-        <label>Geschlecht</label>
-        <div class="cdrop-wrap" id="cdrop-wrap-body-gender">
-          <div class="cdrop-display sel-blue" id="cdrop-disp-body-gender" onclick="cdropToggle('body-gender')">
-            <span id="cdrop-val-body-gender">Männlich</span><span class="cdrop-arrow">▼</span>
-          </div>
-          <div class="cdrop-menu" id="cdrop-menu-body-gender">
-            <div class="cdrop-item active" onclick="cdropSelectGender('male')">Männlich</div>
-            <div class="cdrop-item" onclick="cdropSelectGender('female')">Weiblich</div>
-          </div>
-        </div>
-      </div>
-      <div class="input-row">
-        <label>Alter</label>
-        <div class="cdrop-wrap" id="cdrop-wrap-body-age">
-          <div class="cdrop-display sel-blue" id="cdrop-disp-body-age" onclick="cdropToggle('body-age')">
-            <span id="cdrop-val-body-age">—</span><span class="cdrop-arrow">▼</span>
-          </div>
-          <div class="cdrop-menu" id="cdrop-menu-body-age"></div>
-        </div>
-      </div>
-      <div class="input-row">
-        <label>Größe (cm)</label>
-        <div class="cdrop-wrap" id="cdrop-wrap-body-height">
-          <div class="cdrop-display sel-green" id="cdrop-disp-body-height" onclick="cdropToggle('body-height')">
-            <span id="cdrop-val-body-height">—</span><span class="cdrop-arrow">▼</span>
-          </div>
-          <div class="cdrop-menu" id="cdrop-menu-body-height"></div>
-        </div>
-      </div>
-      <div class="input-row">
-        <label>Gewicht (kg)</label>
-        <div class="cdrop-wrap" id="cdrop-wrap-body-weight">
-          <div class="cdrop-display sel-purple" id="cdrop-disp-body-weight" onclick="cdropToggle('body-weight')">
-            <span id="cdrop-val-body-weight">—</span><span class="cdrop-arrow">▼</span>
-          </div>
-          <div class="cdrop-menu" id="cdrop-menu-body-weight"></div>
-        </div>
-      </div>
-      <div class="input-row">
-        <label>Aktivität</label>
-        <div class="cdrop-wrap" id="cdrop-wrap-body-activity">
-          <div class="cdrop-display sel-orange" id="cdrop-disp-body-activity" onclick="cdropToggle('body-activity')">
-            <span id="cdrop-val-body-activity">Moderat aktiv</span><span class="cdrop-arrow">▼</span>
-          </div>
-          <div class="cdrop-menu" id="cdrop-menu-body-activity">
-            <div class="cdrop-item" onclick="cdropSelectActivity('1.2','Kaum Bewegung')">Kaum Bewegung</div>
-            <div class="cdrop-item" onclick="cdropSelectActivity('1.375','Leicht aktiv')">Leicht aktiv (1-3x/Woche)</div>
-            <div class="cdrop-item active" onclick="cdropSelectActivity('1.55','Moderat aktiv')">Moderat aktiv (3-5x/Woche)</div>
-            <div class="cdrop-item" onclick="cdropSelectActivity('1.725','Sehr aktiv')">Sehr aktiv (6-7x/Woche)</div>
-            <div class="cdrop-item" onclick="cdropSelectActivity('1.9','Extrem aktiv')">Extrem aktiv</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
     <div class="records-grid" id="kcal-cards" style="display:none">
       <div class="record-card gold">
         
@@ -742,15 +685,76 @@ body.light .combo-arrow-btn{border-left-color:rgba(0,0,0,0.1)}
 
 <!-- Name Edit Overlay -->
 <div class="level-overlay" id="name-overlay">
-  <div class="level-box" style="max-height:auto">
-    <div class="level-legend-header">
-      <span class="level-legend-title">✏️ Name ändern</span>
+  <div class="level-box" style="max-height:88vh">
+    <div class="level-legend-header" style="flex-shrink:0">
+      <span class="level-legend-title">👤 Mein Profil</span>
       <button class="level-legend-close" onclick="closeNameEdit()">✕</button>
     </div>
-    <input type="text" id="inp-name" placeholder="Dein Name" maxlength="30"
-      style="width:100%;background:var(--bg3);border:0.5px solid var(--border2);border-radius:var(--radius-sm);color:var(--text);font-family:'DM Sans',sans-serif;font-size:16px;padding:11px 14px;outline:none;margin:8px 0 16px"
-      onkeydown="if(event.key==='Enter')confirmNameEdit()"/>
-    <button class="cel-btn" onclick="confirmNameEdit()" style="width:100%">✓ Bestätigen</button>
+    <div class="level-legend-body" style="overflow-y:auto">
+
+      <div class="input-row" style="margin-bottom:10px">
+        <label>Name</label>
+        <input type="text" id="inp-name" placeholder="Dein Name" maxlength="30"
+          style="flex:1;background:var(--bg3);border:0.5px solid var(--border2);border-radius:var(--radius-sm);color:var(--text);font-family:'DM Mono',monospace;font-size:16px;padding:9px 12px;outline:none;transition:border-color .15s"
+          onkeydown="if(event.key==='Enter')this.blur()"/>
+      </div>
+
+      <div class="input-row">
+        <label>Geschlecht</label>
+        <div class="cdrop-wrap" id="cdrop-wrap-body-gender">
+          <div class="cdrop-display sel-blue" id="cdrop-disp-body-gender" onclick="cdropToggle('body-gender')">
+            <span id="cdrop-val-body-gender">Männlich</span><span class="cdrop-arrow">▼</span>
+          </div>
+          <div class="cdrop-menu" id="cdrop-menu-body-gender">
+            <div class="cdrop-item active" onclick="cdropSelectGender('male')">Männlich</div>
+            <div class="cdrop-item" onclick="cdropSelectGender('female')">Weiblich</div>
+          </div>
+        </div>
+      </div>
+      <div class="input-row">
+        <label>Alter</label>
+        <div class="cdrop-wrap" id="cdrop-wrap-body-age" style="position:relative;flex:1;display:flex">
+          <div class="combo-box sel-blue" style="flex:1;cursor:pointer" onclick="openNumpad('body-age')">
+            <input type="number" id="inp-body-age" class="combo-input" min="10" max="100" placeholder="—" readonly style="cursor:pointer">
+          </div>
+          <div class="cdrop-menu" id="cdrop-menu-body-age"></div>
+        </div>
+      </div>
+      <div class="input-row">
+        <label>Größe (cm)</label>
+        <div class="cdrop-wrap" id="cdrop-wrap-body-height" style="position:relative;flex:1;display:flex">
+          <div class="combo-box sel-green" style="flex:1;cursor:pointer" onclick="openNumpad('body-height')">
+            <input type="number" id="inp-body-height" class="combo-input" min="130" max="250" placeholder="—" readonly style="cursor:pointer">
+          </div>
+          <div class="cdrop-menu" id="cdrop-menu-body-height"></div>
+        </div>
+      </div>
+      <div class="input-row">
+        <label>Gewicht (kg)</label>
+        <div class="cdrop-wrap" id="cdrop-wrap-body-weight" style="position:relative;flex:1;display:flex">
+          <div class="combo-box sel-purple" style="flex:1;cursor:pointer" onclick="openNumpad('body-weight')">
+            <input type="number" id="inp-body-weight" class="combo-input" min="30" max="250" placeholder="—" readonly style="cursor:pointer">
+          </div>
+          <div class="cdrop-menu" id="cdrop-menu-body-weight"></div>
+        </div>
+      </div>
+      <div class="input-row">
+        <label>Aktivität</label>
+        <div class="cdrop-wrap" id="cdrop-wrap-body-activity">
+          <div class="cdrop-display sel-orange" id="cdrop-disp-body-activity" onclick="cdropToggle('body-activity')">
+            <span id="cdrop-val-body-activity">Moderat aktiv</span><span class="cdrop-arrow">▼</span>
+          </div>
+          <div class="cdrop-menu" id="cdrop-menu-body-activity">
+            <div class="cdrop-item" onclick="cdropSelectActivity('1.2','Kaum Bewegung')">Kaum Bewegung</div>
+            <div class="cdrop-item" onclick="cdropSelectActivity('1.375','Leicht aktiv')">Leicht aktiv (1-3x/Woche)</div>
+            <div class="cdrop-item active" onclick="cdropSelectActivity('1.55','Moderat aktiv')">Moderat aktiv (3-5x/Woche)</div>
+            <div class="cdrop-item" onclick="cdropSelectActivity('1.725','Sehr aktiv')">Sehr aktiv (6-7x/Woche)</div>
+            <div class="cdrop-item" onclick="cdropSelectActivity('1.9','Extrem aktiv')">Extrem aktiv</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <button class="cel-btn" onclick="confirmNameEdit()" style="width:100%;margin-top:12px;flex-shrink:0">✓ Speichern</button>
   </div>
 </div>
 
@@ -898,6 +902,16 @@ function openNameEdit(e){
   if(e) e.stopPropagation();
   const el=document.getElementById('inp-name');
   el.value=localStorage.getItem('ft_name')||'';
+  // Populate body inputs
+  const age=cdropSelected['body-age'];
+  const height=cdropSelected['body-height'];
+  const weight=cdropSelected['body-weight'];
+  const ageEl=document.getElementById('inp-body-age');
+  const heightEl=document.getElementById('inp-body-height');
+  const weightEl=document.getElementById('inp-body-weight');
+  if(ageEl) ageEl.value=age||'';
+  if(heightEl) heightEl.value=height||'';
+  if(weightEl) weightEl.value=weight||'';
   document.getElementById('name-overlay').classList.add('show');
   setTimeout(()=>el.focus(),300);
 }
@@ -986,13 +1000,21 @@ let numpadVal='0';
 function openNumpad(type){
   numpadType=type;
   numpadVal=String(cdropSelected[type]||0);
-  const isGoal=type==='goal-push'||type==='goal-pull';
-  const isPull=type==='pull'||type==='goal-pull';
+  const isPull=type==='pull'||type==='goal-pull'||type==='body-height'||type==='body-weight';
+  const isPurple=type==='body-weight';
   const disp=document.getElementById('numpad-display');
-  disp.className='numpad-display '+(isPull?'green':'blue');
-  const labels={'push':'Liegestütze','pull':'Klimmzüge','goal-push':'Tagesziel Liegestütze','goal-pull':'Tagesziel Klimmzüge'};
+  const isBody=(type==='body-age'||type==='body-height'||type==='body-weight');
+  disp.className='numpad-display '+(isPurple?'purple':isPull&&!isPurple?'green':'blue');
+  const labels={
+    'push':'Liegestütze','pull':'Klimmzüge',
+    'goal-push':'Tagesziel Liegestütze','goal-pull':'Tagesziel Klimmzüge',
+    'body-age':'Alter','body-height':'Größe (cm)','body-weight':'Gewicht (kg)'
+  };
   document.getElementById('numpad-label').textContent=labels[type]||type;
-  disp.textContent=numpadVal==='0'?'0':numpadVal;
+  // Show current value or empty for body fields
+  const cur=cdropSelected[type];
+  numpadVal=(cur&&cur>0)?String(cur):'0';
+  disp.textContent=numpadVal==='0'?'—':numpadVal;
   document.getElementById('numpad-overlay').classList.add('show');
 }
 function numpadInput(d){
@@ -1006,8 +1028,21 @@ function numpadDelete(){
   document.getElementById('numpad-display').textContent=numpadVal;
 }
 function numpadConfirm(){
-  const val=Math.min(500,parseInt(numpadVal)||0);
-  cdropSelect(numpadType,val);
+  const maxVals={'push':500,'pull':500,'goal-push':500,'goal-pull':500,'body-age':100,'body-height':250,'body-weight':250};
+  const max=maxVals[numpadType]||500;
+  const val=Math.min(max,parseInt(numpadVal)||0);
+  if(numpadType==='body-age'||numpadType==='body-height'||numpadType==='body-weight'){
+    cdropSelected[numpadType]=val>0?val:null;
+    const inp=document.getElementById('inp-'+numpadType.replace('-','_').replace('body_','body-'));
+    if(inp) inp.value=val>0?val:'';
+    // Also update display for kcal
+    const dispId={'body-age':'cdrop-val-body-age','body-height':'cdrop-val-body-height','body-weight':'cdrop-val-body-weight'}[numpadType];
+    const dispEl=document.getElementById(dispId);
+    if(dispEl) dispEl.textContent=val>0?val:'—';
+    calcKcal();
+  } else {
+    cdropSelect(numpadType,val);
+  }
   document.getElementById('numpad-overlay').classList.remove('show');
 }
 function numpadClickOutside(e){
