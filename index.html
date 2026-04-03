@@ -246,11 +246,11 @@ body.light .combo-arrow-btn{border-left-color:rgba(0,0,0,0.1)}
 /* Level legend overlay */
 .level-overlay{position:fixed;inset:0;display:none;align-items:flex-end;justify-content:center;background:rgba(0,0,0,0.7);z-index:200;padding:0}
 .level-overlay.show{display:flex}
-.level-box{background:var(--bg2);border:0.5px solid var(--border2);border-radius:20px 20px 0 0;padding:1.25rem 1.25rem 2rem;width:100%;max-width:480px;max-height:80vh;display:flex;flex-direction:column;animation:slideUp .3s cubic-bezier(.34,1.2,.64,1);overflow-x:hidden;box-sizing:border-box}
+.level-box{background:var(--bg2);border:0.5px solid var(--border2);border-radius:20px 20px 0 0;padding:1.25rem 1.25rem 2rem;width:100%;max-width:480px;max-height:80vh;display:flex;flex-direction:column;animation:slideUp .3s cubic-bezier(.34,1.2,.64,1);overflow-x:hidden;box-sizing:border-box;touch-action:pan-y;overscroll-behavior:contain}
 .level-legend-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem}
 .level-legend-title{font-size:15px;font-weight:600}
 .level-legend-close{background:none;border:0.5px solid var(--border2);border-radius:50%;width:28px;height:28px;color:var(--text2);cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center}
-.level-legend-body{overflow-y:auto;flex:1}
+.level-legend-body{overflow-y:auto;overflow-x:hidden;flex:1;touch-action:pan-y;overscroll-behavior:contain}
 .level-legend-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:0.5px solid var(--border)}
 .level-legend-row:last-child{border-bottom:none}
 .level-legend-row.current{background:rgba(124,110,245,0.08);border-radius:var(--radius-sm);padding:10px 8px;margin:0 -8px;border-bottom:none}
