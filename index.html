@@ -22,12 +22,13 @@ body.light {
   --text:#111113;--text2:#666670;--text3:#aaaabc;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-html,body{overflow-x:hidden;max-width:100%;overscroll-behavior:none}
-body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:1.5rem 1rem 2rem;transition:background .3s,color .3s;overflow-x:hidden}
+html{overflow:hidden;height:100%;overscroll-behavior:none}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);transition:background .3s,color .3s;overflow:hidden;height:100%;max-width:100%;overscroll-behavior:none}
 /* Hide scrollbars globally but keep scroll functionality */
 *::-webkit-scrollbar{width:0px;height:0px;background:transparent}
 *{scrollbar-width:none;-ms-overflow-style:none}
 .container{max-width:480px;margin:0 auto}
+.scroll-wrap{height:100vh;overflow-y:auto;overflow-x:hidden;padding:1.5rem 1rem 2rem;overscroll-behavior:none;-webkit-overflow-scrolling:touch}
 header{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radius);padding:0;margin-bottom:0.65rem}
 .header-top{display:flex;align-items:center;justify-content:space-between;padding:1rem 1.25rem 1.25rem 1.25rem}
 header h1{font-size:21px;font-weight:600;letter-spacing:-0.3px}
@@ -341,6 +342,7 @@ body.light .combo-arrow-btn{border-left-color:rgba(0,0,0,0.1)}
 </style>
 </head>
 <body>
+<div class="scroll-wrap">
 <div class="container">
   <header>
     <div class="header-top">
@@ -662,6 +664,8 @@ body.light .combo-arrow-btn{border-left-color:rgba(0,0,0,0.1)}
     </div>
 
   </div>
+
+</div><!-- end scroll-wrap -->
 
 <!-- Log Overlay -->
 <div class="level-overlay" id="log-overlay">
@@ -1898,6 +1902,13 @@ initDateDisplay();
 render();
 renderLevelCard();
 appReady = true;
+
+// Prevent overscroll/bounce on iOS
+document.body.addEventListener('touchmove', function(e){
+  if(e.target.closest('.level-legend-body, .help-body, #log-list, .cdrop-menu, .shop-items, .help-box, .level-box')) return;
+  const el=e.target.closest('[style*="overflow"],.cdrop-menu');
+  if(!el) return;
+}, {passive:true});
 </script>
 </body>
 </html>
