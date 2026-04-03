@@ -585,6 +585,12 @@ body.light .combo-arrow-btn{border-left-color:rgba(0,0,0,0.1)}
       <input type="file" id="file-input" accept=".json" onchange="importData(event)" />
       <p class="hint">Daten werden nur lokal auf deinem Gerät gespeichert</p>
     </div>
+
+    <div class="card">
+      <div class="card-title">App aktualisieren</div>
+      <p style="font-size:14px;color:var(--text2);margin-bottom:1rem;line-height:1.6">Neue Version verfügbar? Seite neu laden um Updates zu erhalten.</p>
+      <button class="btn" onclick="reloadApp()" style="background:rgba(124,110,245,0.12);color:var(--accent);border:0.5px solid rgba(124,110,245,0.25)">App neu laden</button>
+    </div>
     <div class="card">
       <div class="card-title">Alle Daten löschen</div>
       <p style="font-size:13px;color:var(--text3);margin-bottom:1rem">Löscht alle Einträge unwiderruflich. Vorher exportieren!</p>
@@ -1790,6 +1796,11 @@ function deleteDay(date){
   if(!confirm('Tag '+date.split('-').reverse().join('.')+' wirklich löschen?'))return;
   entries=entries.filter(e=>e.date!==date);save();render();toast('Tag gelöscht');
 }
+function reloadApp(){
+  autoSave();
+  window.location.reload(true);
+}
+
 function exportData(){
   const bodyData=JSON.parse(localStorage.getItem('ft_body')||'{}');
   const data=JSON.stringify({
