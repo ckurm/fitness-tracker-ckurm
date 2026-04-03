@@ -1581,7 +1581,16 @@ function renderWeek(){
 }
 
 function renderRecords(){
-  if(!entries||!entries.length)return;
+  const setEl=(id,val)=>{const el=document.getElementById(id);if(el)el.textContent=val;};
+
+  if(!entries||!entries.length){
+    setEl('rec-day-push','—');setEl('rec-day-push-date','');
+    setEl('rec-day-pull','—');setEl('rec-day-pull-date','');
+    setEl('rec-week-push','—');setEl('rec-week-push-label','');
+    setEl('rec-streak','—');
+    return;
+  }
+
   const grouped={};
   entries.forEach(e=>{
     if(!grouped[e.date])grouped[e.date]={push:0,pull:0};
@@ -1593,9 +1602,7 @@ function renderRecords(){
 
   const weeks={};
   days.forEach(d=>{const ws=getWeekStart(d);if(!weeks[ws])weeks[ws]=0;weeks[ws]+=grouped[d].push});
-  const maxWeekPush=Math.max(...Object.values(weeks));
-
-  const setEl=(id,val)=>{const el=document.getElementById(id);if(el)el.textContent=val;};
+  const maxWeekPush=Object.values(weeks).length?Math.max(...Object.values(weeks)):0;
 
   setEl('rec-day-push', maxDayPush>0?maxDayPush:'—');
   setEl('rec-day-push-date', maxDayPush>0?'am '+formatDate(days.find(d=>grouped[d].push===maxDayPush)||''):'');
