@@ -1845,7 +1845,15 @@ function deleteDay(date){
 }
 function reloadApp(){
   autoSave();
-  window.location.reload(true);
+  // Force hard reload - bypass PWA cache
+  if('caches' in window){
+    caches.keys().then(names=>{
+      names.forEach(name=>caches.delete(name));
+    }).then(()=>window.location.reload());
+  } else {
+    // Fallback: add timestamp to force fresh load
+    window.location.href=window.location.href.split('?')[0]+'?v='+Date.now();
+  }
 }
 
 function exportData(){
