@@ -464,7 +464,12 @@ body.light .combo-arrow-btn{border-left-color:rgba(0,0,0,0.1)}
   <div class="tab-content" id="tab-berichte">
 
     <div class="card">
-      <div class="card-title">Diese Woche</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
+        <span class="card-title" style="margin-bottom:0">Diese Woche</span>
+        <button class="settings-icon-btn" onclick="openBestenliste()" title="Bestenliste">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg>
+        </button>
+      </div>
       <div class="summary-grid">
         <div class="summary-stat sblue"><div class="summary-stat-label">LS</div><div class="summary-stat-val" id="week-push">0</div></div>
         <div class="summary-stat sgreen"><div class="summary-stat-label">KZ</div><div class="summary-stat-val" id="week-pull">0</div></div>
@@ -478,41 +483,6 @@ body.light .combo-arrow-btn{border-left-color:rgba(0,0,0,0.1)}
         <div class="bar-legend-item"><div class="bar-legend-dot" style="background:#60a5fa"></div>LS</div>
         <div class="bar-legend-item"><div class="bar-legend-dot" style="background:#4ade80"></div>KZ</div>
       </div>
-    </div>
-
-    <div class="card">
-      <div class="card-title">Bestenliste</div>
-      <div class="records-grid">
-        <div class="record-card gold">
-          
-          <div class="record-label">Tagesrekord LS</div>
-          <div class="record-val" id="rec-day-push">—</div>
-          <div class="record-sub" id="rec-day-push-date"></div>
-        </div>
-        <div class="record-card blue">
-          
-          <div class="record-label">Tagesrekord KZ</div>
-          <div class="record-val" id="rec-day-pull">—</div>
-          <div class="record-sub" id="rec-day-pull-date"></div>
-        </div>
-        <div class="record-card green">
-          
-          <div class="record-label">Längste Serie</div>
-          <div class="record-val" id="rec-streak">—</div>
-          <div class="record-sub">Tage in Folge</div>
-        </div>
-        <div class="record-card purple">
-          
-          <div class="record-label">Beste Woche</div>
-          <div class="record-val" id="rec-week-push">—</div>
-          <div class="record-sub" id="rec-week-push-label">LS</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="card-title">Wochenzusammenfassung</div>
-      <div id="weekly-summary"><div class="empty">Noch nicht genug Daten</div></div>
     </div>
 
   </div>
@@ -680,6 +650,41 @@ body.light .combo-arrow-btn{border-left-color:rgba(0,0,0,0.1)}
       <button class="numpad-btn del" onclick="numpadDelete()"><span style="font-size:26px;line-height:1">⌫</span></button>
     </div>
     <button class="numpad-confirm" onclick="numpadConfirm()">✓ Übernehmen</button>
+  </div>
+</div>
+
+<!-- Bestenliste Overlay -->
+<div class="level-overlay" id="bestenliste-overlay">
+  <div class="level-box">
+    <div class="level-legend-header">
+      <span class="level-legend-title">🏆 Bestenliste</span>
+      <button class="level-legend-close" onclick="closeBestenliste()">✕</button>
+    </div>
+    <div class="level-legend-body">
+      <div class="records-grid" style="margin-top:4px">
+        <div class="record-card gold">
+          <div class="record-label">Tagesrekord LS</div>
+          <div class="record-val" id="rec-day-push">—</div>
+          <div class="record-sub" id="rec-day-push-date"></div>
+        </div>
+        <div class="record-card blue">
+          <div class="record-label">Tagesrekord KZ</div>
+          <div class="record-val" id="rec-day-pull">—</div>
+          <div class="record-sub" id="rec-day-pull-date"></div>
+        </div>
+        <div class="record-card green">
+          <div class="record-label">Längste Serie</div>
+          <div class="record-val" id="rec-streak">—</div>
+          <div class="record-sub">Tage in Folge</div>
+        </div>
+        <div class="record-card purple">
+          <div class="record-label">Beste Woche</div>
+          <div class="record-val" id="rec-week-push">—</div>
+          <div class="record-sub" id="rec-week-push-label">LS</div>
+        </div>
+      </div>
+    </div>
+    <button class="cel-btn" onclick="closeBestenliste()" style="width:100%;margin-top:12px">Schließen</button>
   </div>
 </div>
 
@@ -1048,6 +1053,13 @@ function numpadConfirm(){
 function numpadClickOutside(e){
   if(e.target===document.getElementById('numpad-overlay'))
     document.getElementById('numpad-overlay').classList.remove('show');
+}
+
+function openBestenliste(){
+  document.getElementById('bestenliste-overlay').classList.add('show');
+}
+function closeBestenliste(){
+  document.getElementById('bestenliste-overlay').classList.remove('show');
 }
 
 function openLog(){
