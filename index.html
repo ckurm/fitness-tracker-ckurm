@@ -22,7 +22,11 @@ body.light {
   --text:#111113;--text2:#666670;--text3:#aaaabc;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:1.5rem 1rem 5rem;transition:background .3s,color .3s}
+html,body{overflow-x:hidden;max-width:100%}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:1.5rem 1rem 5rem;transition:background .3s,color .3s;overflow-x:hidden}
+/* Hide scrollbars globally but keep scroll functionality */
+*::-webkit-scrollbar{width:0px;height:0px;background:transparent}
+*{scrollbar-width:none;-ms-overflow-style:none}
 .container{max-width:480px;margin:0 auto}
 header{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radius);padding:0;margin-bottom:1.25rem}
 .header-top{display:flex;align-items:center;justify-content:space-between;padding:1rem 1.25rem 1.25rem 1.25rem}
@@ -242,7 +246,7 @@ body.light .combo-arrow-btn{border-left-color:rgba(0,0,0,0.1)}
 /* Level legend overlay */
 .level-overlay{position:fixed;inset:0;display:none;align-items:flex-end;justify-content:center;background:rgba(0,0,0,0.7);z-index:200;padding:0}
 .level-overlay.show{display:flex}
-.level-box{background:var(--bg2);border:0.5px solid var(--border2);border-radius:20px 20px 0 0;padding:1.25rem 1.25rem 2rem;width:100%;max-width:480px;max-height:80vh;display:flex;flex-direction:column;animation:slideUp .3s cubic-bezier(.34,1.2,.64,1)}
+.level-box{background:var(--bg2);border:0.5px solid var(--border2);border-radius:20px 20px 0 0;padding:1.25rem 1.25rem 2rem;width:100%;max-width:480px;max-height:80vh;display:flex;flex-direction:column;animation:slideUp .3s cubic-bezier(.34,1.2,.64,1);overflow-x:hidden;box-sizing:border-box}
 .level-legend-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem}
 .level-legend-title{font-size:15px;font-weight:600}
 .level-legend-close{background:none;border:0.5px solid var(--border2);border-radius:50%;width:28px;height:28px;color:var(--text2);cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center}
@@ -413,20 +417,7 @@ body.light .combo-arrow-btn{border-left-color:rgba(0,0,0,0.1)}
         </div>
       </div>
       <button class="btn btn-green" onclick="addEntry()">+ Eintragen</button>
-    </div>
-
-    <!-- Log -->
-    <div class="card">
-      <div class="log-toggle" onclick="toggleLog()">
-        <span class="card-title" style="margin-bottom:0">Verlauf</span>
-        <span class="log-arrow" id="log-arrow">▼</span>
-      </div>
-      <div class="log-body" id="log-body">
-        <div class="search-wrap" style="margin-top:12px">
-          <input class="search-input" id="log-search" type="text" placeholder="Datum suchen z.B. 01.04.2026" oninput="renderLog()" />
-        </div>
-        <div id="log-list"><div class="empty">Noch keine Einträge</div></div>
-      </div>
+      <button class="btn" onclick="openLog()" style="margin-top:6px;background:var(--bg3);color:var(--text2);border:0.5px solid var(--border2);font-size:14px">📋 Verlauf anzeigen</button>
     </div>
 
   </div>
@@ -678,6 +669,23 @@ body.light .combo-arrow-btn{border-left-color:rgba(0,0,0,0.1)}
 
   </div>
 
+<!-- Log Overlay -->
+<div class="level-overlay" id="log-overlay">
+  <div class="level-box" style="height:85vh;display:flex;flex-direction:column">
+    <div class="level-legend-header" style="flex-shrink:0">
+      <span class="level-legend-title">📋 Verlauf</span>
+      <button class="level-legend-close" onclick="closeLog()">✕</button>
+    </div>
+    <div style="padding:10px 0 8px;flex-shrink:0">
+      <input class="search-input" id="log-search" type="text" placeholder="Datum suchen z.B. 01.04.2026" oninput="renderLog()" style="width:100%" />
+    </div>
+    <div id="log-list" style="flex:1;overflow-y:auto;overflow-x:hidden">
+      <div class="empty">Noch keine Einträge</div>
+    </div>
+    <button class="cel-btn" onclick="closeLog()" style="width:100%;margin-top:12px;flex-shrink:0">Schließen</button>
+  </div>
+</div>
+
 <!-- Numpad Overlay -->
 <div class="numpad-overlay" id="numpad-overlay" onclick="numpadClickOutside(event)">
   <div class="numpad-box">
@@ -710,6 +718,7 @@ body.light .combo-arrow-btn{border-left-color:rgba(0,0,0,0.1)}
       <button class="level-legend-close" onclick="closeLevelLegend()">✕</button>
     </div>
     <div class="level-legend-body" id="level-legend-body"></div>
+    <button class="cel-btn" onclick="closeLevelLegend()" style="width:100%;margin-top:12px">Schließen</button>
   </div>
 </div>
 
@@ -862,14 +871,12 @@ function showLevelLegend(){
   body.innerHTML = TIERS_DISPLAY.map(t => {
     const cur = isCurrent(t);
     const range = t.min===t.max ? 'Level '+t.min : 'Level '+t.min+'–'+t.max;
-    const xp = t.xpTo ? t.xpFrom.toLocaleString('de-DE')+' – '+t.xpTo.toLocaleString('de-DE')+' XP' : 'ab '+t.xpFrom.toLocaleString('de-DE')+' XP';
     return `<div class="level-legend-row${cur?' current':''}">
       <div class="level-legend-emoji">${t.emoji}</div>
       <div class="level-legend-info">
         <div class="level-legend-name">${t.title}${cur?'<span class="level-legend-current-tag">Aktuell</span>':''}</div>
         <div class="level-legend-range">${range}</div>
       </div>
-      <div class="level-legend-xp">${xp}</div>
     </div>`;
   }).join('');
   // Scroll to current tier
@@ -944,6 +951,15 @@ function numpadConfirm(){
 function numpadClickOutside(e){
   if(e.target===document.getElementById('numpad-overlay'))
     document.getElementById('numpad-overlay').classList.remove('show');
+}
+
+function openLog(){
+  renderLog();
+  document.getElementById('log-overlay').classList.add('show');
+}
+function closeLog(){
+  document.getElementById('log-overlay').classList.remove('show');
+  document.getElementById('log-search').value='';
 }
 
 function showHelp(){document.getElementById('help-overlay').classList.add('show')}
@@ -1496,10 +1512,6 @@ function switchTab(tab){
   if(tab==='berichte'){renderWeek();renderRecords()}
   if(tab==='koerper'){calcKcal()}
 }
-function toggleLog(){
-  document.getElementById('log-arrow').classList.toggle('open');
-  document.getElementById('log-body').classList.toggle('open');
-}
 
 // ── Körper / Kcal ─────────────────────────────────────────────────────────────
 let bodyGender='male';
@@ -1620,7 +1632,7 @@ function render(){
   document.getElementById('total-days').textContent=new Set(entries.map(e=>e.date)).size;
   document.getElementById('streak-val').textContent=calcStreak();
   updateProgress(todayPush, todayPull);
-  renderLog();
+  if(document.getElementById('log-overlay').classList.contains('show')) renderLog();
   return {todayPush, todayPull};
 }
 
