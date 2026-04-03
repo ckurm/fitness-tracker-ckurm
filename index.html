@@ -543,7 +543,7 @@ body.light .combo-arrow-btn{border-left-color:rgba(0,0,0,0.1)}
       </div>
       <div class="setting-row">
         <div>
-          <div class="setting-label">🔊 Töne</div>
+          <div class="setting-label">Töne</div>
           <div class="setting-sub">Sound bei Meilensteinen & Zielen</div>
         </div>
         <label class="toggle">
@@ -595,17 +595,12 @@ body.light .combo-arrow-btn{border-left-color:rgba(0,0,0,0.1)}
   <div class="tab-content" id="tab-koerper">
 
     <!-- Level Card -->
-    <div class="level-card" id="level-card" onclick="showLevelLegend()" style="cursor:pointer">
-      <div id="level-card-inner">
+    <div class="level-card" id="level-card" style="cursor:pointer;position:relative">
+      <button class="settings-icon-btn" onclick="openNameEdit(event)" style="position:absolute;top:18px;right:20px;z-index:2" title="Name bearbeiten">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="9" r="3"/><path d="M6.5 19c0-3 2.5-5 5.5-5s5.5 2 5.5 5"/></svg>
+      </button>
+      <div id="level-card-inner" onclick="showLevelLegend()">
         <div class="level-disabled">Abzeichen-System deaktiviert.<br>In den Einstellungen aktivieren.</div>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="card-title">Mein Profil</div>
-      <div class="input-row">
-        <label>Name</label>
-        <input type="text" id="inp-name" placeholder="Dein Name" maxlength="30" oninput="saveName()" style="text-transform:capitalize" />
       </div>
     </div>
 
@@ -736,6 +731,20 @@ body.light .combo-arrow-btn{border-left-color:rgba(0,0,0,0.1)}
       <button class="numpad-btn del" onclick="numpadDelete()"><span style="font-size:26px;line-height:1">⌫</span></button>
     </div>
     <button class="numpad-confirm" onclick="numpadConfirm()">✓ Übernehmen</button>
+  </div>
+</div>
+
+<!-- Name Edit Overlay -->
+<div class="level-overlay" id="name-overlay">
+  <div class="level-box" style="max-height:auto">
+    <div class="level-legend-header">
+      <span class="level-legend-title">✏️ Name ändern</span>
+      <button class="level-legend-close" onclick="closeNameEdit()">✕</button>
+    </div>
+    <input type="text" id="inp-name" placeholder="Dein Name" maxlength="30"
+      style="width:100%;background:var(--bg3);border:0.5px solid var(--border2);border-radius:var(--radius-sm);color:var(--text);font-family:'DM Sans',sans-serif;font-size:16px;padding:11px 14px;outline:none;margin:8px 0 16px"
+      onkeydown="if(event.key==='Enter')confirmNameEdit()"/>
+    <button class="cel-btn" onclick="confirmNameEdit()" style="width:100%">✓ Bestätigen</button>
   </div>
 </div>
 
@@ -877,6 +886,23 @@ function saveSettings(){
   settings.goalPull=cdropSelected['goal-pull']??0;
   localStorage.setItem('ft_settings',JSON.stringify(settings));
   render();
+}
+
+function openNameEdit(e){
+  if(e) e.stopPropagation();
+  const el=document.getElementById('inp-name');
+  el.value=localStorage.getItem('ft_name')||'';
+  document.getElementById('name-overlay').classList.add('show');
+  setTimeout(()=>el.focus(),300);
+}
+function closeNameEdit(){
+  document.getElementById('name-overlay').classList.remove('show');
+}
+function confirmNameEdit(){
+  const name=document.getElementById('inp-name').value.trim();
+  localStorage.setItem('ft_name',name);
+  closeNameEdit();
+  renderLevelCard();
 }
 
 function showLevelLegend(){
@@ -1119,8 +1145,6 @@ function saveName(){
 }
 function loadName(){
   const name=localStorage.getItem('ft_name')||'';
-  const el=document.getElementById('inp-name');
-  if(el) el.value=name;
   return name;
 }
 function renderLevelCard(){
@@ -1909,7 +1933,7 @@ function deleteAll(){
   cdropSelect('pull',0);
 
   // Reset name
-  document.getElementById('inp-name').value='';
+  localStorage.removeItem('ft_name');
   renderLevelCard();
 
   // Reset date to today
