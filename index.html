@@ -368,7 +368,7 @@ body.light .combo-arrow-btn{border-left-color:rgba(0,0,0,0.1)}
   <div class="tab-content active" id="tab-training">
 
     <div class="stat-grid">
-      <div class="stat stat-blue"><div class="stat-label">LZ heute</div><div class="stat-val" id="today-push">0</div></div>
+      <div class="stat stat-blue"><div class="stat-label">LS heute</div><div class="stat-val" id="today-push">0</div></div>
       <div class="stat stat-green"><div class="stat-label">KZ heute</div><div class="stat-val" id="today-pull">0</div></div>
       <div class="stat stat-goal-card" id="stat-goal-card" style="display:none">
         <div class="stat-label">Tagesziel</div>
@@ -395,7 +395,7 @@ body.light .combo-arrow-btn{border-left-color:rgba(0,0,0,0.1)}
       <div class="stat stat-orange" id="stat-streak-card"><div class="stat-label">Tage in Folge</div><div class="stat-val streak-val" id="streak-val">0</div></div>
     </div>
     <div class="stat-grid divider">
-      <div class="stat stat-purple"><div class="stat-label">LZ gesamt</div><div class="stat-val" id="total-push">0</div></div>
+      <div class="stat stat-purple"><div class="stat-label">LS gesamt</div><div class="stat-val" id="total-push">0</div></div>
       <div class="stat stat-teal"><div class="stat-label">KZ gesamt</div><div class="stat-val" id="total-pull">0</div></div>
       <div class="stat stat-pink"><div class="stat-label">Trainingstage</div><div class="stat-val" id="total-days">0</div></div>
     </div>
@@ -442,7 +442,7 @@ body.light .combo-arrow-btn{border-left-color:rgba(0,0,0,0.1)}
     <div class="card">
       <div class="card-title">Diese Woche</div>
       <div class="summary-grid">
-        <div class="summary-stat sblue"><div class="summary-stat-label">LZ</div><div class="summary-stat-val" id="week-push">0</div></div>
+        <div class="summary-stat sblue"><div class="summary-stat-label">LS</div><div class="summary-stat-val" id="week-push">0</div></div>
         <div class="summary-stat sgreen"><div class="summary-stat-label">KZ</div><div class="summary-stat-val" id="week-pull">0</div></div>
         <div class="summary-stat sorange"><div class="summary-stat-label">Trainingstage</div><div class="summary-stat-val" id="week-days">0</div></div>
         <div class="summary-stat spurple"><div class="summary-stat-label">Ø pro Tag</div><div class="summary-stat-val" id="week-avg">0</div></div>
@@ -451,7 +451,7 @@ body.light .combo-arrow-btn{border-left-color:rgba(0,0,0,0.1)}
         <svg id="week-graph" width="100%" height="150" style="overflow:visible"></svg>
       </div>
       <div class="bar-legend">
-        <div class="bar-legend-item"><div class="bar-legend-dot" style="background:#60a5fa"></div>LZ</div>
+        <div class="bar-legend-item"><div class="bar-legend-dot" style="background:#60a5fa"></div>LS</div>
         <div class="bar-legend-item"><div class="bar-legend-dot" style="background:#4ade80"></div>KZ</div>
       </div>
     </div>
@@ -461,7 +461,7 @@ body.light .combo-arrow-btn{border-left-color:rgba(0,0,0,0.1)}
       <div class="records-grid">
         <div class="record-card gold">
           
-          <div class="record-label">Tagesrekord LZ</div>
+          <div class="record-label">Tagesrekord LS</div>
           <div class="record-val" id="rec-day-push">—</div>
           <div class="record-sub" id="rec-day-push-date"></div>
         </div>
@@ -481,7 +481,7 @@ body.light .combo-arrow-btn{border-left-color:rgba(0,0,0,0.1)}
           
           <div class="record-label">Beste Woche</div>
           <div class="record-val" id="rec-week-push">—</div>
-          <div class="record-sub" id="rec-week-push-label">LZ</div>
+          <div class="record-sub" id="rec-week-push-label">LS</div>
         </div>
       </div>
     </div>
@@ -684,7 +684,7 @@ body.light .combo-arrow-btn{border-left-color:rgba(0,0,0,0.1)}
 <div class="numpad-overlay" id="numpad-overlay" onclick="numpadClickOutside(event)">
   <div class="numpad-box">
     <div class="numpad-header">
-      <div class="numpad-field-label" id="numpad-label">LZ</div>
+      <div class="numpad-field-label" id="numpad-label">LS</div>
       <div class="numpad-display blue" id="numpad-display">0</div>
     </div>
     <div class="numpad-grid">
@@ -729,9 +729,9 @@ body.light .combo-arrow-btn{border-left-color:rgba(0,0,0,0.1)}
         <div class="help-icon">📋</div>
         <div>
           <div class="help-h">Training</div>
-          <div class="help-p">Hier trägst du deine Einheiten ein. Wähle Datum, LZ und KZ aus dem Dropdown und tippe auf <b>+ Eintragen</b>. Die Statistiken oben aktualisieren sich automatisch.<br><br>
+          <div class="help-p">Hier trägst du deine Einheiten ein. Wähle Datum, LS und KZ aus dem Dropdown und tippe auf <b>+ Eintragen</b>. Die Statistiken oben aktualisieren sich automatisch.<br><br>
           <b>Abkürzungen:</b><br>
-          <b>LZ</b> = Liegestütze<br>
+          <b>LS</b> = Liegestütze<br>
           <b>KZ</b> = Klimmzüge</div>
         </div>
       </div>
@@ -1187,7 +1187,7 @@ function playNextCelebration(){
   } else if(item.type==='goal-push'){
     document.getElementById('cel-emoji').textContent='🎯';
     document.getElementById('cel-title').textContent='Tagesziel Liegestütze!';
-    document.getElementById('cel-sub').textContent=item.data+' LZ heute – Ziel geschafft! Absolute Maschine!';
+    document.getElementById('cel-sub').textContent=item.data+' LS heute – Ziel geschafft! Absolute Maschine!';
     document.getElementById('celebration').classList.add('show');
     playGoalSound();
     launchGoalFireworks();
@@ -1427,7 +1427,7 @@ function renderWeek(){
     <div class="wsum-grid">
       <div class="wsum-card wblue">
         
-        <div class="wsum-label">LZ diese Woche</div>
+        <div class="wsum-label">LS diese Woche</div>
         <div class="wsum-val">${weekPush}</div>
         <div class="wsum-sub">gesamt</div>
       </div>
@@ -1447,7 +1447,7 @@ function renderWeek(){
         
         <div class="wsum-label">Ø pro Trainingstag</div>
         <div class="wsum-val">${avg}</div>
-        <div class="wsum-sub">LZ</div>
+        <div class="wsum-sub">LS</div>
       </div>
     </div>
   `;
