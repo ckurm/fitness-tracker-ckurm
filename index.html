@@ -350,7 +350,7 @@ body.light .combo-arrow-btn{border-left-color:rgba(0,0,0,0.1)}
       </div>
       <div class="header-btns">
         <button class="settings-icon-btn" onclick="showHelp()" id="help-btn" title="Hilfe">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
         </button>
         <button class="settings-icon-btn" onclick="switchTab('einstellungen')" id="settings-btn" title="Einstellungen">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
@@ -368,8 +368,8 @@ body.light .combo-arrow-btn{border-left-color:rgba(0,0,0,0.1)}
   <div class="tab-content active" id="tab-training">
 
     <div class="stat-grid">
-      <div class="stat stat-blue"><div class="stat-label">Liegestütze heute</div><div class="stat-val" id="today-push">0</div></div>
-      <div class="stat stat-green"><div class="stat-label">Klimmzüge heute</div><div class="stat-val" id="today-pull">0</div></div>
+      <div class="stat stat-blue"><div class="stat-label">LZ heute</div><div class="stat-val" id="today-push">0</div></div>
+      <div class="stat stat-green"><div class="stat-label">KZ heute</div><div class="stat-val" id="today-pull">0</div></div>
       <div class="stat stat-goal-card" id="stat-goal-card" style="display:none">
         <div class="stat-label">Tagesziel</div>
         <div class="goal-mini-block" id="goal-mini-push">
@@ -395,8 +395,8 @@ body.light .combo-arrow-btn{border-left-color:rgba(0,0,0,0.1)}
       <div class="stat stat-orange" id="stat-streak-card"><div class="stat-label">Tage in Folge</div><div class="stat-val streak-val" id="streak-val">0</div></div>
     </div>
     <div class="stat-grid divider">
-      <div class="stat stat-purple"><div class="stat-label">Liegestütze gesamt</div><div class="stat-val" id="total-push">0</div></div>
-      <div class="stat stat-teal"><div class="stat-label">Klimmzüge gesamt</div><div class="stat-val" id="total-pull">0</div></div>
+      <div class="stat stat-purple"><div class="stat-label">LZ gesamt</div><div class="stat-val" id="total-push">0</div></div>
+      <div class="stat stat-teal"><div class="stat-label">KZ gesamt</div><div class="stat-val" id="total-pull">0</div></div>
       <div class="stat stat-pink"><div class="stat-label">Trainingstage</div><div class="stat-val" id="total-days">0</div></div>
     </div>
 
@@ -442,8 +442,8 @@ body.light .combo-arrow-btn{border-left-color:rgba(0,0,0,0.1)}
     <div class="card">
       <div class="card-title">Diese Woche</div>
       <div class="summary-grid">
-        <div class="summary-stat sblue"><div class="summary-stat-label">Liegestütze</div><div class="summary-stat-val" id="week-push">0</div></div>
-        <div class="summary-stat sgreen"><div class="summary-stat-label">Klimmzüge</div><div class="summary-stat-val" id="week-pull">0</div></div>
+        <div class="summary-stat sblue"><div class="summary-stat-label">LZ</div><div class="summary-stat-val" id="week-push">0</div></div>
+        <div class="summary-stat sgreen"><div class="summary-stat-label">KZ</div><div class="summary-stat-val" id="week-pull">0</div></div>
         <div class="summary-stat sorange"><div class="summary-stat-label">Trainingstage</div><div class="summary-stat-val" id="week-days">0</div></div>
         <div class="summary-stat spurple"><div class="summary-stat-label">Ø pro Tag</div><div class="summary-stat-val" id="week-avg">0</div></div>
       </div>
@@ -451,8 +451,8 @@ body.light .combo-arrow-btn{border-left-color:rgba(0,0,0,0.1)}
         <svg id="week-graph" width="100%" height="150" style="overflow:visible"></svg>
       </div>
       <div class="bar-legend">
-        <div class="bar-legend-item"><div class="bar-legend-dot" style="background:#60a5fa"></div>Liegestütze</div>
-        <div class="bar-legend-item"><div class="bar-legend-dot" style="background:#4ade80"></div>Klimmzüge</div>
+        <div class="bar-legend-item"><div class="bar-legend-dot" style="background:#60a5fa"></div>LZ</div>
+        <div class="bar-legend-item"><div class="bar-legend-dot" style="background:#4ade80"></div>KZ</div>
       </div>
     </div>
 
@@ -461,13 +461,13 @@ body.light .combo-arrow-btn{border-left-color:rgba(0,0,0,0.1)}
       <div class="records-grid">
         <div class="record-card gold">
           
-          <div class="record-label">Tagesrekord Liegestütze</div>
+          <div class="record-label">Tagesrekord LZ</div>
           <div class="record-val" id="rec-day-push">—</div>
           <div class="record-sub" id="rec-day-push-date"></div>
         </div>
         <div class="record-card blue">
           
-          <div class="record-label">Tagesrekord Klimmzüge</div>
+          <div class="record-label">Tagesrekord KZ</div>
           <div class="record-val" id="rec-day-pull">—</div>
           <div class="record-sub" id="rec-day-pull-date"></div>
         </div>
@@ -481,7 +481,7 @@ body.light .combo-arrow-btn{border-left-color:rgba(0,0,0,0.1)}
           
           <div class="record-label">Beste Woche</div>
           <div class="record-val" id="rec-week-push">—</div>
-          <div class="record-sub" id="rec-week-push-label">Liegestütze</div>
+          <div class="record-sub" id="rec-week-push-label">LZ</div>
         </div>
       </div>
     </div>
@@ -684,7 +684,7 @@ body.light .combo-arrow-btn{border-left-color:rgba(0,0,0,0.1)}
 <div class="numpad-overlay" id="numpad-overlay" onclick="numpadClickOutside(event)">
   <div class="numpad-box">
     <div class="numpad-header">
-      <div class="numpad-field-label" id="numpad-label">Liegestütze</div>
+      <div class="numpad-field-label" id="numpad-label">LZ</div>
       <div class="numpad-display blue" id="numpad-display">0</div>
     </div>
     <div class="numpad-grid">
@@ -729,7 +729,10 @@ body.light .combo-arrow-btn{border-left-color:rgba(0,0,0,0.1)}
         <div class="help-icon">📋</div>
         <div>
           <div class="help-h">Training</div>
-          <div class="help-p">Hier trägst du deine Einheiten ein. Wähle Datum, Liegestütze und Klimmzüge aus dem Dropdown und tippe auf <b>+ Eintragen</b>. Die Statistiken oben aktualisieren sich automatisch.</div>
+          <div class="help-p">Hier trägst du deine Einheiten ein. Wähle Datum, LZ und KZ aus dem Dropdown und tippe auf <b>+ Eintragen</b>. Die Statistiken oben aktualisieren sich automatisch.<br><br>
+          <b>Abkürzungen:</b><br>
+          <b>LZ</b> = Liegestütze<br>
+          <b>KZ</b> = Klimmzüge</div>
         </div>
       </div>
 
@@ -1176,7 +1179,7 @@ function playNextCelebration(){
   } else if(item.type==='milestone-pull'){
     const d=MILESTONE_DATA[item.data]||{emoji:'🎉',title:'Super!',sub:'Weiter so!'};
     document.getElementById('cel-emoji').textContent=d.emoji;
-    document.getElementById('cel-title').textContent=item.data+' Klimmzüge heute!';
+    document.getElementById('cel-title').textContent=item.data+' KZ heute!';
     document.getElementById('cel-sub').textContent=d.sub;
     document.getElementById('celebration').classList.add('show');
     playMilestoneSound();
@@ -1184,14 +1187,14 @@ function playNextCelebration(){
   } else if(item.type==='goal-push'){
     document.getElementById('cel-emoji').textContent='🎯';
     document.getElementById('cel-title').textContent='Tagesziel Liegestütze!';
-    document.getElementById('cel-sub').textContent=item.data+' Liegestütze heute – Ziel geschafft! Absolute Maschine!';
+    document.getElementById('cel-sub').textContent=item.data+' LZ heute – Ziel geschafft! Absolute Maschine!';
     document.getElementById('celebration').classList.add('show');
     playGoalSound();
     launchGoalFireworks();
   } else if(item.type==='goal-pull'){
     document.getElementById('cel-emoji').textContent='🏅';
     document.getElementById('cel-title').textContent='Tagesziel Klimmzüge!';
-    document.getElementById('cel-sub').textContent=item.data+' Klimmzüge heute – Ziel erreicht! Stark!';
+    document.getElementById('cel-sub').textContent=item.data+' KZ heute – Ziel erreicht! Stark!';
     document.getElementById('celebration').classList.add('show');
     playGoalSound();
     launchGoalFireworks();
@@ -1424,13 +1427,13 @@ function renderWeek(){
     <div class="wsum-grid">
       <div class="wsum-card wblue">
         
-        <div class="wsum-label">Liegestütze diese Woche</div>
+        <div class="wsum-label">LZ diese Woche</div>
         <div class="wsum-val">${weekPush}</div>
         <div class="wsum-sub">gesamt</div>
       </div>
       <div class="wsum-card wgreen">
         
-        <div class="wsum-label">Klimmzüge diese Woche</div>
+        <div class="wsum-label">KZ diese Woche</div>
         <div class="wsum-val">${weekPull}</div>
         <div class="wsum-sub">gesamt</div>
       </div>
@@ -1444,7 +1447,7 @@ function renderWeek(){
         
         <div class="wsum-label">Ø pro Trainingstag</div>
         <div class="wsum-val">${avg}</div>
-        <div class="wsum-sub">Liegestütze</div>
+        <div class="wsum-sub">LZ</div>
       </div>
     </div>
   `;
