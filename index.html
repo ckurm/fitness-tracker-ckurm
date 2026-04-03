@@ -48,7 +48,7 @@ header p{font-size:12px;color:var(--text2);margin-top:2px}
 
 /* Stats */
 .stat-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:8px}
-.stat{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radius);padding:12px;text-align:center;position:relative;overflow:hidden;display:flex;flex-direction:column}
+.stat{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radius);padding:12px;text-align:center;position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:center;height:84px}
 .stat::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:var(--radius) var(--radius) 0 0}
 .stat-blue::before{background:linear-gradient(90deg,#3b82f6,#60a5fa)}
 .stat-blue .stat-val{color:#60a5fa}
@@ -68,7 +68,7 @@ header p{font-size:12px;color:var(--text2);margin-top:2px}
 .stat-pink::before{background:linear-gradient(90deg,#be185d,#f472b6)}
 .stat-pink .stat-val{color:#f472b6}
 .stat-pink{border-color:rgba(244,114,182,0.2)}
-.stat-label{font-size:11px;color:var(--text2);line-height:1.3;margin-top:4px;flex:1}
+.stat-label{font-size:11px;color:var(--text2);line-height:1.3}
 .stat-val{font-family:'DM Mono',monospace;font-size:22px;font-weight:500;margin-top:4px}
 .streak-val{color:var(--orange)}
 
@@ -88,20 +88,14 @@ header p{font-size:12px;color:var(--text2);margin-top:2px}
 .wsum-card.wpurple .wsum-val{color:#a78bfa}
 .wsum-sub{font-size:10px;color:var(--text3);margin-top:3px}
 
-/* Trend arrow */
-.stat-trend{font-size:11px;font-family:'DM Mono',monospace;position:absolute;bottom:12px;left:0;right:0;text-align:center;opacity:0.8}
-.trend-up{color:#4ade80}
-.trend-down{color:#f87171}
-.trend-equal{color:var(--text3)}
-
 /* Goal mini card */
-.stat-goal-card{border-color:rgba(251,146,60,0.2)!important;justify-content:space-around;gap:6px}
+.stat-goal-card{border-color:rgba(251,146,60,0.2)!important;justify-content:space-around;gap:6px;height:84px!important;padding:10px 10px!important}
 .stat-goal-card::before{background:linear-gradient(90deg,#ea580c,#fb923c)!important}
 .goal-mini-block{width:100%}
-.goal-mini-row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:3px}
+.goal-mini-row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:2px}
 .goal-mini-label{font-size:10px;font-weight:600;color:var(--text2);letter-spacing:0.5px}
 .goal-mini-nums{font-size:10px;font-family:'DM Mono',monospace;color:var(--text2)}
-.goal-mini-track{height:6px;background:var(--bg3);border-radius:3px;overflow:hidden}
+.goal-mini-track{height:5px;background:var(--bg3);border-radius:3px;overflow:hidden}
 .goal-mini-fill{height:100%;border-radius:3px;width:0%;transition:width .6s cubic-bezier(.34,1.2,.64,1);position:relative}
 .goal-mini-fill::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.45),transparent);animation:shimmer 1.8s infinite}
 .goal-mini-fill-blue{background:linear-gradient(90deg,#3b82f6,#60a5fa);box-shadow:0 0 6px #60a5fa}
@@ -374,8 +368,8 @@ body.light .combo-arrow-btn{border-left-color:rgba(0,0,0,0.1)}
   <div class="tab-content active" id="tab-training">
 
     <div class="stat-grid">
-      <div class="stat stat-blue" style="position:relative;min-height:80px"><div class="stat-label" style="position:relative;z-index:1">Liegestütze heute</div><div class="stat-val" id="today-push" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center">0</div><div class="stat-trend" id="trend-push"></div></div>
-      <div class="stat stat-green" style="position:relative;min-height:80px"><div class="stat-label" style="position:relative;z-index:1">Klimmzüge heute</div><div class="stat-val" id="today-pull" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center">0</div><div class="stat-trend" id="trend-pull"></div></div>
+      <div class="stat stat-blue"><div class="stat-label">Liegestütze heute</div><div class="stat-val" id="today-push">0</div></div>
+      <div class="stat stat-green"><div class="stat-label">Klimmzüge heute</div><div class="stat-val" id="today-pull">0</div></div>
       <div class="stat stat-goal-card" id="stat-goal-card" style="display:none">
         <div class="stat-label">Tagesziel</div>
         <div class="goal-mini-block" id="goal-mini-push">
@@ -1285,7 +1279,7 @@ function updateProgress(todayPush, todayPull){
     const fill=document.getElementById('goal-fill-pull');
     if(fill) fill.style.width=pct+'%';
     const nums=document.getElementById('goal-nums-pull');
-    if(nums) nums.textContent=todayPull+'/'+settings.goalPull+(pct>=100?' 🎯':'');
+    if(nums) nums.textContent=todayPull+'/'+settings.goalPull;
     if(pct>=100) checkGoalCelebration('pull',todayPull);
   }
 }
@@ -1617,23 +1611,6 @@ function render(){
   document.getElementById('total-pull').textContent=entries.reduce((a,e)=>a+e.pull,0);
   document.getElementById('total-days').textContent=new Set(entries.map(e=>e.date)).size;
   document.getElementById('streak-val').textContent=calcStreak();
-
-  // Trend: vergleich mit gestern
-  const yesterday=addDays(today,-1);
-  const ye=entries.filter(e=>e.date===yesterday);
-  const yesPush=ye.reduce((a,e)=>a+e.push,0);
-  const yesPull=ye.reduce((a,e)=>a+e.pull,0);
-  function setTrend(id,today,yesterday){
-    const el=document.getElementById(id);if(!el)return;
-    if(yesterday===0&&today===0){el.textContent='';return;}
-    const diff=today-yesterday;
-    if(diff>0){el.textContent='↑ +'+diff;el.className='stat-trend trend-up';}
-    else if(diff<0){el.textContent='↓ '+diff;el.className='stat-trend trend-down';}
-    else{el.textContent='→ ±0';el.className='stat-trend trend-equal';}
-  }
-  setTrend('trend-push',todayPush,yesPush);
-  setTrend('trend-pull',todayPull,yesPull);
-
   updateProgress(todayPush, todayPull);
   if(document.getElementById('log-overlay').classList.contains('show')) renderLog();
   return {todayPush, todayPull};
