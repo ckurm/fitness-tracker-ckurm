@@ -607,7 +607,8 @@ body.light .combo-arrow-btn{border-left-color:rgba(0,0,0,0.1)}
 <!-- Numpad Overlay -->
 <div class="numpad-overlay" id="numpad-overlay" onclick="numpadClickOutside(event)">
   <div class="numpad-box">
-    <div class="numpad-header">
+    <div class="numpad-header" style="position:relative">
+      <button class="level-legend-close" onclick="document.getElementById('numpad-overlay').classList.remove('show')" style="position:absolute;top:0;right:0">✕</button>
       <div class="numpad-field-label" id="numpad-label">LS</div>
       <div class="numpad-display blue" id="numpad-display">0</div>
     </div>
