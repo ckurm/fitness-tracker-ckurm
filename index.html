@@ -90,30 +90,11 @@ header p{font-size:12px;color:var(--text2);margin-top:2px}
 .wsum-sub{font-size:10px;color:var(--text3);margin-top:3px}
 
 /* Goal mini card */
-.stat-goal-card{border-color:rgba(251,146,60,0.2)!important;justify-content:space-around;gap:6px;height:84px!important;padding:10px 10px!important}
-.stat-goal-card::before{background:linear-gradient(90deg,#ea580c,#fb923c)!important}
-.goal-mini-block{width:100%}
-.goal-mini-row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:2px}
-.goal-mini-label{font-size:10px;font-weight:600;color:var(--text2);letter-spacing:0.5px}
-.goal-mini-nums{font-size:10px;font-family:'DM Mono',monospace;color:var(--text2)}
-.goal-mini-track{height:5px;background:var(--bg3);border-radius:3px;overflow:hidden}
-.goal-mini-fill{height:100%;border-radius:3px;width:0%;transition:width .6s cubic-bezier(.34,1.2,.64,1);position:relative}
-.goal-mini-fill::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.45),transparent);animation:shimmer 1.8s infinite}
-.goal-mini-fill-blue{background:linear-gradient(90deg,#3b82f6,#60a5fa);box-shadow:0 0 6px #60a5fa}
-.goal-mini-fill-green{background:linear-gradient(90deg,#16a34a,#4ade80);box-shadow:0 0 6px #4ade80}
-.goal-mini-empty{font-size:10px;color:var(--text3);text-align:center;width:100%}
 
 /* Progress bar (kept for backwards compat) */
-.progress-card{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radius);padding:0.5rem 1.25rem;margin-bottom:4px}
-.progress-header{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px}
-.progress-title{font-size:11px;font-weight:500;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px}
-.progress-title{font-size:12px;font-weight:500;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px}
-.progress-nums{font-size:13px;font-family:'DM Mono',monospace}
-.progress-track{height:10px;background:var(--bg3);border-radius:5px;overflow:hidden;position:relative}
 .progress-fill{height:100%;border-radius:5px;transition:width .6s cubic-bezier(.34,1.2,.64,1);position:relative}
 .progress-fill::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,0.3) 50%,transparent 100%);animation:shimmer 2s infinite}
 @keyframes shimmer{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
-.progress-label{font-size:11px;color:var(--text3);margin-top:4px;text-align:right}
 
 /* Combined progress card */
 .progress-combined{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radius);padding:8px 14px;margin-top:4px;margin-bottom:14px;display:flex;flex-direction:column;gap:6px}
@@ -882,7 +863,7 @@ function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t
 
 // ── State ─────────────────────────────────────────────────────────────────────
 let entries=[];
-let settings={goalPush:0,goalPull:0,darkMode:true,showGoalPush:true,showGoalPull:true,showBadges:true,soundEnabled:true};
+let settings={goalPush:0,goalPull:0,darkMode:true,showBadges:true,soundEnabled:true};
 try{entries=JSON.parse(localStorage.getItem('training_log')||'[]')}catch(e){entries=[]}
 try{
   const s=JSON.parse(localStorage.getItem('ft_settings')||'{}');
@@ -1406,13 +1387,6 @@ function launchFireworks(){
 function stopFireworks(){if(fwRaf){cancelAnimationFrame(fwRaf);fwRaf=null}const c=document.getElementById('fw-canvas');c.style.display='none';c.getContext('2d').clearRect(0,0,c.width,c.height)}
 
 // ── Progress bar ──────────────────────────────────────────────────────────────
-function neonColor(pct){
-  if(pct>=100) return 'linear-gradient(90deg,#00ff88,#00ffcc)';
-  if(pct>=75)  return 'linear-gradient(90deg,#aaff00,#00ff88)';
-  if(pct>=50)  return 'linear-gradient(90deg,#ffee00,#aaff00)';
-  if(pct>=25)  return 'linear-gradient(90deg,#ff6600,#ffee00)';
-  return 'linear-gradient(90deg,#ff0080,#ff6600)';
-}
 // ── Progress (mini goal card in stat grid) ────────────────────────────────────
 function updateProgress(todayPush, todayPull){
   const combined=document.getElementById('progress-combined');
@@ -1455,13 +1429,6 @@ function updateProgress(todayPush, todayPull){
   } else rowPull.style.display='none';
 }
 
-function neonColorPull(pct){
-  if(pct>=100) return 'linear-gradient(90deg,#4ade80,#22d3ee)';
-  if(pct>=75)  return 'linear-gradient(90deg,#22d3ee,#60a5fa)';
-  if(pct>=50)  return 'linear-gradient(90deg,#60a5fa,#a78bfa)';
-  if(pct>=25)  return 'linear-gradient(90deg,#a78bfa,#f472b6)';
-  return 'linear-gradient(90deg,#f472b6,#fb923c)';
-}
 
 function checkGoalCelebration(type, count){
   const key='goal_cel_'+type+'_'+todayStr();
@@ -1897,18 +1864,6 @@ function deleteDay(date){
   if(!confirm('Tag '+date.split('-').reverse().join('.')+' wirklich löschen?'))return;
   entries=entries.filter(e=>e.date!==date);save();render();toast('Tag gelöscht');
 }
-function reloadApp(){
-  autoSave();
-  // Force hard reload - bypass PWA cache
-  if('caches' in window){
-    caches.keys().then(names=>{
-      names.forEach(name=>caches.delete(name));
-    }).then(()=>window.location.reload());
-  } else {
-    // Fallback: add timestamp to force fresh load
-    window.location.href=window.location.href.split('?')[0]+'?v='+Date.now();
-  }
-}
 
 function exportData(){
   const bodyData=JSON.parse(localStorage.getItem('ft_body')||'{}');
@@ -1919,8 +1874,6 @@ function exportData(){
     settings:{
       goalPush:settings.goalPush,
       goalPull:settings.goalPull,
-      showGoalPush:settings.showGoalPush,
-      showGoalPull:settings.showGoalPull,
       darkMode:settings.darkMode,
       showBadges:settings.showBadges
     },
@@ -2016,7 +1969,7 @@ function deleteAll(){
   entries=[];
 
   // Reset settings to defaults
-  settings={goalPush:0,goalPull:0,darkMode:true,showGoalPush:true,showGoalPull:true,showBadges:true};
+  settings={goalPush:0,goalPull:0,darkMode:true,showBadges:true};
   localStorage.setItem('ft_goals_v2','1');
 
   // Reset goal dropdowns
