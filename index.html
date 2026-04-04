@@ -547,7 +547,12 @@ body.light .combo-arrow-btn{border-left-color:rgba(0,0,0,0.1)}
     </div>
 
     <div class="card">
-      <div class="card-title">Daten sichern</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
+        <span class="card-title" style="margin-bottom:0">Daten sichern</span>
+        <button class="settings-icon-btn" onclick="openDeleteConfirm()" title="Alle Daten löschen" style="color:#f87171">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+        </button>
+      </div>
       <p style="font-size:14px;color:var(--text2);margin-bottom:1rem;line-height:1.6">Exportiere deine Daten zur Sicherung. Beim Handywechsel einfach importieren.</p>
       <div class="btn-row">
         <button class="btn btn-import" onclick="document.getElementById('file-input').click()">Importieren</button>
@@ -555,12 +560,6 @@ body.light .combo-arrow-btn{border-left-color:rgba(0,0,0,0.1)}
       </div>
       <input type="file" id="file-input" accept=".json" onchange="importData(event)" />
       <p class="hint">Daten werden nur lokal auf deinem Gerät gespeichert</p>
-    </div>
-
-    <div class="card">
-      <div class="card-title">Alle Daten löschen</div>
-      <p style="font-size:13px;color:var(--text3);margin-bottom:1rem">Löscht alle Einträge unwiderruflich. Vorher exportieren!</p>
-      <button class="btn btn-danger" onclick="deleteAll()">Alle Daten löschen</button>
     </div>
 
   </div>
@@ -645,6 +644,21 @@ body.light .combo-arrow-btn{border-left-color:rgba(0,0,0,0.1)}
       <button class="numpad-btn del" onclick="numpadDelete()"><span style="font-size:26px;line-height:1">⌫</span></button>
     </div>
     <button class="numpad-confirm" onclick="numpadConfirm()">✓ Übernehmen</button>
+  </div>
+</div>
+
+<!-- Delete Confirm Overlay -->
+<div class="level-overlay" id="delete-overlay">
+  <div class="level-box" style="max-height:auto">
+    <div class="level-legend-header">
+      <span class="level-legend-title" style="color:#f87171">🗑 Alle Daten löschen</span>
+      <button class="level-legend-close" onclick="closeDeleteConfirm()">✕</button>
+    </div>
+    <p style="font-size:14px;color:var(--text2);line-height:1.6;margin:8px 0 20px">Löscht alle Einträge, XP und Einstellungen unwiderruflich. Vorher exportieren!</p>
+    <div style="display:flex;gap:10px">
+      <button class="btn" onclick="closeDeleteConfirm()" style="flex:1;background:var(--bg3);color:var(--text2);border:0.5px solid var(--border2)">Abbrechen</button>
+      <button class="btn btn-danger" onclick="deleteAll();closeDeleteConfirm()" style="flex:1">Löschen</button>
+    </div>
   </div>
 </div>
 
@@ -873,7 +887,8 @@ try{entries=JSON.parse(localStorage.getItem('training_log')||'[]')}catch(e){entr
 try{
   const s=JSON.parse(localStorage.getItem('ft_settings')||'{}');
   settings={...settings,...s};
-  // Reset goals to 0 if no user-set version flag exists (clears old default values)
+  // Always default soundEnabled to true unless explicitly saved as false
+  if(s.soundEnabled===undefined) settings.soundEnabled=true;
   if(!localStorage.getItem('ft_goals_v2')){
     settings.goalPush=0;settings.goalPull=0;
     localStorage.setItem('ft_goals_v2','1');
@@ -1042,6 +1057,13 @@ function numpadClickOutside(e){
     document.getElementById('numpad-overlay').classList.remove('show');
 }
 
+function openDeleteConfirm(){
+  document.getElementById('delete-overlay').classList.add('show');
+}
+function closeDeleteConfirm(){
+  document.getElementById('delete-overlay').classList.remove('show');
+}
+
 function openBestenliste(){
   // Build content dynamically
   const body=document.getElementById('bestenliste-body');
@@ -1140,48 +1162,35 @@ const MILESTONE_DATA={
   450:{emoji:'🦾',title:'450 Liegestütze!',sub:'Fast am Limit – unglaublich!'},
   500:{emoji:'🏆',title:'500 Liegestütze!',sub:'Legendär. Kein anderes Wort dafür!'},
 };
-// ── Sounds (Web Audio API) ────────────────────────────────────────────────────
-function playMilestoneSound(){
-  if(!settings.soundEnabled) return;
+// ── Audio ─────────────────────────────────────────────────────────────────────
+let _ac=null;
+function _getAC(){
+  if(!_ac) _ac=new(window.AudioContext||window.webkitAudioContext)();
+  if(_ac.state!=='running') _ac.resume();
+  return _ac;
+}
+// Resume AudioContext on any user interaction
+document.addEventListener('click',function(){if(_ac&&_ac.state==='suspended')_ac.resume();});
+function _tone(freq,start,dur,vol){
   try{
-    const ctx=new (window.AudioContext||window.webkitAudioContext)();
-    const notes=[523,659,784,1047]; // C5 E5 G5 C6
-    notes.forEach(function(freq,i){
-      const osc=ctx.createOscillator();
-      const gain=ctx.createGain();
-      osc.connect(gain);gain.connect(ctx.destination);
-      osc.type='sine';
-      osc.frequency.setValueAtTime(freq,ctx.currentTime+i*0.12);
-      gain.gain.setValueAtTime(0,ctx.currentTime+i*0.12);
-      gain.gain.linearRampToValueAtTime(0.28,ctx.currentTime+i*0.12+0.02);
-      gain.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+i*0.12+0.35);
-      osc.start(ctx.currentTime+i*0.12);
-      osc.stop(ctx.currentTime+i*0.12+0.35);
-    });
+    const a=_getAC(),o=a.createOscillator(),g=a.createGain();
+    o.connect(g);g.connect(a.destination);
+    o.type='sine';o.frequency.value=freq;
+    g.gain.setValueAtTime(vol||0.3,a.currentTime+start);
+    g.gain.exponentialRampToValueAtTime(0.001,a.currentTime+start+dur);
+    o.start(a.currentTime+start);o.stop(a.currentTime+start+dur+0.05);
   }catch(e){}
 }
+function playMilestoneSound(){
+  if(!settings.soundEnabled)return;
+  _tone(523,0,0.15,0.25);_tone(659,0.15,0.15,0.25);
+  _tone(784,0.3,0.15,0.25);_tone(1047,0.45,0.25,0.3);
+}
 function playGoalSound(){
-  if(!settings.soundEnabled) return;
-  try{
-    const ctx=new (window.AudioContext||window.webkitAudioContext)();
-    // Fanfare: aufsteigende Akkorde + finaler hoher Ton
-    const sequence=[
-      {freq:392,t:0},{freq:523,t:0.1},{freq:659,t:0.2},
-      {freq:784,t:0.3},{freq:1047,t:0.45},{freq:1319,t:0.55}
-    ];
-    sequence.forEach(function(n){
-      const osc=ctx.createOscillator();
-      const gain=ctx.createGain();
-      osc.connect(gain);gain.connect(ctx.destination);
-      osc.type='triangle';
-      osc.frequency.setValueAtTime(n.freq,ctx.currentTime+n.t);
-      gain.gain.setValueAtTime(0,ctx.currentTime+n.t);
-      gain.gain.linearRampToValueAtTime(0.3,ctx.currentTime+n.t+0.03);
-      gain.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+n.t+0.4);
-      osc.start(ctx.currentTime+n.t);
-      osc.stop(ctx.currentTime+n.t+0.4);
-    });
-  }catch(e){}
+  if(!settings.soundEnabled)return;
+  _tone(392,0,0.12,0.25);_tone(523,0.12,0.12,0.25);
+  _tone(659,0.24,0.12,0.25);_tone(784,0.36,0.12,0.3);
+  _tone(1047,0.48,0.12,0.3);_tone(1319,0.6,0.3,0.35);
 }
 
 // ── XP / Level System ────────────────────────────────────────────────────────
@@ -1286,6 +1295,7 @@ function renderLevelCard(){
 function saveSoundSetting(){
   settings.soundEnabled=document.getElementById('toggle-sound').checked;
   localStorage.setItem('ft_settings',JSON.stringify(settings));
+  if(settings.soundEnabled) playMilestoneSound();
 }
 function saveBadgesSetting(){
   settings.showBadges = document.getElementById('toggle-badges').checked;
@@ -1293,20 +1303,9 @@ function saveBadgesSetting(){
   renderLevelCard();
 }
 function playLevelUpSound(){
-  if(!settings.soundEnabled) return;
-  try{
-    const ctx=new (window.AudioContext||window.webkitAudioContext)();
-    const notes=[523,659,784,1047,1319];
-    notes.forEach(function(freq,i){
-      const osc=ctx.createOscillator();const gain=ctx.createGain();
-      osc.connect(gain);gain.connect(ctx.destination);
-      osc.type='sine';osc.frequency.setValueAtTime(freq,ctx.currentTime+i*0.1);
-      gain.gain.setValueAtTime(0,ctx.currentTime+i*0.1);
-      gain.gain.linearRampToValueAtTime(0.3,ctx.currentTime+i*0.1+0.02);
-      gain.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+i*0.1+0.4);
-      osc.start(ctx.currentTime+i*0.1);osc.stop(ctx.currentTime+i*0.1+0.4);
-    });
-  }catch(e){}
+  if(!settings.soundEnabled)return;
+  _tone(523,0,0.12,0.25);_tone(659,0.12,0.12,0.25);
+  _tone(784,0.24,0.12,0.25);_tone(1047,0.36,0.12,0.3);_tone(1319,0.48,0.3,0.35);
 }
 
 function getCelebrated(type){try{return JSON.parse(localStorage.getItem('cel_'+(type||'push')+'_'+todayStr())||'[]')}catch(e){return[]}}
@@ -1875,6 +1874,7 @@ document.addEventListener('click', function(e){
   });
 });
 function addEntry(){
+  if(settings.soundEnabled) try{_getAC();}catch(e){}
   const date=getEntryDate();
   const push=cdropSelected.push;
   const pull=cdropSelected.pull;
@@ -1994,8 +1994,6 @@ document.getElementById('toggle-sound').checked=settings.soundEnabled!==false;
   reader.readAsText(file);event.target.value='';
 }
 function deleteAll(){
-  if(!confirm('Wirklich alle Daten löschen und App auf Startzustand zurücksetzen?'))return;
-
   // Clear ALL localStorage keys used by this app
   localStorage.removeItem('training_log');
   localStorage.removeItem('ft_settings');
@@ -2034,9 +2032,9 @@ function deleteAll(){
   cdropSelected['body-weight']=null;
   bodyGender='male';
   bodyActivity=1.55;
-  document.getElementById('cdrop-val-body-age').textContent='—';
-  document.getElementById('cdrop-val-body-height').textContent='—';
-  document.getElementById('cdrop-val-body-weight').textContent='—';
+  const bage=document.getElementById('inp-body-age');if(bage)bage.value='';
+  const bheight=document.getElementById('inp-body-height');if(bheight)bheight.value='';
+  const bweight=document.getElementById('inp-body-weight');if(bweight)bweight.value='';
   cdropSelectGender('male');
   cdropSelectActivity('1.55','Moderat aktiv');
   document.getElementById('kcal-cards').style.display='none';
