@@ -1867,19 +1867,26 @@ function deleteDay(date){
 
 function exportData(){
   const bodyData=JSON.parse(localStorage.getItem('ft_body')||'{}');
+  // Collect all celebration keys for today (milestones etc.)
+  const celKeys={};
+  Object.keys(localStorage).filter(k=>k.startsWith('cel_')||k.startsWith('goal_cel_')).forEach(k=>{
+    try{celKeys[k]=JSON.parse(localStorage.getItem(k));}catch(e){}
+  });
   const data=JSON.stringify({
-    version:2,
+    version:3,
     exported:new Date().toISOString(),
     entries,
     settings:{
       goalPush:settings.goalPush,
       goalPull:settings.goalPull,
       darkMode:settings.darkMode,
-      showBadges:settings.showBadges
+      showBadges:settings.showBadges,
+      soundEnabled:settings.soundEnabled
     },
     xp:getTotalXP(),
     name:localStorage.getItem('ft_name')||'',
-    body:bodyData
+    body:bodyData,
+    celebrationKeys:celKeys
   },null,2);
   const blob=new Blob([data],{type:'application/json'});
   const url=URL.createObjectURL(blob);
@@ -1904,10 +1911,11 @@ function importData(event){
       });
       save();
 
-      // 2) Settings in localStorage schreiben (ZUERST, dann UI)
+      // 2) Settings vollständig wiederherstellen
       if(data.settings){
         settings={...settings,...data.settings};
         if(settings.showBadges===undefined) settings.showBadges=true;
+        if(settings.soundEnabled===undefined) settings.soundEnabled=true;
         localStorage.setItem('ft_settings',JSON.stringify(settings));
       }
 
@@ -1930,12 +1938,21 @@ function importData(event){
       });
       setTotalXP(Math.max(currentXP, backupXP, retroXP));
 
-      // 4) Name & Körperdaten
+      // 4) Name wiederherstellen
       if(data.name) localStorage.setItem('ft_name',data.name);
+
+      // 5) Körperdaten vollständig wiederherstellen
       if(data.body&&Object.keys(data.body).length)
         localStorage.setItem('ft_body',JSON.stringify(data.body));
 
-      // 5) UI komplett neu aufbauen (nach localStorage-Updates)
+      // 6) Meilenstein-Keys wiederherstellen
+      if(data.celebrationKeys){
+        Object.keys(data.celebrationKeys).forEach(k=>{
+          localStorage.setItem(k,JSON.stringify(data.celebrationKeys[k]));
+        });
+      }
+
+      // 7) UI komplett neu aufbauen
       applyTheme();
       appReady=false;
       cdropSelect('goal-push',settings.goalPush||0);
@@ -1943,7 +1960,8 @@ function importData(event){
       appReady=true;
       document.getElementById('toggle-dark').checked=settings.darkMode;
       document.getElementById('toggle-badges').checked=settings.showBadges!==false;
-document.getElementById('toggle-sound').checked=settings.soundEnabled!==false;
+      document.getElementById('toggle-sound').checked=settings.soundEnabled!==false;
+      try{_getAC();}catch(e){}
       loadName();
       loadBodyData();
       render();
@@ -2012,7 +2030,9 @@ function deleteAll(){
 
   // Switch back to Einstellungen tab
   switchTab('einstellungen');
-
+  settings.soundEnabled=true;
+  document.getElementById('toggle-sound').checked=true;
+  try{_getAC();}catch(e){}
   render();
   renderLevelCard();
   toast('App auf Startzustand zurückgesetzt');
