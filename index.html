@@ -491,6 +491,28 @@ body.light .combo-arrow-btn{border-left-color:rgba(0,0,0,0.1)}
   <div class="tab-content" id="tab-einstellungen">
 
     <div class="card">
+      <div class="card-title">Tagesziel</div>
+      <div class="input-row">
+        <label>Liegestütze</label>
+        <div class="cdrop-wrap" id="cdrop-wrap-goal-push" style="position:relative;flex:1;display:flex">
+          <div class="combo-box sel-blue" style="flex:1;cursor:pointer" onclick="openNumpad('goal-push')">
+            <input type="number" id="inp-goal-push" class="combo-input" min="0" max="500" value="0" placeholder="0" readonly style="cursor:pointer">
+          </div>
+          <div class="cdrop-menu" id="cdrop-menu-goal-push"></div>
+        </div>
+      </div>
+      <div class="input-row">
+        <label>Klimmzüge</label>
+        <div class="cdrop-wrap" id="cdrop-wrap-goal-pull" style="position:relative;flex:1;display:flex">
+          <div class="combo-box sel-green" style="flex:1;cursor:pointer" onclick="openNumpad('goal-pull')">
+            <input type="number" id="inp-goal-pull" class="combo-input" min="0" max="500" value="0" placeholder="0" readonly style="cursor:pointer">
+          </div>
+          <div class="cdrop-menu" id="cdrop-menu-goal-pull"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
       <div class="card-title">Darstellung</div>
       <div class="setting-row">
         <div>
@@ -525,28 +547,6 @@ body.light .combo-arrow-btn{border-left-color:rgba(0,0,0,0.1)}
     </div>
 
     <div class="card">
-      <div class="card-title">Tagesziel</div>
-      <div class="input-row">
-        <label>Liegestütze</label>
-        <div class="cdrop-wrap" id="cdrop-wrap-goal-push" style="position:relative;flex:1;display:flex">
-          <div class="combo-box sel-blue" style="flex:1;cursor:pointer" onclick="openNumpad('goal-push')">
-            <input type="number" id="inp-goal-push" class="combo-input" min="0" max="500" value="0" placeholder="0" readonly style="cursor:pointer">
-          </div>
-          <div class="cdrop-menu" id="cdrop-menu-goal-push"></div>
-        </div>
-      </div>
-      <div class="input-row">
-        <label>Klimmzüge</label>
-        <div class="cdrop-wrap" id="cdrop-wrap-goal-pull" style="position:relative;flex:1;display:flex">
-          <div class="combo-box sel-green" style="flex:1;cursor:pointer" onclick="openNumpad('goal-pull')">
-            <input type="number" id="inp-goal-pull" class="combo-input" min="0" max="500" value="0" placeholder="0" readonly style="cursor:pointer">
-          </div>
-          <div class="cdrop-menu" id="cdrop-menu-goal-pull"></div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card">
       <div class="card-title">Daten sichern</div>
       <p style="font-size:14px;color:var(--text2);margin-bottom:1rem;line-height:1.6">Exportiere deine Daten zur Sicherung. Beim Handywechsel einfach importieren.</p>
       <div class="btn-row">
@@ -558,11 +558,6 @@ body.light .combo-arrow-btn{border-left-color:rgba(0,0,0,0.1)}
     </div>
 
     <div class="card">
-      <div class="card-title">App aktualisieren</div>
-      <p style="font-size:14px;color:var(--text2);margin-bottom:1rem;line-height:1.6">Neue Version verfügbar? Seite neu laden um Updates zu erhalten.</p>
-      <button class="btn" onclick="reloadApp()" style="background:rgba(124,110,245,0.12);color:var(--accent);border:0.5px solid rgba(124,110,245,0.25)">App neu laden</button>
-    </div>
-    <div class="card">
       <div class="card-title">Alle Daten löschen</div>
       <p style="font-size:13px;color:var(--text3);margin-bottom:1rem">Löscht alle Einträge unwiderruflich. Vorher exportieren!</p>
       <button class="btn btn-danger" onclick="deleteAll()">Alle Daten löschen</button>
@@ -573,14 +568,9 @@ body.light .combo-arrow-btn{border-left-color:rgba(0,0,0,0.1)}
 
     <!-- Level Card -->
     <div class="level-card" id="level-card" style="position:relative">
-      <div style="position:absolute;top:18px;right:20px;z-index:2;display:flex;gap:8px;align-items:center">
-        <button class="settings-icon-btn" onclick="showLevelLegend()" title="Level-Erklärung">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-        </button>
-        <button class="settings-icon-btn" onclick="openNameEdit(event)" title="Name bearbeiten">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="9" r="3"/><path d="M6.5 19c0-3 2.5-5 5.5-5s5.5 2 5.5 5"/></svg>
-        </button>
-      </div>
+      <button class="settings-icon-btn" onclick="openNameEdit(event)" style="position:absolute;top:18px;right:20px;z-index:2" title="Name bearbeiten">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="9" r="3"/><path d="M6.5 19c0-3 2.5-5 5.5-5s5.5 2 5.5 5"/></svg>
+      </button>
       <div id="level-card-inner" style="pointer-events:none">
         <div class="level-disabled">Abzeichen-System deaktiviert.<br>In den Einstellungen aktivieren.</div>
       </div>
@@ -805,7 +795,7 @@ body.light .combo-arrow-btn{border-left-color:rgba(0,0,0,0.1)}
         <div class="help-icon">⚙️</div>
         <div>
           <div class="help-h">Einstellungen</div>
-          <div class="help-p">Hier kannst du dein Tagesziel für LS und KZ festlegen sowie Töne, Abzeichen und den dunklen Modus ein- und ausschalten. Unter „App aktualisieren" kannst du die App manuell neu laden um Updates zu erhalten. Die Datensicherung befindet sich ebenfalls hier – exportiere deine Daten als Backup und importiere sie auf einem neuen Gerät.</div>
+          <div class="help-p">Hier kannst du dein Tagesziel für LS und KZ festlegen sowie Töne, Abzeichen und den dunklen Modus ein- und ausschalten. Die Datensicherung befindet sich ebenfalls hier – exportiere deine Daten als Backup und importiere sie auf einem neuen Gerät.</div>
         </div>
       </div>
 
@@ -830,10 +820,25 @@ body.light .combo-arrow-btn{border-left-color:rgba(0,0,0,0.1)}
         <div>
           <div class="help-h">Level &amp; XP System</div>
           <div class="help-p">Im Profil siehst du dein aktuelles Level mit Fortschrittsbalken. XP sammelst du so:<br><br>
-          🎯 <b>Tagesziel Liegestütze erreicht</b> → +15 XP<br>
-          🎯 <b>Tagesziel Klimmzüge erreicht</b> → +15 XP<br>
-          🏆 <b>Meilenstein Push oder Pull</b> → +5 XP<br><br>
-          Jedes Level braucht <b>100 XP</b>. Es gibt 101 Level – von 🌱 Einsteiger bis 💎 Legende. Das Sonderlevel 🌟 <b>Mythos</b> (Level 101) erreichst du erst bei 20.000 XP, was etwa einem weiteren Jahr konsequentem Training entspricht. Bei jedem Level-Up erscheint ein Popup mit Feuerwerk. Das System kann in den Einstellungen aktiviert oder deaktiviert werden.</div>
+          🎯 <b>Tagesziel LS erreicht</b> → +15 XP<br>
+          🎯 <b>Tagesziel KZ erreicht</b> → +15 XP<br>
+          🏆 <b>Meilenstein</b> → +5 XP<br><br>
+          Jedes Level braucht <b>100 XP</b>. Das Sonderlevel 🌟 <b>Mythos</b> (Level 101) erreichst du bei 20.000 XP.<br><br>
+          <b>Level-Übersicht:</b></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px 12px;margin-top:8px;font-size:12px;color:var(--text2)">
+            <div>🌱 1–9 &nbsp;Einsteiger</div>
+            <div>⚡ 10–19 Aktiv</div>
+            <div>🔥 20–29 Enthusiast</div>
+            <div>💪 30–39 Stark</div>
+            <div>🏅 40–49 Medaillist</div>
+            <div>🥉 50–59 Bronze</div>
+            <div>🥈 60–69 Silber</div>
+            <div>🥇 70–79 Gold</div>
+            <div>🏆 80–89 Champion</div>
+            <div>👑 90–99 Elite</div>
+            <div>💎 100 &nbsp;&nbsp;Legende</div>
+            <div>🌟 101 &nbsp;&nbsp;Mythos</div>
+          </div>
         </div>
       </div>
 
