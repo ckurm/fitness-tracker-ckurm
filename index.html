@@ -1166,11 +1166,16 @@ const MILESTONE_DATA={
 let _ac=null;
 function _getAC(){
   if(!_ac) _ac=new(window.AudioContext||window.webkitAudioContext)();
-  if(_ac.state!=='running') _ac.resume();
+  if(_ac.state==='suspended') _ac.resume();
   return _ac;
 }
-// Resume AudioContext on any user interaction
-document.addEventListener('click',function(){if(_ac&&_ac.state==='suspended')_ac.resume();});
+// Keep AudioContext alive on every interaction
+['click','touchend','keydown'].forEach(ev=>{
+  document.addEventListener(ev,()=>{
+    if(!_ac){try{_ac=new(window.AudioContext||window.webkitAudioContext)();}catch(e){}}
+    if(_ac&&_ac.state==='suspended') _ac.resume();
+  });
+});
 function _tone(freq,start,dur,vol){
   try{
     const a=_getAC(),o=a.createOscillator(),g=a.createGain();
@@ -1183,11 +1188,13 @@ function _tone(freq,start,dur,vol){
 }
 function playMilestoneSound(){
   if(!settings.soundEnabled)return;
+  if(_ac&&_ac.state==='suspended')_ac.resume();
   _tone(523,0,0.15,0.25);_tone(659,0.15,0.15,0.25);
   _tone(784,0.3,0.15,0.25);_tone(1047,0.45,0.25,0.3);
 }
 function playGoalSound(){
   if(!settings.soundEnabled)return;
+  if(_ac&&_ac.state==='suspended')_ac.resume();
   _tone(392,0,0.12,0.25);_tone(523,0.12,0.12,0.25);
   _tone(659,0.24,0.12,0.25);_tone(784,0.36,0.12,0.3);
   _tone(1047,0.48,0.12,0.3);_tone(1319,0.6,0.3,0.35);
@@ -1375,7 +1382,7 @@ function showCelebration(milestone){ queueCelebration('milestone',milestone); }
 function closeCelebration(){
   document.getElementById('celebration').classList.remove('show');
   stopFireworks();
-  // small delay then play next
+  if(_ac&&_ac.state==='suspended') _ac.resume();
   setTimeout(playNextCelebration,400);
 }
 function launchFireworks(){
