@@ -1,0 +1,2075 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Fitness Tracker</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg:#0f0f11;--bg2:#18181c;--bg3:#222228;
+  --border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.14);
+  --text:#f0f0f2;--text2:#9090a0;--text3:#55556a;
+  --green:#4ade80;--green-bg:rgba(74,222,128,0.1);
+  --blue:#60a5fa;--blue-bg:rgba(96,165,250,0.1);
+  --accent:#7c6ef5;--orange:#fb923c;--red:#f87171;
+  --radius:12px;--radius-sm:8px;
+}
+body.light {
+  --bg:#f5f5f7;--bg2:#ffffff;--bg3:#ebebed;
+  --border:rgba(0,0,0,0.08);--border2:rgba(0,0,0,0.14);
+  --text:#111113;--text2:#666670;--text3:#aaaabc;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{overflow:hidden;height:100%;overscroll-behavior:none}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);transition:background .3s,color .3s;overflow:hidden;height:100%;max-width:100%;overscroll-behavior:none}
+/* Hide scrollbars globally but keep scroll functionality */
+*::-webkit-scrollbar{width:0px;height:0px;background:transparent}
+*{scrollbar-width:none;-ms-overflow-style:none}
+.container{max-width:480px;margin:0 auto}
+.scroll-wrap{height:100vh;overflow-y:auto;overflow-x:hidden;padding:1.5rem 1rem 2rem;overscroll-behavior:none;-webkit-overflow-scrolling:touch}
+header{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radius);padding:0;margin-bottom:0.65rem}
+.header-top{display:flex;align-items:center;justify-content:space-between;padding:1rem 1.25rem 1.25rem 1.25rem}
+header h1{font-size:21px;font-weight:600;letter-spacing:-0.3px}
+header p{font-size:12px;color:var(--text2);margin-top:2px}
+.settings-icon-btn{background:none;border:none;color:var(--text2);cursor:pointer;padding:0 4px;line-height:1;transition:color .2s,transform .4s;display:inline-flex;align-items:center}
+.settings-icon-btn:hover{color:var(--accent)}
+#settings-btn:hover{transform:rotate(60deg)}
+.header-btns{display:flex;gap:6px;align-items:center}
+
+/* Tabs */
+.tabs{display:flex;border-top:0.5px solid var(--border)}
+.tab-btn{flex:1;padding:11px 2px;border:none;border-radius:0;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:color .2s;background:transparent;color:var(--text2);border-bottom:2px solid transparent;text-align:center}
+.tab-btn.active{color:var(--accent);border-bottom:2px solid var(--accent)}
+.tab-btn:first-child{border-bottom-left-radius:calc(var(--radius) - 1px)}
+.tab-btn:last-child{border-bottom-right-radius:calc(var(--radius) - 1px)}
+
+.tab-content{display:none}.tab-content.active{display:block}
+
+/* Stats */
+.stat-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:8px}
+.stat{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radius);padding:12px;text-align:center;position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:center;height:84px}
+.stat::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:var(--radius) var(--radius) 0 0}
+.stat-blue::before{background:linear-gradient(90deg,#3b82f6,#60a5fa)}
+.stat-blue .stat-val{color:#60a5fa}
+.stat-blue{border-color:rgba(96,165,250,0.2)}
+.stat-green::before{background:linear-gradient(90deg,#16a34a,#4ade80)}
+.stat-green .stat-val{color:#4ade80}
+.stat-green{border-color:rgba(74,222,128,0.2)}
+.stat-orange::before{background:linear-gradient(90deg,#ea580c,#fb923c)}
+.stat-orange .stat-val{color:#fb923c}
+.stat-orange{border-color:rgba(251,146,60,0.2)}
+.stat-purple::before{background:linear-gradient(90deg,#7c3aed,#a78bfa)}
+.stat-purple .stat-val{color:#a78bfa}
+.stat-purple{border-color:rgba(167,139,250,0.2)}
+.stat-teal::before{background:linear-gradient(90deg,#0891b2,#22d3ee)}
+.stat-teal .stat-val{color:#22d3ee}
+.stat-teal{border-color:rgba(34,211,238,0.2)}
+.stat-pink::before{background:linear-gradient(90deg,#be185d,#f472b6)}
+.stat-pink .stat-val{color:#f472b6}
+.stat-pink{border-color:rgba(244,114,182,0.2)}
+.stat-label{font-size:11px;color:var(--text2);line-height:1.3}
+.stat-val{font-family:'DM Mono',monospace;font-size:22px;font-weight:500;margin-top:4px}
+.streak-val{color:var(--orange)}
+
+/* Week summary cards */
+.wsum-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.wsum-card{background:var(--bg3);border-radius:var(--radius);padding:14px;position:relative;overflow:hidden;border:0.5px solid var(--border)}
+.wsum-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:var(--radius) var(--radius) 0 0}
+.wsum-card.wblue::before{background:linear-gradient(90deg,#3b82f6,#60a5fa)}
+.wsum-card.wgreen::before{background:linear-gradient(90deg,#16a34a,#4ade80)}
+.wsum-card.worange::before{background:linear-gradient(90deg,#ea580c,#fb923c)}
+.wsum-card.wpurple::before{background:linear-gradient(90deg,#7c3aed,#a78bfa)}
+.wsum-label{font-size:11px;color:var(--text2);margin-bottom:5px;line-height:1.3}
+.wsum-val{font-family:'DM Mono',monospace;font-size:20px;font-weight:500}
+.wsum-card.wblue .wsum-val{color:#60a5fa}
+.wsum-card.wgreen .wsum-val{color:#4ade80}
+.wsum-card.worange .wsum-val{color:#fb923c}
+.wsum-card.wpurple .wsum-val{color:#a78bfa}
+.wsum-sub{font-size:10px;color:var(--text3);margin-top:3px}
+
+/* Goal mini card */
+
+/* Progress bar (kept for backwards compat) */
+.progress-fill{height:100%;border-radius:5px;transition:width .6s cubic-bezier(.34,1.2,.64,1);position:relative}
+.progress-fill::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,0.3) 50%,transparent 100%);animation:shimmer 2s infinite}
+@keyframes shimmer{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+
+/* Combined progress card */
+.progress-combined{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radius);padding:8px 14px;margin-top:4px;margin-bottom:14px;display:flex;flex-direction:column;gap:6px}
+.progress-row{display:flex;flex-direction:column;gap:3px}
+.progress-row-header{display:flex;align-items:center;gap:6px}
+.progress-row-title{font-size:10px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px;min-width:72px}
+.progress-row-nums{font-size:11px;font-family:'DM Mono',monospace;color:var(--text2);flex:1}
+.progress-row-pct{font-size:10px;font-family:'DM Mono',monospace;color:var(--text3)}
+.progress-track-sm{height:7px;background:var(--bg3);border-radius:4px;overflow:hidden;position:relative}
+.progress-divider{height:0.5px;background:var(--border);margin:0 -2px}
+
+/* Progress bar (legacy kept) */
+
+/* Card */
+.card{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radius);padding:1rem 1.25rem;margin-bottom:12px}
+.card-title{font-size:12px;font-weight:500;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:1rem}
+
+/* Inputs */
+.input-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.input-row label{font-size:14px;color:var(--text2);min-width:95px}
+.input-row input[type=number],.input-row input[type=date],.input-row input[type=text]{flex:1;background:var(--bg3);border:0.5px solid var(--border2);border-radius:var(--radius-sm);color:var(--text);font-family:'DM Mono',monospace;font-size:15px;padding:9px 12px;outline:none;transition:border-color .15s}
+.input-row input:focus{border-color:var(--accent)}
+input[type=number]::-webkit-inner-spin-button{opacity:.4}
+input[type=date]::-webkit-calendar-picker-indicator{filter:invert(0.6)}
+input[type=time]{color-scheme:dark}
+body.light input[type=time]{color-scheme:light}
+
+/* Buttons */
+.btn{width:100%;padding:11px;border:none;border-radius:var(--radius-sm);font-family:'DM Sans',sans-serif;font-size:15px;font-weight:500;cursor:pointer;transition:opacity .15s,transform .1s;margin-top:4px}
+.btn:hover{opacity:.88}.btn:active{transform:scale(0.98)}
+.btn-green{background:#22c55e;color:#fff}
+.btn-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.btn-row .btn{margin-top:0;font-size:13px;padding:10px}
+.btn-export{background:rgba(96,165,250,0.12);color:var(--blue);border:0.5px solid rgba(96,165,250,0.25)}
+.btn-import{background:rgba(74,222,128,0.12);color:var(--green);border:0.5px solid rgba(74,222,128,0.25)}
+.btn-danger{background:rgba(248,113,113,0.12);color:var(--red);border:0.5px solid rgba(248,113,113,0.25);margin-top:0}
+
+/* Picker */
+
+/* Log */
+.log-toggle{display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none}
+.log-arrow{font-size:12px;color:var(--text3);transition:transform .2s}
+.log-arrow.open{transform:rotate(180deg)}
+.log-body{display:none;margin-top:1rem}.log-body.open{display:block}
+.search-wrap{margin-bottom:10px}
+.search-input{width:100%;background:var(--bg3);border:0.5px solid var(--border2);border-radius:var(--radius-sm);color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;padding:9px 12px;outline:none;transition:border-color .15s}
+.search-input:focus{border-color:var(--accent)}
+.search-input::placeholder{color:var(--text3)}
+.log-item{display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-bottom:0.5px solid var(--border)}
+.log-item:last-child{border-bottom:none}
+.log-date-main{font-size:14px;font-weight:500}
+.log-date-sub{font-size:12px;color:var(--text3);margin-top:2px}
+.log-right{display:flex;align-items:center;gap:8px}
+.badge{font-size:12px;font-family:'DM Mono',monospace;padding:4px 9px;border-radius:20px;font-weight:500}
+.badge-push{background:var(--blue-bg);color:var(--blue)}
+.badge-pull{background:var(--green-bg);color:var(--green)}
+.del-btn{background:none;border:none;color:var(--text3);cursor:pointer;font-size:16px;padding:2px 4px;line-height:1;transition:color .15s}
+.del-btn:hover{color:var(--red)}
+.empty{text-align:center;padding:2rem 0;font-size:14px;color:var(--text3)}
+.today-tag{font-size:11px;color:var(--accent);margin-left:5px}
+.divider{margin-bottom:8px}
+.hint{font-size:11px;color:var(--text3);margin-top:10px;text-align:center}
+
+/* Toggle switch */
+.setting-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:0.5px solid var(--border)}
+.setting-row:last-child{border-bottom:none}
+.setting-label{font-size:14px}
+.setting-sub{font-size:12px;color:var(--text3);margin-top:2px}
+.toggle{position:relative;width:44px;height:24px;flex-shrink:0}
+.toggle input{opacity:0;width:0;height:0}
+.toggle-slider{position:absolute;inset:0;background:var(--bg3);border-radius:12px;cursor:pointer;transition:background .3s}
+.toggle input:checked+.toggle-slider{background:#22c55e}
+.toggle-slider::before{content:'';position:absolute;width:18px;height:18px;left:3px;top:3px;background:#fff;border-radius:50%;transition:transform .3s}
+.toggle input:checked+.toggle-slider::before{transform:translateX(20px)}
+
+/* Records */
+.records-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.record-card{background:var(--bg3);border-radius:var(--radius);padding:14px;position:relative;overflow:hidden;border:0.5px solid var(--border)}
+.record-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:var(--radius) var(--radius) 0 0}
+.record-card.gold::before{background:linear-gradient(90deg,#f59e0b,#fbbf24,#f59e0b)}
+.record-card.blue::before{background:linear-gradient(90deg,#3b82f6,#60a5fa,#3b82f6)}
+.record-card.green::before{background:linear-gradient(90deg,#22c55e,#4ade80,#22c55e)}
+.record-card.purple::before{background:linear-gradient(90deg,#7c3aed,#a78bfa,#7c3aed)}
+.record-label{font-size:11px;color:var(--text2);margin-bottom:6px;line-height:1.3}
+.record-val{font-family:'DM Mono',monospace;font-size:20px;font-weight:500}
+.record-card.gold .record-val{color:#fbbf24}
+.record-card.blue .record-val{color:#60a5fa}
+.record-card.green .record-val{color:#4ade80}
+.record-card.purple .record-val{color:#a78bfa}
+.record-sub{font-size:10px;color:var(--text3);margin-top:3px}
+
+/* Week chart */
+.week-bars{display:flex;align-items:flex-end;gap:4px;margin:8px 0 4px}
+.bar-legend{display:flex;justify-content:center;gap:16px;margin-top:10px;margin-bottom:2px}
+.bar-legend-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text2)}
+.bar-legend-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0}
+
+/* Week summary */
+.summary-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.summary-stat{background:var(--bg3);border-radius:var(--radius-sm);padding:10px;text-align:center;position:relative;overflow:hidden;border:0.5px solid var(--border)}
+.summary-stat::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.summary-stat.sblue::before{background:linear-gradient(90deg,#3b82f6,#60a5fa)}
+.summary-stat.sblue{border-color:rgba(96,165,250,0.2)}.summary-stat.sblue .summary-stat-val{color:#60a5fa}
+.summary-stat.sgreen::before{background:linear-gradient(90deg,#16a34a,#4ade80)}
+.summary-stat.sgreen{border-color:rgba(74,222,128,0.2)}.summary-stat.sgreen .summary-stat-val{color:#4ade80}
+.summary-stat.sorange::before{background:linear-gradient(90deg,#ea580c,#fb923c)}
+.summary-stat.sorange{border-color:rgba(251,146,60,0.2)}.summary-stat.sorange .summary-stat-val{color:#fb923c}
+.summary-stat.spurple::before{background:linear-gradient(90deg,#7c3aed,#a78bfa)}
+.summary-stat.spurple{border-color:rgba(167,139,250,0.2)}.summary-stat.spurple .summary-stat-val{color:#a78bfa}
+.summary-stat-label{font-size:11px;color:var(--text2);margin-bottom:4px;margin-top:4px}
+.summary-stat-val{font-size:18px;font-weight:500;font-family:'DM Mono',monospace}
+
+/* Combo box (input + dropdown) */
+.combo-box{display:flex;align-items:center;border-radius:var(--radius-sm);overflow:visible;flex:1;touch-action:manipulation}
+.combo-box.sel-blue{background:var(--bg3);border:0.5px solid rgba(96,165,250,0.5);color:#60a5fa;box-shadow:0 0 0 2px rgba(96,165,250,0.08)}
+.combo-box.sel-green{background:var(--bg3);border:0.5px solid rgba(74,222,128,0.5);color:#4ade80;box-shadow:0 0 0 2px rgba(74,222,128,0.08)}
+.combo-input{flex:1;background:transparent;border:none;color:inherit;font-family:'DM Mono',monospace;font-size:16px;padding:9px 4px 9px 12px;outline:none;width:100%;min-width:0;touch-action:manipulation;-webkit-user-select:none;user-select:none}
+.combo-input::-webkit-inner-spin-button{opacity:.5}
+.combo-arrow-btn{background:none;border:none;border-left:0.5px solid rgba(255,255,255,0.1);color:inherit;cursor:pointer;font-size:10px;padding:9px 12px;opacity:.6;transition:opacity .2s;line-height:1;flex-shrink:0}
+.combo-arrow-btn:hover{opacity:1}
+body.light .combo-arrow-btn{border-left-color:rgba(0,0,0,0.1)}
+
+/* Custom dropdowns */
+.cdrop-wrap{position:relative;flex:1}
+.cdrop-display{display:flex;align-items:center;justify-content:space-between;padding:9px 12px;border-radius:var(--radius-sm);font-family:'DM Mono',monospace;font-size:15px;cursor:pointer;user-select:none;transition:border-color .15s}
+.cdrop-display.sel-blue{background:var(--bg3);border:0.5px solid rgba(96,165,250,0.5);color:#60a5fa;box-shadow:0 0 0 2px rgba(96,165,250,0.08)}
+.cdrop-display.sel-green{background:var(--bg3);border:0.5px solid rgba(74,222,128,0.5);color:#4ade80;box-shadow:0 0 0 2px rgba(74,222,128,0.08)}
+.cdrop-display.sel-purple{background:var(--bg3);border:0.5px solid rgba(167,139,250,0.5);color:#a78bfa;box-shadow:0 0 0 2px rgba(167,139,250,0.08)}
+.cdrop-display.sel-orange{background:var(--bg3);border:0.5px solid rgba(251,146,60,0.5);color:#fb923c;box-shadow:0 0 0 2px rgba(251,146,60,0.08)}
+.cdrop-arrow{font-size:10px;opacity:.6;transition:transform .2s}
+.cdrop-display.open .cdrop-arrow{transform:rotate(180deg)}
+.cdrop-menu{display:none;position:absolute;top:calc(100% + 4px);left:0;right:0;background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius-sm);z-index:60;max-height:200px;overflow-y:auto}
+.cdrop-menu.open{display:block}
+.cdrop-item{padding:8px 14px;font-family:'DM Mono',monospace;font-size:14px;cursor:pointer;transition:background .1s}
+.cdrop-item:hover{background:var(--bg3)}
+.cdrop-item.active{color:var(--accent);font-weight:500}
+
+/* Level card */
+.level-card{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radius);padding:1.25rem;margin-bottom:12px;position:relative;overflow:hidden}
+.level-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#7c3aed,#7c6ef5,#60a5fa,#4ade80);border-radius:var(--radius) var(--radius) 0 0}
+.level-top{display:flex;align-items:center;gap:14px;margin-bottom:14px}
+.level-badge{width:56px;height:56px;border-radius:50%;background:var(--bg3);border:2px solid var(--accent);display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0;box-shadow:0 0 16px rgba(124,110,245,0.3)}
+.level-info{flex:1}
+.level-num{font-size:22px;font-weight:600;font-family:'DM Mono',monospace;color:var(--accent);animation:levelPulse 3s ease-in-out infinite}
+@keyframes levelPulse{
+  0%,100%{text-shadow:0 0 6px rgba(124,110,245,0.4);opacity:1}
+  50%{text-shadow:0 0 18px rgba(124,110,245,0.9),0 0 32px rgba(96,165,250,0.4);opacity:0.88}
+}
+.level-title{font-size:13px;color:var(--text2);margin-top:2px}
+.level-xp-row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px}
+.level-xp-label{font-size:12px;color:var(--text2)}
+.level-xp-nums{font-size:12px;font-family:'DM Mono',monospace;color:var(--text2)}
+.level-track{height:10px;background:var(--bg3);border-radius:5px;overflow:hidden}
+.level-fill{height:100%;border-radius:5px;background:linear-gradient(90deg,#7c6ef5,#60a5fa);transition:width .6s cubic-bezier(.34,1.2,.64,1);box-shadow:0 0 8px rgba(124,110,245,0.5)}
+.level-hint{font-size:11px;color:var(--text3);margin-top:6px;text-align:right}
+.level-disabled{text-align:center;padding:1rem;font-size:13px;color:var(--text3)}
+
+/* Level legend overlay */
+.level-overlay{position:fixed;inset:0;display:none;align-items:flex-end;justify-content:center;background:rgba(0,0,0,0.7);z-index:200;padding:0}
+.level-overlay.show{display:flex}
+.level-box{background:var(--bg2);border:0.5px solid var(--border2);border-radius:20px 20px 0 0;padding:1.25rem 1.25rem 2rem;width:100%;max-width:480px;max-height:80vh;display:flex;flex-direction:column;animation:slideUp .3s cubic-bezier(.34,1.2,.64,1);overflow-x:hidden;box-sizing:border-box;touch-action:pan-y;overscroll-behavior:contain}
+.level-legend-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem}
+.level-legend-title{font-size:15px;font-weight:600}
+.level-legend-close{background:none;border:0.5px solid var(--border2);border-radius:50%;width:28px;height:28px;color:var(--text2);cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center}
+.level-legend-body{overflow-y:auto;overflow-x:hidden;flex:1;touch-action:pan-y;overscroll-behavior:contain}
+.level-legend-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:0.5px solid var(--border)}
+.level-legend-row:last-child{border-bottom:none}
+.level-legend-row.current{background:rgba(124,110,245,0.08);border-radius:var(--radius-sm);padding:10px 8px;margin:0 -8px;border-bottom:none}
+.level-legend-emoji{font-size:24px;width:32px;text-align:center;flex-shrink:0}
+.level-legend-info{flex:1}
+.level-legend-name{font-size:14px;font-weight:500}
+.level-legend-range{font-size:12px;color:var(--text2);margin-top:2px}
+.level-legend-xp{font-size:12px;font-family:'DM Mono',monospace;color:var(--text3);flex-shrink:0}
+.level-legend-current-tag{font-size:10px;background:var(--accent);color:#fff;border-radius:10px;padding:2px 7px;margin-left:6px;vertical-align:middle}
+
+/* Date toggle */
+.date-today-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.date-today-badge{display:flex;align-items:center;gap:8px}
+.date-today-dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);flex-shrink:0;animation:dotPulse 2s ease-in-out infinite}
+@keyframes dotPulse{0%,100%{opacity:1}50%{opacity:0.4}}
+.date-today-label{font-size:15px;font-weight:500}
+.date-today-sub{font-size:12px;color:var(--text3);margin-left:16px;margin-top:-6px}
+.date-other-btn{font-size:12px;color:var(--accent);background:none;border:none;cursor:pointer;padding:0;font-family:'DM Sans',sans-serif;font-weight:500}
+.date-other-btn:hover{opacity:.75}
+.date-picker-row{display:none;margin-bottom:10px;gap:8px;align-items:center}
+.date-picker-row.show{display:flex}
+.date-back-btn{font-size:12px;color:var(--accent);background:none;border:none;cursor:pointer;padding:0;font-family:'DM Sans',sans-serif;white-space:nowrap}
+
+/* Numpad overlay */
+.numpad-overlay{position:fixed;inset:0;display:none;align-items:flex-end;justify-content:center;background:rgba(0,0,0,0.6);z-index:300;padding:0}
+.numpad-overlay.show{display:flex}
+.numpad-box{background:var(--bg2);border:0.5px solid var(--border2);border-radius:20px 20px 0 0;padding:1rem 1rem 1.5rem;width:100%;max-width:480px;animation:slideUp .25s cubic-bezier(.34,1.2,.64,1)}
+.numpad-header{text-align:center;margin-bottom:0.75rem}
+.numpad-field-label{font-size:12px;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:4px}
+.numpad-display{font-size:36px;font-weight:600;font-family:'DM Mono',monospace;color:var(--text);letter-spacing:2px;min-height:44px;line-height:1}
+.numpad-display.blue{color:#60a5fa}
+.numpad-display.green{color:#4ade80}
+.numpad-display.purple{color:#a78bfa}
+.numpad-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:8px}
+.numpad-btn{background:var(--bg3);border:0.5px solid var(--border);border-radius:var(--radius);font-size:20px;font-family:'DM Mono',monospace;font-weight:500;color:var(--text);padding:13px 0;cursor:pointer;transition:background .1s,transform .08s;-webkit-tap-highlight-color:transparent}
+.numpad-btn:active{background:var(--border2);transform:scale(0.95)}
+.numpad-btn.del{font-size:18px;color:var(--text2)}
+.numpad-btn.zero{grid-column:span 2}
+.numpad-confirm{width:100%;padding:13px;background:#22c55e;color:#fff;border:none;border-radius:var(--radius);font-size:16px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;transition:opacity .15s}
+.numpad-confirm:active{opacity:.85}
+
+/* Help overlay */
+.help-overlay{position:fixed;inset:0;display:none;align-items:flex-end;justify-content:center;background:rgba(0,0,0,0.7);z-index:200;padding:0}
+.help-overlay.show{display:flex}
+.help-box{background:var(--bg2);border:0.5px solid var(--border2);border-radius:20px 20px 0 0;padding:1.25rem 1.25rem 1.5rem;width:100%;max-width:480px;max-height:85vh;display:flex;flex-direction:column;animation:slideUp .3s cubic-bezier(.34,1.2,.64,1)}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.help-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem}
+.help-title{font-size:15px;font-weight:600}
+.help-close{background:none;border:0.5px solid var(--border2);border-radius:50%;width:28px;height:28px;color:var(--text2);cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center}
+.help-body{overflow-y:auto;flex:1;margin-bottom:1rem}
+.help-section{display:flex;gap:12px;padding:10px 0;border-bottom:0.5px solid var(--border)}
+.help-section:last-child{border-bottom:none}
+.help-icon{font-size:20px;flex-shrink:0;margin-top:2px}
+.help-h{font-size:14px;font-weight:500;margin-bottom:3px}
+.help-p{font-size:13px;color:var(--text2);line-height:1.5}
+
+/* Toast */
+.toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(20px);background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);padding:10px 20px;font-size:14px;color:var(--text);opacity:0;transition:opacity .3s,transform .3s;pointer-events:none;white-space:nowrap;z-index:99}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+#file-input{display:none}
+
+/* Fireworks */
+#fw-canvas{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:190;display:none}
+
+/* Celebration */
+.celebration{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,0.75);z-index:200}
+.celebration.show{display:flex}
+.celebration-box{background:var(--bg2);border:0.5px solid var(--border2);border-radius:20px;padding:2rem 2.5rem;text-align:center;animation:popIn .4s cubic-bezier(.34,1.56,.64,1);max-width:320px;width:90%}
+@keyframes popIn{from{transform:scale(0.7);opacity:0}to{transform:scale(1);opacity:1}}
+.cel-emoji{font-size:52px;margin-bottom:12px;display:block;animation:bob .6s infinite alternate}
+@keyframes bob{from{transform:translateY(0)}to{transform:translateY(-8px)}}
+.cel-title{font-size:20px;font-weight:600;margin-bottom:6px}
+.cel-sub{font-size:14px;color:var(--text2);margin-bottom:1.5rem;line-height:1.5}
+.cel-btn{background:#22c55e;color:#fff;border:none;border-radius:var(--radius-sm);padding:10px 32px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:500;cursor:pointer}
+</style>
+</head>
+<body>
+<div class="scroll-wrap">
+<div class="container">
+  <header>
+    <div class="header-top">
+      <div>
+        <h1>Fitness Tracker</h1>
+        <p>Liegestütze &amp; Klimmzüge</p>
+      </div>
+      <div class="header-btns">
+        <button class="settings-icon-btn" onclick="showHelp()" id="help-btn" title="Hilfe">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        </button>
+        <button class="settings-icon-btn" onclick="switchTab('einstellungen')" id="settings-btn" title="Einstellungen">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab('training')">Training</button>
+      <button class="tab-btn" onclick="switchTab('berichte')">Berichte</button>
+      <button class="tab-btn" onclick="switchTab('koerper')">Profil</button>
+    </div>
+  </header>
+
+  <!-- ══ TRAINING TAB ══ -->
+  <div class="tab-content active" id="tab-training">
+
+    <div class="stat-grid">
+      <div class="stat stat-blue"><div class="stat-label">LS heute</div><div class="stat-val" id="today-push">0</div></div>
+      <div class="stat stat-green"><div class="stat-label">KZ heute</div><div class="stat-val" id="today-pull">0</div></div>
+      <div class="stat stat-orange"><div class="stat-label">Tage in Folge</div><div class="stat-val streak-val" id="streak-val">0</div></div>
+    </div>
+    <div class="stat-grid divider">
+      <div class="stat stat-purple"><div class="stat-label">LS gesamt</div><div class="stat-val" id="total-push">0</div></div>
+      <div class="stat stat-teal"><div class="stat-label">KZ gesamt</div><div class="stat-val" id="total-pull">0</div></div>
+      <div class="stat stat-pink"><div class="stat-label">Trainingstage</div><div class="stat-val" id="total-days">0</div></div>
+    </div>
+
+    <!-- Progress -->
+    <div class="progress-combined" id="progress-combined" style="display:none">
+      <div style="font-size:11px;font-weight:500;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:8px">Tagesziel</div>
+      <div class="progress-row" id="progress-row-push">
+        <div class="progress-row-header">
+          <span class="progress-row-title">Liegestütze</span>
+          <span class="progress-row-nums" id="progress-nums-push">0 / 0</span>
+          <span class="progress-row-pct" id="progress-label-push">0%</span>
+        </div>
+        <div class="progress-track-sm">
+          <div class="progress-fill" id="progress-fill-push" style="width:0%"></div>
+        </div>
+      </div>
+      <div class="progress-divider" id="progress-divider" style="display:none"></div>
+      <div class="progress-row" id="progress-row-pull">
+        <div class="progress-row-header">
+          <span class="progress-row-title">Klimmzüge</span>
+          <span class="progress-row-nums" id="progress-nums-pull">0 / 0</span>
+          <span class="progress-row-pct" id="progress-label-pull">0%</span>
+        </div>
+        <div class="progress-track-sm">
+          <div class="progress-fill" id="progress-fill-pull" style="width:0%"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Entry -->
+    <div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
+        <span class="card-title" style="margin-bottom:0">Einheit eintragen</span>
+        <button class="settings-icon-btn" onclick="openLog()" title="Verlauf">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </button>
+      </div>
+
+      <!-- Date -->
+      <div class="input-row" style="margin-bottom:8px">
+        <label style="font-size:13px;color:var(--text2);min-width:95px">Datum</label>
+        <input type="date" id="inp-date" style="flex:1;background:var(--bg3);border:0.5px solid var(--border2);border-radius:var(--radius-sm);color:var(--text);font-family:'DM Mono',monospace;font-size:16px;padding:7px 10px;outline:none" />
+      </div>
+
+      <div class="input-row">
+        <label>Liegestütze</label>
+        <div class="cdrop-wrap" id="cdrop-wrap-push" style="position:relative;flex:1;display:flex">
+          <div class="combo-box sel-blue" style="flex:1;cursor:pointer" onclick="openNumpad('push')">
+            <input type="number" id="inp-push" class="combo-input" min="0" max="500" value="0" placeholder="0"
+              oninput="syncFromInput('push')" readonly style="cursor:pointer">
+          </div>
+          <div class="cdrop-menu" id="cdrop-menu-push"></div>
+        </div>
+      </div>
+      <div class="input-row">
+        <label>Klimmzüge</label>
+        <div class="cdrop-wrap" id="cdrop-wrap-pull" style="position:relative;flex:1;display:flex">
+          <div class="combo-box sel-green" style="flex:1;cursor:pointer" onclick="openNumpad('pull')">
+            <input type="number" id="inp-pull" class="combo-input" min="0" max="500" value="0" placeholder="0"
+              oninput="syncFromInput('pull')" readonly style="cursor:pointer">
+          </div>
+          <div class="cdrop-menu" id="cdrop-menu-pull"></div>
+        </div>
+      </div>
+      <button class="btn btn-green" onclick="addEntry()">+ Eintragen</button>
+    </div>
+
+  </div>
+
+  <!-- ══ BERICHTE TAB ══ -->
+  <div class="tab-content" id="tab-berichte">
+
+    <div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
+        <span class="card-title" style="margin-bottom:0">Diese Woche</span>
+        <button class="settings-icon-btn" onclick="openBestenliste()" title="Bestenliste">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg>
+        </button>
+      </div>
+      <div class="summary-grid">
+        <div class="summary-stat sblue"><div class="summary-stat-label">LS</div><div class="summary-stat-val" id="week-push">0</div></div>
+        <div class="summary-stat sgreen"><div class="summary-stat-label">KZ</div><div class="summary-stat-val" id="week-pull">0</div></div>
+        <div class="summary-stat sorange"><div class="summary-stat-label">Trainingstage</div><div class="summary-stat-val" id="week-days">0</div></div>
+        <div class="summary-stat spurple"><div class="summary-stat-label">Ø pro Tag</div><div class="summary-stat-val" id="week-avg">0</div></div>
+      </div>
+      <div style="position:relative;margin:12px 0 4px">
+        <svg id="week-graph" width="100%" height="150" style="overflow:visible"></svg>
+      </div>
+      <div class="bar-legend">
+        <div class="bar-legend-item"><div class="bar-legend-dot" style="background:#60a5fa"></div>LS</div>
+        <div class="bar-legend-item"><div class="bar-legend-dot" style="background:#4ade80"></div>KZ</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ══ EINSTELLUNGEN TAB ══ -->
+  <div class="tab-content" id="tab-einstellungen">
+
+    <div class="card">
+      <div class="card-title">Tagesziel</div>
+      <div class="input-row">
+        <label>Liegestütze</label>
+        <div class="cdrop-wrap" id="cdrop-wrap-goal-push" style="position:relative;flex:1;display:flex">
+          <div class="combo-box sel-blue" style="flex:1;cursor:pointer" onclick="openNumpad('goal-push')">
+            <input type="number" id="inp-goal-push" class="combo-input" min="0" max="500" value="0" placeholder="0" readonly style="cursor:pointer">
+          </div>
+          <div class="cdrop-menu" id="cdrop-menu-goal-push"></div>
+        </div>
+      </div>
+      <div class="input-row">
+        <label>Klimmzüge</label>
+        <div class="cdrop-wrap" id="cdrop-wrap-goal-pull" style="position:relative;flex:1;display:flex">
+          <div class="combo-box sel-green" style="flex:1;cursor:pointer" onclick="openNumpad('goal-pull')">
+            <input type="number" id="inp-goal-pull" class="combo-input" min="0" max="500" value="0" placeholder="0" readonly style="cursor:pointer">
+          </div>
+          <div class="cdrop-menu" id="cdrop-menu-goal-pull"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Darstellung</div>
+      <div class="setting-row">
+        <div>
+          <div class="setting-label">Dunkler Modus</div>
+          <div class="setting-sub">Dunkle Oberfläche aktivieren</div>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" id="toggle-dark" checked onchange="toggleThemeSwitch()">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+      <div class="setting-row">
+        <div>
+          <div class="setting-label">Abzeichen & Level</div>
+          <div class="setting-sub">XP, Levelaufstieg und Badges im Profil</div>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" id="toggle-badges" checked onchange="saveBadgesSetting()">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+      <div class="setting-row">
+        <div>
+          <div class="setting-label">Töne</div>
+          <div class="setting-sub">Sound bei Meilensteinen & Zielen</div>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" id="toggle-sound" checked onchange="saveSoundSetting()">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+    </div>
+
+    <div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
+        <span class="card-title" style="margin-bottom:0">Daten sichern</span>
+        <button class="settings-icon-btn" onclick="openDeleteConfirm()" title="Alle Daten löschen" style="color:#f87171">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+        </button>
+      </div>
+      <p style="font-size:14px;color:var(--text2);margin-bottom:1rem;line-height:1.6">Exportiere deine Daten zur Sicherung. Beim Handywechsel einfach importieren.</p>
+      <div class="btn-row">
+        <button class="btn btn-import" onclick="document.getElementById('file-input').click()">Importieren</button>
+        <button class="btn btn-export" onclick="exportData()">Exportieren</button>
+      </div>
+      <input type="file" id="file-input" accept=".json" onchange="importData(event)" />
+      <p class="hint">Daten werden nur lokal auf deinem Gerät gespeichert</p>
+    </div>
+
+  </div>
+  <div class="tab-content" id="tab-koerper">
+
+    <!-- Level Card -->
+    <div class="level-card" id="level-card" style="position:relative">
+      <button class="settings-icon-btn" onclick="openNameEdit(event)" style="position:absolute;top:18px;right:20px;z-index:2" title="Name bearbeiten">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="9" r="3"/><path d="M6.5 19c0-3 2.5-5 5.5-5s5.5 2 5.5 5"/></svg>
+      </button>
+      <div id="level-card-inner" style="pointer-events:none">
+        <div class="level-disabled">Abzeichen-System deaktiviert.<br>In den Einstellungen aktivieren.</div>
+      </div>
+    </div>
+
+    <div class="records-grid" id="kcal-cards" style="display:none">
+      <div class="record-card gold">
+        
+        <div class="record-label">Grundumsatz (BMR)</div>
+        <div class="record-val" id="kcal-bmr">—</div>
+        <div class="record-sub">kcal / Tag</div>
+      </div>
+      <div class="record-card blue">
+        
+        <div class="record-label">Gesamtumsatz (TDEE)</div>
+        <div class="record-val" id="kcal-tdee">—</div>
+        <div class="record-sub">kcal / Tag</div>
+      </div>
+      <div class="record-card green">
+        
+        <div class="record-label">Verbrennung Training heute</div>
+        <div class="record-val" id="kcal-workout">—</div>
+        <div class="record-sub">kcal zusätzlich</div>
+      </div>
+      <div class="record-card purple">
+        
+        <div class="record-label">Gesamt heute</div>
+        <div class="record-val" id="kcal-total">—</div>
+        <div class="record-sub">kcal verbrannt</div>
+      </div>
+    </div>
+
+  </div>
+
+</div><!-- end scroll-wrap -->
+
+<!-- Log Overlay -->
+<div class="level-overlay" id="log-overlay">
+  <div class="level-box" style="height:85vh;display:flex;flex-direction:column">
+    <div class="level-legend-header" style="flex-shrink:0">
+      <span class="level-legend-title">📋 Verlauf</span>
+      <button class="level-legend-close" onclick="closeLog()">✕</button>
+    </div>
+    <div style="padding:10px 0 8px;flex-shrink:0">
+      <input class="search-input" id="log-search" type="text" placeholder="Datum suchen z.B. 01.04.2026" oninput="renderLog()" style="width:100%" />
+    </div>
+    <div id="log-list" style="flex:1;overflow-y:auto;overflow-x:hidden">
+      <div class="empty">Noch keine Einträge</div>
+    </div>
+    <button class="cel-btn" onclick="closeLog()" style="width:100%;margin-top:12px;flex-shrink:0">Schließen</button>
+  </div>
+</div>
+
+<!-- Numpad Overlay -->
+<div class="numpad-overlay" id="numpad-overlay" onclick="numpadClickOutside(event)">
+  <div class="numpad-box">
+    <div class="numpad-header" style="position:relative">
+      <button class="level-legend-close" onclick="document.getElementById('numpad-overlay').classList.remove('show')" style="position:absolute;top:0;right:0">✕</button>
+      <div class="numpad-field-label" id="numpad-label">LS</div>
+      <div class="numpad-display blue" id="numpad-display">0</div>
+    </div>
+    <div class="numpad-grid">
+      <button class="numpad-btn" onclick="numpadInput('1')">1</button>
+      <button class="numpad-btn" onclick="numpadInput('2')">2</button>
+      <button class="numpad-btn" onclick="numpadInput('3')">3</button>
+      <button class="numpad-btn" onclick="numpadInput('4')">4</button>
+      <button class="numpad-btn" onclick="numpadInput('5')">5</button>
+      <button class="numpad-btn" onclick="numpadInput('6')">6</button>
+      <button class="numpad-btn" onclick="numpadInput('7')">7</button>
+      <button class="numpad-btn" onclick="numpadInput('8')">8</button>
+      <button class="numpad-btn" onclick="numpadInput('9')">9</button>
+      <button class="numpad-btn zero" onclick="numpadInput('0')">0</button>
+      <button class="numpad-btn del" onclick="numpadDelete()"><span style="font-size:26px;line-height:1">⌫</span></button>
+    </div>
+    <button class="numpad-confirm" onclick="numpadConfirm()">✓ Übernehmen</button>
+  </div>
+</div>
+
+<!-- Delete Confirm Overlay -->
+<div class="level-overlay" id="delete-overlay">
+  <div class="level-box" style="max-height:auto">
+    <div class="level-legend-header">
+      <span class="level-legend-title" style="color:#f87171">🗑 Alle Daten löschen</span>
+      <button class="level-legend-close" onclick="closeDeleteConfirm()">✕</button>
+    </div>
+    <p style="font-size:14px;color:var(--text2);line-height:1.6;margin:8px 0 20px">Löscht alle Einträge, XP und Einstellungen unwiderruflich. Vorher exportieren!</p>
+    <div style="display:flex;gap:10px">
+      <button class="btn" onclick="closeDeleteConfirm()" style="flex:1;background:var(--bg3);color:var(--text2);border:0.5px solid var(--border2)">Abbrechen</button>
+      <button class="btn btn-danger" onclick="deleteAll();closeDeleteConfirm()" style="flex:1">Löschen</button>
+    </div>
+  </div>
+</div>
+
+<!-- Bestenliste Overlay -->
+<div class="level-overlay" id="bestenliste-overlay">
+  <div class="level-box">
+    <div class="level-legend-header">
+      <span class="level-legend-title">🏆 Bestenliste</span>
+      <button class="level-legend-close" onclick="closeBestenliste()">✕</button>
+    </div>
+    <div class="level-legend-body" id="bestenliste-body"></div>
+    <button class="cel-btn" onclick="closeBestenliste()" style="width:100%;margin-top:12px">Schließen</button>
+  </div>
+</div>
+
+<!-- Name Edit Overlay -->
+<div class="level-overlay" id="name-overlay">
+  <div class="level-box" style="max-height:88vh">
+    <div class="level-legend-header" style="flex-shrink:0">
+      <span class="level-legend-title">👤 Mein Profil</span>
+      <button class="level-legend-close" onclick="closeNameEdit()">✕</button>
+    </div>
+    <div class="level-legend-body" style="overflow-y:auto">
+
+      <div class="input-row" style="margin-bottom:10px">
+        <label>Name</label>
+        <input type="text" id="inp-name" placeholder="Dein Name" maxlength="30"
+          style="flex:1;background:var(--bg3);border:0.5px solid var(--border2);border-radius:var(--radius-sm);color:var(--text);font-family:'DM Mono',monospace;font-size:16px;padding:9px 12px;outline:none;transition:border-color .15s"
+          onkeydown="if(event.key==='Enter')this.blur()"/>
+      </div>
+
+      <div class="input-row">
+        <label>Geschlecht</label>
+        <div class="cdrop-wrap" id="cdrop-wrap-body-gender">
+          <div class="cdrop-display sel-blue" id="cdrop-disp-body-gender" onclick="cdropToggle('body-gender')">
+            <span id="cdrop-val-body-gender">Männlich</span><span class="cdrop-arrow">▼</span>
+          </div>
+          <div class="cdrop-menu" id="cdrop-menu-body-gender">
+            <div class="cdrop-item active" onclick="cdropSelectGender('male')">Männlich</div>
+            <div class="cdrop-item" onclick="cdropSelectGender('female')">Weiblich</div>
+          </div>
+        </div>
+      </div>
+      <div class="input-row">
+        <label>Alter</label>
+        <div class="cdrop-wrap" id="cdrop-wrap-body-age" style="position:relative;flex:1;display:flex">
+          <div class="combo-box sel-blue" style="flex:1;cursor:pointer" onclick="openNumpad('body-age')">
+            <input type="number" id="inp-body-age" class="combo-input" min="10" max="100" placeholder="—" readonly style="cursor:pointer">
+          </div>
+          <div class="cdrop-menu" id="cdrop-menu-body-age"></div>
+        </div>
+      </div>
+      <div class="input-row">
+        <label>Größe (cm)</label>
+        <div class="cdrop-wrap" id="cdrop-wrap-body-height" style="position:relative;flex:1;display:flex">
+          <div class="combo-box sel-green" style="flex:1;cursor:pointer" onclick="openNumpad('body-height')">
+            <input type="number" id="inp-body-height" class="combo-input" min="130" max="250" placeholder="—" readonly style="cursor:pointer">
+          </div>
+          <div class="cdrop-menu" id="cdrop-menu-body-height"></div>
+        </div>
+      </div>
+      <div class="input-row">
+        <label>Gewicht (kg)</label>
+        <div class="cdrop-wrap" id="cdrop-wrap-body-weight" style="position:relative;flex:1;display:flex">
+          <div class="combo-box sel-purple" style="flex:1;cursor:pointer" onclick="openNumpad('body-weight')">
+            <input type="number" id="inp-body-weight" class="combo-input" min="30" max="250" placeholder="—" readonly style="cursor:pointer">
+          </div>
+          <div class="cdrop-menu" id="cdrop-menu-body-weight"></div>
+        </div>
+      </div>
+      <div class="input-row">
+        <label>Aktivität</label>
+        <div class="cdrop-wrap" id="cdrop-wrap-body-activity">
+          <div class="cdrop-display sel-orange" id="cdrop-disp-body-activity" onclick="cdropToggle('body-activity')">
+            <span id="cdrop-val-body-activity">Moderat aktiv</span><span class="cdrop-arrow">▼</span>
+          </div>
+          <div class="cdrop-menu" id="cdrop-menu-body-activity">
+            <div class="cdrop-item" onclick="cdropSelectActivity('1.2','Kaum Bewegung')">Kaum Bewegung</div>
+            <div class="cdrop-item" onclick="cdropSelectActivity('1.375','Leicht aktiv')">Leicht aktiv (1-3x/Woche)</div>
+            <div class="cdrop-item active" onclick="cdropSelectActivity('1.55','Moderat aktiv')">Moderat aktiv (3-5x/Woche)</div>
+            <div class="cdrop-item" onclick="cdropSelectActivity('1.725','Sehr aktiv')">Sehr aktiv (6-7x/Woche)</div>
+            <div class="cdrop-item" onclick="cdropSelectActivity('1.9','Extrem aktiv')">Extrem aktiv</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <button class="cel-btn" onclick="confirmNameEdit()" style="width:100%;margin-top:12px;flex-shrink:0">✓ Speichern</button>
+  </div>
+</div>
+
+<!-- Level Legend Overlay -->
+<div class="level-overlay" id="level-overlay">
+  <div class="level-box">
+    <div class="level-legend-header">
+      <span class="level-legend-title">🏆 Alle Level</span>
+      <button class="level-legend-close" onclick="closeLevelLegend()">✕</button>
+    </div>
+    <div class="level-legend-body" id="level-legend-body"></div>
+    <button class="cel-btn" onclick="closeLevelLegend()" style="width:100%;margin-top:12px">Schließen</button>
+  </div>
+</div>
+
+<!-- ══ KÖRPER TAB ══ -->
+<div class="help-overlay" id="help-overlay">
+  <div class="help-box">
+    <div class="help-header">
+      <span class="help-title">Wie funktioniert der Tracker?</span>
+      <button class="help-close" onclick="closeHelp()">✕</button>
+    </div>
+    <div class="help-body">
+
+      <div class="help-section">
+        <div class="help-icon">📋</div>
+        <div>
+          <div class="help-h">Training</div>
+          <div class="help-p">Hier trägst du deine Einheiten ein. Wähle Datum, LS und KZ aus dem Dropdown und tippe auf <b>+ Eintragen</b>. Die Statistiken oben aktualisieren sich automatisch.<br><br>
+          <b>Abkürzungen:</b><br>
+          <b>LS</b> = Liegestütze<br>
+          <b>KZ</b> = Klimmzüge</div>
+        </div>
+      </div>
+
+      <div class="help-section">
+        <div class="help-icon">🎯</div>
+        <div>
+          <div class="help-h">Tagesziel & Fortschrittsbalken</div>
+          <div class="help-p">Setze in den Einstellungen ein Tagesziel für LS und/oder KZ. Sobald ein Ziel gesetzt ist, erscheint unterhalb der Stat-Karten ein gemeinsamer Kasten mit zwei Fortschrittsbalken – blau für Liegestütze, grün für Klimmzüge. Bei Erreichen des Ziels gibt es ein Feuerwerk! 🎯</div>
+        </div>
+      </div>
+
+      <div class="help-section">
+        <div class="help-icon">🏆</div>
+        <div>
+          <div class="help-h">Meilensteine</div>
+          <div class="help-p">Bei 25, 50, 100, 150 ... bis 500 Liegestützen <b>oder</b> Klimmzügen pro Tag erscheint automatisch eine Erfolgsmeldung mit Feuerwerk. Beide werden unabhängig voneinander erkannt und hintereinander angezeigt. Jeder Meilenstein wird nur einmal pro Tag angezeigt.</div>
+        </div>
+      </div>
+
+      <div class="help-section">
+        <div class="help-icon">📊</div>
+        <div>
+          <div class="help-h">Berichte</div>
+          <div class="help-p">Zeigt deine Wochenstatistik als Balkendiagramm, die Bestenliste mit deinen Rekorden sowie eine Zusammenfassung der aktuellen Woche.</div>
+        </div>
+      </div>
+
+      <div class="help-section">
+        <div class="help-icon">⚙️</div>
+        <div>
+          <div class="help-h">Einstellungen</div>
+          <div class="help-p">Hier kannst du dein Tagesziel für LS und KZ festlegen sowie Töne, Abzeichen und den dunklen Modus ein- und ausschalten. Die Datensicherung befindet sich ebenfalls hier – exportiere deine Daten als Backup und importiere sie auf einem neuen Gerät.</div>
+        </div>
+      </div>
+
+      <div class="help-section">
+        <div class="help-icon">🌙</div>
+        <div>
+          <div class="help-h">Hell / Dunkel</div>
+          <div class="help-p">Oben rechts kannst du zwischen dunklem und hellem Design wechseln. Die Einstellung wird gespeichert.</div>
+        </div>
+      </div>
+
+      <div class="help-section">
+        <div class="help-icon">👤</div>
+        <div>
+          <div class="help-h">Profil &amp; Kalorienberechnung</div>
+          <div class="help-p">Trage dein Geschlecht, Alter, Größe, Gewicht und Aktivitätslevel ein. Der Tracker berechnet daraus automatisch deinen täglichen Kalorienverbrauch. Grundumsatz (BMR) ist der Verbrauch im Ruhezustand, Gesamtumsatz (TDEE) der tatsächliche Tagesverbrauch inkl. Aktivität. Das Training von heute wird zusätzlich eingerechnet. Berechnung nach der Harris-Benedict Formel – Werte sind Schätzwerte.</div>
+        </div>
+      </div>
+
+      <div class="help-section">
+        <div class="help-icon">⭐</div>
+        <div>
+          <div class="help-h">Level &amp; XP System</div>
+          <div class="help-p">Im Profil siehst du dein aktuelles Level mit Fortschrittsbalken. XP sammelst du so:<br><br>
+          🎯 <b>Tagesziel LS erreicht</b> → +15 XP<br>
+          🎯 <b>Tagesziel KZ erreicht</b> → +15 XP<br>
+          🏆 <b>Meilenstein</b> → +5 XP<br><br>
+          Jedes Level braucht <b>100 XP</b>. Das Sonderlevel 🌟 <b>Mythos</b> (Level 101) erreichst du bei 20.000 XP.<br><br>
+          <b>Level-Übersicht:</b></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px 12px;margin-top:8px;font-size:12px;color:var(--text2)">
+            <div>🌱 1–9 &nbsp;Einsteiger</div>
+            <div>⚡ 10–19 Aktiv</div>
+            <div>🔥 20–29 Enthusiast</div>
+            <div>💪 30–39 Stark</div>
+            <div>🏅 40–49 Medaillist</div>
+            <div>🥉 50–59 Bronze</div>
+            <div>🥈 60–69 Silber</div>
+            <div>🥇 70–79 Gold</div>
+            <div>🏆 80–89 Champion</div>
+            <div>👑 90–99 Elite</div>
+            <div>💎 100 &nbsp;&nbsp;Legende</div>
+            <div>🌟 101 &nbsp;&nbsp;Mythos</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <button class="cel-btn" onclick="closeHelp()" style="width:100%;margin-top:4px">Verstanden!</button>
+  </div>
+</div>
+
+<canvas id="fw-canvas"></canvas>
+<div class="celebration" id="celebration">
+  <div class="celebration-box">
+    <span class="cel-emoji" id="cel-emoji">🏆</span>
+    <div class="cel-title" id="cel-title">Super!</div>
+    <div class="cel-sub" id="cel-sub">Weiter so!</div>
+    <button class="cel-btn" onclick="closeCelebration()">💪 Weiter!</button>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+// ── Helpers ───────────────────────────────────────────────────────────────────
+function todayStr(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function formatDate(d){const[y,m,day]=d.split('-');return day+'.'+m+'.'+y}
+function getWeekStart(dateStr){const d=new Date(dateStr);const day=d.getDay();const diff=d.getDate()-(day===0?6:day-1);d.setDate(diff);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function addDays(dateStr,n){const d=new Date(dateStr);d.setDate(d.getDate()+n);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500)}
+
+// ── State ─────────────────────────────────────────────────────────────────────
+let entries=[];
+let settings={goalPush:0,goalPull:0,darkMode:true,showBadges:true,soundEnabled:true};
+try{entries=JSON.parse(localStorage.getItem('training_log')||'[]')}catch(e){entries=[]}
+try{
+  const s=JSON.parse(localStorage.getItem('ft_settings')||'{}');
+  settings={...settings,...s};
+  // Always default soundEnabled to true unless explicitly saved as false
+  if(s.soundEnabled===undefined) settings.soundEnabled=true;
+  if(!localStorage.getItem('ft_goals_v2')){
+    settings.goalPush=0;settings.goalPull=0;
+    localStorage.setItem('ft_goals_v2','1');
+  }
+}catch(e){}
+
+let appReady = false;
+
+function save(){localStorage.setItem('training_log',JSON.stringify(entries))}
+function saveSettings(){
+  settings.goalPush=cdropSelected['goal-push']??0;
+  settings.goalPull=cdropSelected['goal-pull']??0;
+  localStorage.setItem('ft_settings',JSON.stringify(settings));
+  render();
+}
+
+function openNameEdit(e){
+  if(e) e.stopPropagation();
+  const el=document.getElementById('inp-name');
+  el.value=localStorage.getItem('ft_name')||'';
+  // Populate body inputs
+  const age=cdropSelected['body-age'];
+  const height=cdropSelected['body-height'];
+  const weight=cdropSelected['body-weight'];
+  const ageEl=document.getElementById('inp-body-age');
+  const heightEl=document.getElementById('inp-body-height');
+  const weightEl=document.getElementById('inp-body-weight');
+  if(ageEl) ageEl.value=age||'';
+  if(heightEl) heightEl.value=height||'';
+  if(weightEl) weightEl.value=weight||'';
+  document.getElementById('name-overlay').classList.add('show');
+  setTimeout(()=>el.focus(),300);
+}
+function closeNameEdit(){
+  document.getElementById('name-overlay').classList.remove('show');
+}
+function confirmNameEdit(){
+  const name=document.getElementById('inp-name').value.trim();
+  localStorage.setItem('ft_name',name);
+  closeNameEdit();
+  renderLevelCard();
+}
+
+function showLevelLegend(){
+  if(!settings.showBadges) return;
+  const currentLevel = calcLevel(getTotalXP());
+  const TIERS_DISPLAY = [
+    {min:1,  max:9,   emoji:'🌱', title:'Einsteiger', xpFrom:0,    xpTo:900},
+    {min:10, max:19,  emoji:'⚡', title:'Aktiv',       xpFrom:900,  xpTo:2000},
+    {min:20, max:29,  emoji:'🔥', title:'Enthusiast',  xpFrom:2000, xpTo:3000},
+    {min:30, max:39,  emoji:'💪', title:'Stark',       xpFrom:3000, xpTo:4000},
+    {min:40, max:49,  emoji:'🏅', title:'Medaillist',  xpFrom:4000, xpTo:5000},
+    {min:50, max:59,  emoji:'🥉', title:'Bronze',      xpFrom:5000, xpTo:6000},
+    {min:60, max:69,  emoji:'🥈', title:'Silber',      xpFrom:6000, xpTo:7000},
+    {min:70, max:79,  emoji:'🥇', title:'Gold',        xpFrom:7000, xpTo:8000},
+    {min:80, max:89,  emoji:'🏆', title:'Champion',    xpFrom:8000, xpTo:9000},
+    {min:90, max:99,  emoji:'👑', title:'Elite',       xpFrom:9000, xpTo:9900},
+    {min:100,max:100, emoji:'💎', title:'Legende',     xpFrom:9900, xpTo:20000},
+    {min:101,max:101, emoji:'🌟', title:'Mythos',      xpFrom:20000,xpTo:null},
+  ];
+  const isCurrent = t => currentLevel >= t.min && currentLevel <= t.max;
+  const body = document.getElementById('level-legend-body');
+  body.innerHTML = TIERS_DISPLAY.map(t => {
+    const cur = isCurrent(t);
+    const range = t.min===t.max ? 'Level '+t.min : 'Level '+t.min+'–'+t.max;
+    return `<div class="level-legend-row${cur?' current':''}">
+      <div class="level-legend-emoji">${t.emoji}</div>
+      <div class="level-legend-info">
+        <div class="level-legend-name">${t.title}${cur?'<span class="level-legend-current-tag">Aktuell</span>':''}</div>
+        <div class="level-legend-range">${range}</div>
+      </div>
+    </div>`;
+  }).join('');
+  // Scroll to current tier
+  document.getElementById('level-overlay').classList.add('show');
+  setTimeout(()=>{
+    const cur = body.querySelector('.current');
+    if(cur) cur.scrollIntoView({block:'center',behavior:'smooth'});
+  }, 350);
+}
+function closeLevelLegend(){
+  document.getElementById('level-overlay').classList.remove('show');
+}
+
+// ── Date toggle ───────────────────────────────────────────────────────────────
+function toggleDatePicker(){
+  const row=document.getElementById('date-picker-row');
+  const heute=document.getElementById('date-heute-row');
+  const isOpen=row.style.display==='flex';
+  if(isOpen){
+    row.style.display='none';
+    heute.style.display='flex';
+  } else {
+    document.getElementById('inp-date').value=todayStr();
+    row.style.display='flex';
+    heute.style.display='none';
+  }
+}
+function resetToToday(){
+  document.getElementById('inp-date').value=todayStr();
+  document.getElementById('date-picker-row').style.display='none';
+  document.getElementById('date-heute-row').style.display='flex';
+}
+function getEntryDate(){
+  return document.getElementById('inp-date').value||todayStr();
+}
+function initDateDisplay(){
+  const sub=document.getElementById('date-today-sub');
+  if(sub){const d=new Date();sub.textContent=d.toLocaleDateString('de-DE',{weekday:'long',day:'numeric',month:'long'})}
+  document.getElementById('inp-date').value=todayStr();
+}
+
+// ── Numpad ────────────────────────────────────────────────────────────────────
+let numpadType='push';
+let numpadVal='0';
+function openNumpad(type){
+  numpadType=type;
+  numpadVal=String(cdropSelected[type]||0);
+  const isPull=type==='pull'||type==='goal-pull'||type==='body-height'||type==='body-weight';
+  const isPurple=type==='body-weight';
+  const disp=document.getElementById('numpad-display');
+  const isBody=(type==='body-age'||type==='body-height'||type==='body-weight');
+  disp.className='numpad-display '+(isPurple?'purple':isPull&&!isPurple?'green':'blue');
+  const labels={
+    'push':'Liegestütze','pull':'Klimmzüge',
+    'goal-push':'Tagesziel Liegestütze','goal-pull':'Tagesziel Klimmzüge',
+    'body-age':'Alter','body-height':'Größe (cm)','body-weight':'Gewicht (kg)'
+  };
+  document.getElementById('numpad-label').textContent=labels[type]||type;
+  // Show current value or empty for body fields
+  const cur=cdropSelected[type];
+  numpadVal=(cur&&cur>0)?String(cur):'0';
+  disp.textContent=numpadVal==='0'?'—':numpadVal;
+  document.getElementById('numpad-overlay').classList.add('show');
+}
+function numpadInput(d){
+  if(numpadVal==='0') numpadVal=d;
+  else numpadVal+=d;
+  if(parseInt(numpadVal)>500) numpadVal='500';
+  document.getElementById('numpad-display').textContent=numpadVal;
+}
+function numpadDelete(){
+  numpadVal=numpadVal.length>1?numpadVal.slice(0,-1):'0';
+  document.getElementById('numpad-display').textContent=numpadVal;
+}
+function numpadConfirm(){
+  const maxVals={'push':500,'pull':500,'goal-push':500,'goal-pull':500,'body-age':100,'body-height':250,'body-weight':250};
+  const max=maxVals[numpadType]||500;
+  const val=Math.min(max,parseInt(numpadVal)||0);
+  if(numpadType==='body-age'||numpadType==='body-height'||numpadType==='body-weight'){
+    cdropSelected[numpadType]=val>0?val:null;
+    const inp=document.getElementById('inp-'+numpadType.replace('-','_').replace('body_','body-'));
+    if(inp) inp.value=val>0?val:'';
+    // Also update display for kcal
+    const dispId={'body-age':'cdrop-val-body-age','body-height':'cdrop-val-body-height','body-weight':'cdrop-val-body-weight'}[numpadType];
+    const dispEl=document.getElementById(dispId);
+    if(dispEl) dispEl.textContent=val>0?val:'—';
+    calcKcal();
+  } else {
+    cdropSelect(numpadType,val);
+  }
+  document.getElementById('numpad-overlay').classList.remove('show');
+}
+function numpadClickOutside(e){
+  if(e.target===document.getElementById('numpad-overlay'))
+    document.getElementById('numpad-overlay').classList.remove('show');
+}
+
+function openDeleteConfirm(){
+  document.getElementById('delete-overlay').classList.add('show');
+}
+function closeDeleteConfirm(){
+  document.getElementById('delete-overlay').classList.remove('show');
+}
+
+function openBestenliste(){
+  // Build content dynamically
+  const body=document.getElementById('bestenliste-body');
+  if(!body) return;
+
+  if(!entries||!entries.length){
+    body.innerHTML='<div class="empty" style="padding:2rem 0;text-align:center;color:var(--text3)">Noch keine Einträge vorhanden</div>';
+    document.getElementById('bestenliste-overlay').classList.add('show');
+    return;
+  }
+
+  const grouped={};
+  entries.forEach(e=>{
+    if(!grouped[e.date])grouped[e.date]={push:0,pull:0};
+    grouped[e.date].push+=e.push;grouped[e.date].pull+=e.pull;
+  });
+  const days=Object.keys(grouped).sort();
+  const maxDayPush=Math.max(...days.map(d=>grouped[d].push));
+  const maxDayPull=Math.max(...days.map(d=>grouped[d].pull));
+  const dayPush=days.find(d=>grouped[d].push===maxDayPush)||'';
+  const dayPull=days.find(d=>grouped[d].pull===maxDayPull)||'';
+
+  const weeks={};
+  days.forEach(d=>{const ws=getWeekStart(d);if(!weeks[ws])weeks[ws]=0;weeks[ws]+=grouped[d].push});
+  const maxWeekPush=Object.values(weeks).length?Math.max(...Object.values(weeks)):0;
+
+  let bestStreak=0,cur=0,prev=null;
+  days.forEach(d=>{
+    if(!prev){cur=1;}else{const diff=Math.round((new Date(d)-new Date(prev))/86400000);cur=diff===1?cur+1:1;}
+    if(cur>bestStreak)bestStreak=cur;prev=d;
+  });
+
+  body.innerHTML=`
+    <div class="records-grid" style="margin-top:4px">
+      <div class="record-card gold">
+        <div class="record-label">Tagesrekord LS</div>
+        <div class="record-val" style="color:#fbbf24">${maxDayPush>0?maxDayPush:'—'}</div>
+        <div class="record-sub">${dayPush?'am '+formatDate(dayPush):''}</div>
+      </div>
+      <div class="record-card blue">
+        <div class="record-label">Tagesrekord KZ</div>
+        <div class="record-val" style="color:#60a5fa">${maxDayPull>0?maxDayPull:'—'}</div>
+        <div class="record-sub">${dayPull?'am '+formatDate(dayPull):''}</div>
+      </div>
+      <div class="record-card green">
+        <div class="record-label">Längste Serie</div>
+        <div class="record-val" style="color:#4ade80">${bestStreak>0?bestStreak:'—'}</div>
+        <div class="record-sub">${bestStreak>0?'Tage in Folge':''}</div>
+      </div>
+      <div class="record-card purple">
+        <div class="record-label">Beste Woche LS</div>
+        <div class="record-val" style="color:#a78bfa">${maxWeekPush>0?maxWeekPush:'—'}</div>
+        <div class="record-sub">${maxWeekPush>0?'Liegestütze':''}</div>
+      </div>
+    </div>`;
+  document.getElementById('bestenliste-overlay').classList.add('show');
+}
+function closeBestenliste(){
+  document.getElementById('bestenliste-overlay').classList.remove('show');
+}
+
+function openLog(){
+  renderLog();
+  document.getElementById('log-overlay').classList.add('show');
+}
+function closeLog(){
+  document.getElementById('log-overlay').classList.remove('show');
+  document.getElementById('log-search').value='';
+}
+
+function showHelp(){document.getElementById('help-overlay').classList.add('show')}
+function closeHelp(){document.getElementById('help-overlay').classList.remove('show')}
+
+// ── Theme ─────────────────────────────────────────────────────────────────────
+function applyTheme(){
+  document.body.classList.toggle('light',!settings.darkMode);
+  document.documentElement.style.colorScheme=settings.darkMode?'dark':'light';
+  const td=document.getElementById('toggle-dark');
+  if(td) td.checked=settings.darkMode;
+}
+function toggleTheme(){settings.darkMode=!settings.darkMode;localStorage.setItem('ft_settings',JSON.stringify(settings));applyTheme()}
+function toggleThemeSwitch(){settings.darkMode=document.getElementById('toggle-dark').checked;localStorage.setItem('ft_settings',JSON.stringify(settings));applyTheme()}
+
+// ── Milestones ────────────────────────────────────────────────────────────────
+const MILESTONES=[25,50,100,150,200,250,300,350,400,450,500];
+const MILESTONE_DATA={
+  25:{emoji:'⚡',title:'Erste 25 heute!',sub:'Guter Start – weiter so!'},
+  50:{emoji:'🔥',title:'Erste 50 heute!',sub:'Gut aufgewärmt – weiter so!'},
+  100:{emoji:'💯',title:'100 Liegestütze!',sub:'Stark – du bist heute in Topform!'},
+  150:{emoji:'⚡',title:'150 Liegestütze!',sub:'Das ist echte Disziplin!'},
+  200:{emoji:'🚀',title:'200 Liegestütze!',sub:'Unaufhaltsam heute!'},
+  250:{emoji:'💪',title:'250 Liegestütze!',sub:'Fast die halbe Tausend – Respekt!'},
+  300:{emoji:'🏅',title:'300 Liegestütze!',sub:'Das ist außergewöhnlich!'},
+  350:{emoji:'🔥',title:'350 Liegestütze!',sub:'Du übertriffst dich selbst!'},
+  400:{emoji:'⭐',title:'400 Liegestütze!',sub:'Absolute Maschine!'},
+  450:{emoji:'🦾',title:'450 Liegestütze!',sub:'Fast am Limit – unglaublich!'},
+  500:{emoji:'🏆',title:'500 Liegestütze!',sub:'Legendär. Kein anderes Wort dafür!'},
+};
+// ── Audio ─────────────────────────────────────────────────────────────────────
+let _ac=null;
+function _getAC(){
+  if(!_ac) _ac=new(window.AudioContext||window.webkitAudioContext)();
+  if(_ac.state==='suspended') _ac.resume();
+  return _ac;
+}
+// Keep AudioContext alive on every interaction
+['click','touchend','keydown'].forEach(ev=>{
+  document.addEventListener(ev,()=>{
+    if(!_ac){try{_ac=new(window.AudioContext||window.webkitAudioContext)();}catch(e){}}
+    if(_ac&&_ac.state==='suspended') _ac.resume();
+  });
+});
+function _tone(freq,start,dur,vol){
+  try{
+    const a=_getAC(),o=a.createOscillator(),g=a.createGain();
+    o.connect(g);g.connect(a.destination);
+    o.type='sine';o.frequency.value=freq;
+    g.gain.setValueAtTime(vol||0.3,a.currentTime+start);
+    g.gain.exponentialRampToValueAtTime(0.001,a.currentTime+start+dur);
+    o.start(a.currentTime+start);o.stop(a.currentTime+start+dur+0.05);
+  }catch(e){}
+}
+function playMilestoneSound(){
+  if(!settings.soundEnabled)return;
+  if(_ac&&_ac.state==='suspended')_ac.resume();
+  _tone(523,0,0.15,0.25);_tone(659,0.15,0.15,0.25);
+  _tone(784,0.3,0.15,0.25);_tone(1047,0.45,0.25,0.3);
+}
+function playGoalSound(){
+  if(!settings.soundEnabled)return;
+  if(_ac&&_ac.state==='suspended')_ac.resume();
+  _tone(392,0,0.12,0.25);_tone(523,0.12,0.12,0.25);
+  _tone(659,0.24,0.12,0.25);_tone(784,0.36,0.12,0.3);
+  _tone(1047,0.48,0.12,0.3);_tone(1319,0.6,0.3,0.35);
+}
+
+// ── XP / Level System ────────────────────────────────────────────────────────
+const XP_PER_LEVEL = 100;
+const MAX_LEVEL = 101;
+const XP_MYTHOS = 20000;
+const LEVEL_TIERS = [
+  {min:1,  max:9,   emoji:'🌱', title:'Einsteiger'},
+  {min:10, max:19,  emoji:'⚡', title:'Aktiv'},
+  {min:20, max:29,  emoji:'🔥', title:'Enthusiast'},
+  {min:30, max:39,  emoji:'💪', title:'Stark'},
+  {min:40, max:49,  emoji:'🏅', title:'Medaillist'},
+  {min:50, max:59,  emoji:'🥉', title:'Bronze'},
+  {min:60, max:69,  emoji:'🥈', title:'Silber'},
+  {min:70, max:79,  emoji:'🥇', title:'Gold'},
+  {min:80, max:89,  emoji:'🏆', title:'Champion'},
+  {min:90, max:99,  emoji:'👑', title:'Elite'},
+  {min:100,max:100, emoji:'💎', title:'Legende'},
+  {min:101,max:101, emoji:'🌟', title:'Mythos'},
+];
+
+function getLevelInfo(level){
+  return LEVEL_TIERS.find(t=>level>=t.min&&level<=t.max)||LEVEL_TIERS[0];
+}
+function getTotalXP(){
+  try{return parseInt(localStorage.getItem('ft_xp')||'0',10)}catch(e){return 0}
+}
+function setTotalXP(xp){localStorage.setItem('ft_xp',String(xp))}
+function calcLevel(totalXP){
+  if(totalXP >= XP_MYTHOS) return 101;
+  return Math.min(100, Math.floor(totalXP/XP_PER_LEVEL)+1);
+}
+function addXP(amount, reason){
+  if(!settings.showBadges) return;
+  const oldXP = getTotalXP();
+  const oldLevel = calcLevel(oldXP);
+  const newXP = oldXP + amount;
+  const newLevel = calcLevel(newXP);
+  setTotalXP(newXP);
+  if(newLevel > oldLevel && newLevel <= MAX_LEVEL){
+    const info = getLevelInfo(newLevel);
+    setTimeout(()=>{
+      queueCelebration('levelup', {level:newLevel, info});
+      playLevelUpSound();
+    }, 1800);
+  } else {
+    setTimeout(()=>toast('+'+amount+' XP – '+reason), 1800);
+  }
+  renderLevelCard();
+}
+function saveName(){
+  const name=document.getElementById('inp-name').value.trim();
+  localStorage.setItem('ft_name',name);
+  renderLevelCard();
+}
+function loadName(){
+  const name=localStorage.getItem('ft_name')||'';
+  return name;
+}
+function renderLevelCard(){
+  const inner = document.getElementById('level-card-inner');
+  if(!inner) return;
+  if(!settings.showBadges){
+    inner.innerHTML='<div class="level-disabled">Abzeichen-System deaktiviert.<br>In den Einstellungen aktivieren.</div>';
+    return;
+  }
+  const totalXP = getTotalXP();
+  const level = calcLevel(totalXP);
+  const info = getLevelInfo(level);
+  let xpInLevel, xpNeeded, pct, xpToNext;
+  if(level >= 101){
+    xpInLevel = totalXP - XP_MYTHOS; xpNeeded = '∞'; pct = 100; xpToNext = 0;
+  } else if(level === 100){
+    xpInLevel = totalXP - 9900; xpNeeded = XP_MYTHOS - 9900;
+    pct = Math.round((xpInLevel / xpNeeded)*100);
+    xpToNext = xpNeeded - xpInLevel;
+  } else {
+    xpInLevel = totalXP % XP_PER_LEVEL; xpNeeded = XP_PER_LEVEL;
+    pct = Math.round((xpInLevel/XP_PER_LEVEL)*100);
+    xpToNext = XP_PER_LEVEL - xpInLevel;
+  }
+  const name = localStorage.getItem('ft_name')||'';
+  inner.innerHTML=`
+    <div class="level-top" style="pointer-events:none">
+      <div class="level-badge">${info.emoji}</div>
+      <div class="level-info">
+        ${name?'<div style="font-size:15px;font-weight:600;margin-bottom:2px">'+name+'</div>':''}
+        <div class="level-num">Level ${level}</div>
+        <div class="level-title">${info.title}</div>
+      </div>
+    </div>
+    <div class="level-xp-row">
+      <span class="level-xp-label">Erfahrung</span>
+      <span class="level-xp-nums">${xpInLevel} / ${level>=101?'∞':xpNeeded} XP</span>
+    </div>
+    <div class="level-track">
+      <div class="level-fill" style="width:${pct}%"></div>
+    </div>
+    <div class="level-xp-row" style="margin-top:6px;margin-bottom:0">
+      <span class="level-xp-label">Gesamt XP</span>
+      <span class="level-xp-nums" style="color:var(--accent)">${totalXP.toLocaleString('de-DE')} XP</span>
+    </div>
+    <div class="level-hint">${level>=101?'🌟 Höchstes Level erreicht – du bist ein Mythos!':level===100?'Noch '+xpToNext+' XP bis 🌟 Mythos':'Noch '+xpToNext+' XP bis Level '+(level+1)}</div>
+  `;
+}
+function saveSoundSetting(){
+  settings.soundEnabled=document.getElementById('toggle-sound').checked;
+  localStorage.setItem('ft_settings',JSON.stringify(settings));
+  if(settings.soundEnabled) playMilestoneSound();
+}
+function saveBadgesSetting(){
+  settings.showBadges = document.getElementById('toggle-badges').checked;
+  localStorage.setItem('ft_settings',JSON.stringify(settings));
+  renderLevelCard();
+}
+function playLevelUpSound(){
+  if(!settings.soundEnabled)return;
+  _tone(523,0,0.12,0.25);_tone(659,0.12,0.12,0.25);
+  _tone(784,0.24,0.12,0.25);_tone(1047,0.36,0.12,0.3);_tone(1319,0.48,0.3,0.35);
+}
+
+function getCelebrated(type){try{return JSON.parse(localStorage.getItem('cel_'+(type||'push')+'_'+todayStr())||'[]')}catch(e){return[]}}
+function markCelebrated(type,m){const a=getCelebrated(type);if(!a.includes(m))a.push(m);localStorage.setItem('cel_'+type+'_'+todayStr(),JSON.stringify(a))}
+function checkMilestones(todayPush,todayPull){
+  const cPush=getCelebrated('push');
+  const uncPush=MILESTONES.filter(m=>todayPush>=m&&!cPush.includes(m));
+  if(uncPush.length){uncPush.forEach(m=>markCelebrated('push',m));queueCelebration('milestone',uncPush[uncPush.length-1]);addXP(uncPush.length*5,'Meilenstein Liegestütze')}
+  const cPull=getCelebrated('pull');
+  const uncPull=MILESTONES.filter(m=>todayPull>=m&&!cPull.includes(m));
+  if(uncPull.length){uncPull.forEach(m=>markCelebrated('pull',m));queueCelebration('milestone-pull',uncPull[uncPull.length-1]);addXP(uncPull.length*5,'Meilenstein Klimmzüge')}
+}
+
+// ── Celebration queue ─────────────────────────────────────────────────────────
+let celebQueue=[];
+let celebPlaying=false;
+function queueCelebration(type,data){celebQueue.push({type,data});if(!celebPlaying)playNextCelebration()}
+function playNextCelebration(){
+  if(!celebQueue.length){celebPlaying=false;return}
+  celebPlaying=true;
+  const item=celebQueue.shift();
+  if(item.type==='milestone'){
+    const d=MILESTONE_DATA[item.data]||{emoji:'🎉',title:'Super!',sub:'Weiter so!'};
+    document.getElementById('cel-emoji').textContent=d.emoji;
+    document.getElementById('cel-title').textContent=d.title;
+    document.getElementById('cel-sub').textContent=d.sub;
+    document.getElementById('celebration').classList.add('show');
+    playMilestoneSound();
+    launchFireworks();
+  } else if(item.type==='milestone-pull'){
+    const d=MILESTONE_DATA[item.data]||{emoji:'🎉',title:'Super!',sub:'Weiter so!'};
+    document.getElementById('cel-emoji').textContent=d.emoji;
+    document.getElementById('cel-title').textContent=item.data+' KZ heute!';
+    document.getElementById('cel-sub').textContent=d.sub;
+    document.getElementById('celebration').classList.add('show');
+    playMilestoneSound();
+    launchFireworks();
+  } else if(item.type==='goal-push'){
+    document.getElementById('cel-emoji').textContent='🎯';
+    document.getElementById('cel-title').textContent='Tagesziel Liegestütze!';
+    document.getElementById('cel-sub').textContent=item.data+' LS heute – Ziel geschafft! Absolute Maschine!';
+    document.getElementById('celebration').classList.add('show');
+    playGoalSound();
+    launchGoalFireworks();
+  } else if(item.type==='goal-pull'){
+    document.getElementById('cel-emoji').textContent='🏅';
+    document.getElementById('cel-title').textContent='Tagesziel Klimmzüge!';
+    document.getElementById('cel-sub').textContent=item.data+' KZ heute – Ziel erreicht! Stark!';
+    document.getElementById('celebration').classList.add('show');
+    playGoalSound();
+    launchGoalFireworks();
+  } else if(item.type==='levelup'){
+    const {level, info} = item.data;
+    const isMythos = level === 101;
+    document.getElementById('cel-emoji').textContent = info.emoji;
+    document.getElementById('cel-title').textContent = 'Level '+level+' erreicht!';
+    document.getElementById('cel-sub').textContent = info.title+(isMythos?' – Du hast das Höchste erreicht. Absolute Legende!':' – Stark, weiter so!');
+    document.getElementById('celebration').classList.add('show');
+    if(isMythos){ playLevelUpSound(); launchGoalFireworks(); }
+    else { launchFireworks(); }
+  }
+}
+
+// ── Celebration / Fireworks ───────────────────────────────────────────────────
+let fwRaf=null;
+function showCelebration(milestone){ queueCelebration('milestone',milestone); }
+function closeCelebration(){
+  document.getElementById('celebration').classList.remove('show');
+  stopFireworks();
+  if(_ac&&_ac.state==='suspended') _ac.resume();
+  setTimeout(playNextCelebration,400);
+}
+function launchFireworks(){
+  const canvas=document.getElementById('fw-canvas');
+  canvas.style.display='block';canvas.width=window.innerWidth;canvas.height=window.innerHeight;
+  const ctx=canvas.getContext('2d');const particles=[];
+  const COLORS=['#7c6ef5','#60a5fa','#4ade80','#fb923c','#f472b6','#facc15','#f87171'];
+  function burst(){
+    const x=80+Math.random()*(canvas.width-160);const y=60+Math.random()*(canvas.height*.5);
+    const color=COLORS[Math.floor(Math.random()*COLORS.length)];
+    for(let i=0;i<50;i++){const angle=Math.random()*Math.PI*2;const speed=1.5+Math.random()*5;particles.push({x,y,vx:Math.cos(angle)*speed,vy:Math.sin(angle)*speed-1,alpha:1,decay:.012+Math.random()*.01,color,r:1.5+Math.random()*2.5})}
+  }
+  let frame=0;burst();
+  function loop(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);frame++;if(frame%28===0)burst();
+    for(let i=particles.length-1;i>=0;i--){const p=particles[i];p.x+=p.vx;p.y+=p.vy;p.vy+=.09;p.vx*=.99;p.alpha-=p.decay;if(p.alpha<=0){particles.splice(i,1);continue}ctx.save();ctx.globalAlpha=p.alpha;ctx.fillStyle=p.color;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fill();ctx.restore()}
+    fwRaf=requestAnimationFrame(loop);
+  }
+  loop();
+}
+function stopFireworks(){if(fwRaf){cancelAnimationFrame(fwRaf);fwRaf=null}const c=document.getElementById('fw-canvas');c.style.display='none';c.getContext('2d').clearRect(0,0,c.width,c.height)}
+
+// ── Progress bar ──────────────────────────────────────────────────────────────
+// ── Progress (mini goal card in stat grid) ────────────────────────────────────
+function updateProgress(todayPush, todayPull){
+  const combined=document.getElementById('progress-combined');
+  const rowPush=document.getElementById('progress-row-push');
+  const rowPull=document.getElementById('progress-row-pull');
+  const divider=document.getElementById('progress-divider');
+  const hasPush=settings.goalPush>0;
+  const hasPull=settings.goalPull>0;
+
+  if(!hasPush&&!hasPull){combined.style.display='none';return;}
+  combined.style.display='flex';
+
+  // Push row
+  if(hasPush){
+    rowPush.style.display='flex';
+    const pct=Math.min(100,Math.round((todayPush/settings.goalPush)*100));
+    const fill=document.getElementById('progress-fill-push');
+    fill.style.width=pct+'%';
+    fill.style.background='linear-gradient(90deg,#3b82f6,#60a5fa)';
+    fill.style.boxShadow=pct>0?'0 0 8px #60a5fa':'none';
+    document.getElementById('progress-nums-push').textContent=todayPush+'/'+settings.goalPush;
+    document.getElementById('progress-label-push').textContent=pct+'%'+(pct>=100?' 🎯':'');
+    if(pct>=100) checkGoalCelebration('push',todayPush);
+  } else rowPush.style.display='none';
+
+  // Divider only when both visible
+  if(divider) divider.style.display=(hasPush&&hasPull)?'block':'none';
+
+  // Pull row
+  if(hasPull){
+    rowPull.style.display='flex';
+    const pct=Math.min(100,Math.round((todayPull/settings.goalPull)*100));
+    const fill=document.getElementById('progress-fill-pull');
+    fill.style.width=pct+'%';
+    fill.style.background='linear-gradient(90deg,#16a34a,#4ade80)';
+    fill.style.boxShadow=pct>0?'0 0 8px #4ade80':'none';
+    document.getElementById('progress-nums-pull').textContent=todayPull+'/'+settings.goalPull;
+    document.getElementById('progress-label-pull').textContent=pct+'%'+(pct>=100?' 🎯':'');
+    if(pct>=100) checkGoalCelebration('pull',todayPull);
+  } else rowPull.style.display='none';
+}
+
+
+function checkGoalCelebration(type, count){
+  const key='goal_cel_'+type+'_'+todayStr();
+  if(localStorage.getItem(key)==='1') return;
+  localStorage.setItem(key,'1');
+  if(type==='push'){
+    queueCelebration('goal-push', count);
+    addXP(15,'Tagesziel Liegestütze');
+  } else {
+    queueCelebration('goal-pull', count);
+    addXP(15,'Tagesziel Klimmzüge');
+  }
+}
+
+function launchGoalFireworks(){
+  stopFireworks();
+  const canvas=document.getElementById('fw-canvas');
+  canvas.style.display='block';canvas.width=window.innerWidth;canvas.height=window.innerHeight;
+  const ctx=canvas.getContext('2d');const particles=[];
+  const COLORS=['#00ff88','#00ffcc','#aaff00','#ffee00','#7c6ef5','#60a5fa','#f472b6','#facc15'];
+  function burst(forced){
+    const x=forced!=null?forced:(50+Math.random()*(canvas.width-100));
+    const y=forced!=null?canvas.height*0.3:(30+Math.random()*(canvas.height*0.55));
+    const color=COLORS[Math.floor(Math.random()*COLORS.length)];
+    // more particles = bigger bang
+    for(let i=0;i<80;i++){
+      const angle=Math.random()*Math.PI*2;
+      const speed=2+Math.random()*7;
+      particles.push({x,y,vx:Math.cos(angle)*speed,vy:Math.sin(angle)*speed-2,alpha:1,decay:.009+Math.random()*.008,color,r:2+Math.random()*3.5});
+    }
+  }
+  // Initial triple burst
+  burst(canvas.width*0.2);
+  setTimeout(()=>burst(canvas.width*0.5),150);
+  setTimeout(()=>burst(canvas.width*0.8),300);
+  let frame=0;
+  function loop(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);frame++;
+    if(frame%22===0) burst();
+    for(let i=particles.length-1;i>=0;i--){
+      const p=particles[i];p.x+=p.vx;p.y+=p.vy;p.vy+=.07;p.vx*=.99;p.alpha-=p.decay;
+      if(p.alpha<=0){particles.splice(i,1);continue}
+      ctx.save();ctx.globalAlpha=p.alpha;
+      // neon glow effect
+      ctx.shadowColor=p.color;ctx.shadowBlur=6;
+      ctx.fillStyle=p.color;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fill();
+      ctx.restore();
+    }
+    fwRaf=requestAnimationFrame(loop);
+  }
+  loop();
+}
+
+// ── Week chart ────────────────────────────────────────────────────────────────
+function renderWeek(){
+  const weekStart=getWeekStart(todayStr());
+  const days=['Mo','Di','Mi','Do','Fr','Sa','So'];
+  const data=[];
+  let weekPush=0,weekPull=0,weekDays=0;
+  for(let i=0;i<7;i++){
+    const d=addDays(weekStart,i);
+    const dayEntries=entries.filter(e=>e.date===d);
+    const push=dayEntries.reduce((a,e)=>a+e.push,0);
+    const pull=dayEntries.reduce((a,e)=>a+e.pull,0);
+    data.push({day:days[i],push,pull,date:d});
+    weekPush+=push;weekPull+=pull;
+    if(push>0||pull>0)weekDays++;
+  }
+  document.getElementById('week-push').textContent=weekPush;
+  document.getElementById('week-pull').textContent=weekPull;
+  document.getElementById('week-days').textContent=weekDays;
+  document.getElementById('week-avg').textContent=weekDays>0?Math.round(weekPush/weekDays):0;
+
+  // Use ONE shared max so bars are proportional to each other
+  const maxVal=Math.max(...data.map(d=>Math.max(d.push,d.pull)),1);
+  const svg=document.getElementById('week-graph');
+  const W=svg.parentElement.offsetWidth||320;
+  const H=150;
+  svg.setAttribute('viewBox',`0 0 ${W} ${H}`);
+  const today=todayStr();
+  const numDays=7;
+  const slotW=W/numDays;
+  const barW=Math.max(slotW*0.3,5);
+  const gap=slotW*0.06;
+  const maxBarH=100;
+  const baseY=H-18;
+  const labelSpace=14;
+
+  let html='';
+
+  data.forEach((d,i)=>{
+    const cx=slotW*i+slotW/2;
+    const isToday=d.date===today;
+    const opacity=isToday?'1':'0.75';
+
+    // Push bar (blue, left) – scaled against shared maxVal
+    const pushH=d.push>0?Math.max((d.push/maxVal)*maxBarH,4):0;
+    const pushX=cx-barW-gap/2;
+    if(pushH>0){
+      html+=`<rect x="${pushX}" y="${baseY-pushH}" width="${barW}" height="${pushH}" rx="3" fill="#60a5fa" opacity="${opacity}"/>`;
+      // Number above bar
+      html+=`<text x="${pushX+barW/2}" y="${baseY-pushH-4}" text-anchor="middle" font-size="8" font-family="monospace" fill="#60a5fa" font-weight="600">${d.push}</text>`;
+    } else {
+      html+=`<rect x="${pushX}" y="${baseY-3}" width="${barW}" height="3" rx="1.5" fill="rgba(96,165,250,0.15)"/>`;
+    }
+
+    // Pull bar (green, right) – scaled against shared maxVal
+    const pullH=d.pull>0?Math.max((d.pull/maxVal)*maxBarH,4):0;
+    const pullX=cx+gap/2;
+    if(pullH>0){
+      html+=`<rect x="${pullX}" y="${baseY-pullH}" width="${barW}" height="${pullH}" rx="3" fill="#4ade80" opacity="${opacity}"/>`;
+      // Number above bar
+      html+=`<text x="${pullX+barW/2}" y="${baseY-pullH-4}" text-anchor="middle" font-size="8" font-family="monospace" fill="#4ade80" font-weight="600">${d.pull}</text>`;
+    } else {
+      html+=`<rect x="${pullX}" y="${baseY-3}" width="${barW}" height="3" rx="1.5" fill="rgba(74,222,128,0.15)"/>`;
+    }
+
+    // Day label
+    const dayColor=isToday?'#7c6ef5':'rgba(144,144,160,0.8)';
+    html+=`<text x="${cx}" y="${H-3}" text-anchor="middle" font-size="9" fill="${dayColor}" font-weight="${isToday?'700':'400'}" font-family="sans-serif">${d.day}</text>`;
+  });
+
+  svg.innerHTML=html;
+
+  // Weekly summary
+  const summaryEl=document.getElementById('weekly-summary');
+  if(weekPush===0){summaryEl.innerHTML='<div class="empty">Noch nicht genug Daten</div>';return}
+  const avg=weekDays>0?Math.round(weekPush/weekDays):0;
+  const goalMet=data.filter(d=>d.push>=settings.goalPush).length;
+  summaryEl.innerHTML=`
+    <div class="wsum-grid">
+      <div class="wsum-card wblue">
+        
+        <div class="wsum-label">LS diese Woche</div>
+        <div class="wsum-val">${weekPush}</div>
+        <div class="wsum-sub">gesamt</div>
+      </div>
+      <div class="wsum-card wgreen">
+        
+        <div class="wsum-label">KZ diese Woche</div>
+        <div class="wsum-val">${weekPull}</div>
+        <div class="wsum-sub">gesamt</div>
+      </div>
+      <div class="wsum-card worange">
+        
+        <div class="wsum-label">Ziel erreicht</div>
+        <div class="wsum-val">${goalMet} / ${weekDays}</div>
+        <div class="wsum-sub">Trainingstagen</div>
+      </div>
+      <div class="wsum-card wpurple">
+        
+        <div class="wsum-label">Ø pro Trainingstag</div>
+        <div class="wsum-val">${avg}</div>
+        <div class="wsum-sub">LS</div>
+      </div>
+    </div>
+  `;
+}
+
+function renderRecords(){
+  const setEl=(id,val)=>{const el=document.getElementById(id);if(el)el.textContent=val;};
+
+  if(!entries||!entries.length){
+    setEl('rec-day-push','—');setEl('rec-day-push-date','');
+    setEl('rec-day-pull','—');setEl('rec-day-pull-date','');
+    setEl('rec-week-push','—');setEl('rec-week-push-label','');
+    setEl('rec-streak','—');
+    return;
+  }
+
+  const grouped={};
+  entries.forEach(e=>{
+    if(!grouped[e.date])grouped[e.date]={push:0,pull:0};
+    grouped[e.date].push+=e.push;grouped[e.date].pull+=e.pull;
+  });
+  const days=Object.keys(grouped);
+  const maxDayPush=Math.max(...days.map(d=>grouped[d].push));
+  const maxDayPull=Math.max(...days.map(d=>grouped[d].pull));
+
+  const weeks={};
+  days.forEach(d=>{const ws=getWeekStart(d);if(!weeks[ws])weeks[ws]=0;weeks[ws]+=grouped[d].push});
+  const maxWeekPush=Object.values(weeks).length?Math.max(...Object.values(weeks)):0;
+
+  setEl('rec-day-push', maxDayPush>0?maxDayPush:'—');
+  setEl('rec-day-push-date', maxDayPush>0?'am '+formatDate(days.find(d=>grouped[d].push===maxDayPush)||''):'');
+  setEl('rec-day-pull', maxDayPull>0?maxDayPull:'—');
+  setEl('rec-day-pull-date', maxDayPull>0?'am '+formatDate(days.find(d=>grouped[d].pull===maxDayPull)||''):'');
+  setEl('rec-week-push', maxWeekPush>0?maxWeekPush:'—');
+  setEl('rec-week-push-label', maxWeekPush>0?'Liegestütze':'');
+
+  const sortedDays=[...new Set(days)].sort();
+  let bestStreak=0,cur=0,prev=null;
+  sortedDays.forEach(d=>{
+    if(!prev){cur=1;}else{const diff=Math.round((new Date(d)-new Date(prev))/86400000);cur=diff===1?cur+1:1;}
+    if(cur>bestStreak)bestStreak=cur;prev=d;
+  });
+  setEl('rec-streak', bestStreak>0?bestStreak:'—');
+}
+
+// ── Tab / Log ─────────────────────────────────────────────────────────────────
+function switchTab(tab){
+  const tabs=['training','berichte','koerper','einstellungen'];
+  document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',['training','berichte','koerper'][i]===tab));
+  tabs.forEach(t=>document.getElementById('tab-'+t).classList.toggle('active',t===tab));
+  if(tab==='berichte'){renderWeek();renderRecords()}
+  if(tab==='koerper'){calcKcal()}
+}
+
+// ── Körper / Kcal ─────────────────────────────────────────────────────────────
+let bodyGender='male';
+let bodyActivity=1.55;
+
+function cdropSelectGender(val){
+  bodyGender=val;
+  const label=val==='male'?'Männlich':'Weiblich';
+  document.getElementById('cdrop-val-body-gender').textContent=label;
+  document.getElementById('cdrop-disp-body-gender').classList.remove('open');
+  document.getElementById('cdrop-menu-body-gender').classList.remove('open');
+  document.getElementById('cdrop-menu-body-gender').querySelectorAll('.cdrop-item').forEach(el=>{
+    el.classList.toggle('active',(val==='male'&&el.textContent==='Männlich')||(val==='female'&&el.textContent==='Weiblich'));
+  });
+  calcKcal();
+}
+
+function cdropSelectActivity(val,label){
+  bodyActivity=parseFloat(val);
+  document.getElementById('cdrop-val-body-activity').textContent=label;
+  document.getElementById('cdrop-disp-body-activity').classList.remove('open');
+  document.getElementById('cdrop-menu-body-activity').classList.remove('open');
+  document.getElementById('cdrop-menu-body-activity').querySelectorAll('.cdrop-item').forEach(el=>{
+    el.classList.toggle('active',el.textContent.startsWith(label));
+  });
+  calcKcal();
+}
+
+function saveBodyData(){
+  const bd={gender:bodyGender,age:cdropSelected['body-age'],height:cdropSelected['body-height'],weight:cdropSelected['body-weight'],activity:bodyActivity};
+  localStorage.setItem('ft_body',JSON.stringify(bd));
+}
+
+function loadBodyData(){
+  try{
+    const bd=JSON.parse(localStorage.getItem('ft_body')||'{}');
+    if(bd.gender) cdropSelectGender(bd.gender);
+    if(bd.age)    cdropSelect('body-age', bd.age);
+    if(bd.height) cdropSelect('body-height', bd.height);
+    if(bd.weight) cdropSelect('body-weight', bd.weight);
+    if(bd.activity){
+      const labels={'1.2':'Kaum Bewegung','1.375':'Leicht aktiv','1.55':'Moderat aktiv','1.725':'Sehr aktiv','1.9':'Extrem aktiv'};
+      cdropSelectActivity(String(bd.activity), labels[String(bd.activity)]||'Moderat aktiv');
+    }
+  }catch(e){}
+}
+
+function calcKcal(){
+  saveBodyData();
+  const gender=bodyGender;
+  const age=cdropSelected['body-age'];
+  const height=cdropSelected['body-height'];
+  const weight=cdropSelected['body-weight'];
+  const activity=bodyActivity;
+  if(!age||!height||!weight){
+    document.getElementById('kcal-cards').style.display='none';
+    return;
+  }
+  // Harris-Benedict
+  let bmr;
+  if(gender==='male') bmr=Math.round(88.362+(13.397*weight)+(4.799*height)-(5.677*age));
+  else bmr=Math.round(447.593+(9.247*weight)+(3.098*height)-(4.330*age));
+  const tdee=Math.round(bmr*activity);
+
+  // Training kcal today
+  const today=todayStr();
+  const te=entries.filter(e=>e.date===today);
+  const todayPush=te.reduce((a,e)=>a+e.push,0);
+  const todayPull=te.reduce((a,e)=>a+e.pull,0);
+  // ~0.5 kcal per pushup, ~1 kcal per pullup (adjusted for body weight)
+  const weightFactor=weight/70;
+  const workoutKcal=Math.round((todayPush*0.5+todayPull*1.0)*weightFactor);
+  const totalKcal=tdee+workoutKcal;
+
+  document.getElementById('kcal-bmr').textContent=bmr.toLocaleString('de-DE');
+  document.getElementById('kcal-tdee').textContent=tdee.toLocaleString('de-DE');
+  document.getElementById('kcal-workout').textContent=workoutKcal>0?'+'+workoutKcal:'0';
+  document.getElementById('kcal-total').textContent=totalKcal.toLocaleString('de-DE');
+  document.getElementById('kcal-cards').style.display='grid';
+}
+
+// ── Streak ────────────────────────────────────────────────────────────────────
+function calcStreak(){
+  const days=[...new Set(entries.map(e=>e.date))].sort().reverse();
+  if(!days.length)return 0;
+  let s=0;const today=new Date();today.setHours(0,0,0,0);let cur=today;
+  for(let i=0;i<days.length;i++){const d=new Date(days[i]);const diff=Math.round((cur-d)/86400000);if(diff<=1){s++;cur=d}else break}
+  return s;
+}
+
+// ── Log render ────────────────────────────────────────────────────────────────
+function renderLog(){
+  const searchVal=(document.getElementById('log-search')?document.getElementById('log-search').value.trim():'').toLowerCase();
+  const today=todayStr();
+  const log=document.getElementById('log-list');
+  if(!entries.length){log.innerHTML='<div class="empty">Noch keine Einträge</div>';return}
+  const grouped={};
+  entries.forEach(e=>{if(!grouped[e.date])grouped[e.date]={push:0,pull:0,count:0};grouped[e.date].push+=e.push;grouped[e.date].pull+=e.pull;grouped[e.date].count++});
+  let days=Object.keys(grouped).sort().reverse();
+  if(searchVal)days=days.filter(d=>formatDate(d).includes(searchVal)||d.includes(searchVal));
+  if(!days.length){log.innerHTML='<div class="empty">Kein Eintrag gefunden</div>';return}
+  log.innerHTML=days.map(d=>{
+    const g=grouped[d];const isToday=d===today;
+    return`<div class="log-item"><div><div class="log-date-main">${formatDate(d)}${isToday?'<span class="today-tag">heute</span>':''}</div><div class="log-date-sub">${g.count} Einheit${g.count!==1?'en':''}</div></div><div class="log-right"><span class="badge badge-push">${g.push} LS</span>${g.pull>0?`<span class="badge badge-pull">${g.pull} KZ</span>`:''}<button class="del-btn" onclick="deleteDay('${d}')">✕</button></div></div>`;
+  }).join('');
+}
+
+// ── Render ────────────────────────────────────────────────────────────────────
+function render(){
+  const today=todayStr();
+  const te=entries.filter(e=>e.date===today);
+  const todayPush=te.reduce((a,e)=>a+e.push,0);
+  const todayPull=te.reduce((a,e)=>a+e.pull,0);
+  document.getElementById('today-push').textContent=todayPush;
+  document.getElementById('today-pull').textContent=todayPull;
+  document.getElementById('total-push').textContent=entries.reduce((a,e)=>a+e.push,0);
+  document.getElementById('total-pull').textContent=entries.reduce((a,e)=>a+e.pull,0);
+  document.getElementById('total-days').textContent=new Set(entries.map(e=>e.date)).size;
+  document.getElementById('streak-val').textContent=calcStreak();
+  updateProgress(todayPush, todayPull);
+  if(document.getElementById('log-overlay').classList.contains('show')) renderLog();
+  return {todayPush, todayPull};
+}
+
+// ── Custom dropdowns ──────────────────────────────────────────────────────────
+const CDROP_VALS = {
+  push: Array.from({length:51},(_,i)=>i),
+  pull: Array.from({length:51},(_,i)=>i),
+  'goal-push': Array.from({length:501},(_,i)=>i),
+  'goal-pull': Array.from({length:501},(_,i)=>i),
+  'body-age':    Array.from({length:91},(_,i)=>i+10),
+  'body-height': Array.from({length:121},(_,i)=>i+130),
+  'body-weight': Array.from({length:221},(_,i)=>i+30)
+};
+const cdropSelected = {push:0, pull:0, 'goal-push':0, 'goal-pull':0, 'body-age':null, 'body-height':null, 'body-weight':null};
+
+function cdropBuild(type){
+  const menu = document.getElementById('cdrop-menu-'+type);
+  const items = CDROP_VALS[type];
+  const firstVal = items[0];
+  menu.innerHTML = items.map(v =>
+    `<div class="cdrop-item${v===firstVal?' active':''}" onclick="cdropSelect('${type}',${v})">${v}</div>`
+  ).join('');
+}
+
+const ALL_CDROPS=['push','pull','goal-push','goal-pull','body-age','body-height','body-weight','body-gender','body-activity'];
+
+function cdropToggle(type){
+  const menu=document.getElementById('cdrop-menu-'+type);
+  const isOpen=menu.classList.contains('open');
+  ALL_CDROPS.forEach(t=>{
+    const d=document.getElementById('cdrop-disp-'+t);
+    const m=document.getElementById('cdrop-menu-'+t);
+    if(d) d.classList.remove('open');
+    if(m) m.classList.remove('open');
+  });
+  if(!isOpen){
+    const disp=document.getElementById('cdrop-disp-'+type);
+    if(disp) disp.classList.add('open');
+    menu.classList.add('open');
+    const active=menu.querySelector('.active');
+    if(active) setTimeout(()=>active.scrollIntoView({block:'nearest'}),50);
+  }
+}
+
+function syncFromInput(type){
+  const el=document.getElementById('inp-'+type);
+  let val=parseInt(el.value)||0;
+  if(val<0)val=0;
+  if(val>500)val=500;
+  cdropSelected[type]=val;
+  // update active in dropdown
+  const menu=document.getElementById('cdrop-menu-'+type);
+  if(menu) menu.querySelectorAll('.cdrop-item').forEach(item=>{
+    item.classList.toggle('active', parseInt(item.textContent)===val);
+  });
+}
+
+function cdropSelect(type, val){
+  cdropSelected[type]=val;
+  if(type==='push'||type==='pull'||type==='goal-push'||type==='goal-pull'){
+    const inp=document.getElementById('inp-'+type);
+    if(inp) inp.value=val;
+  } else {
+    const valEl=document.getElementById('cdrop-val-'+type);
+    const dispEl=document.getElementById('cdrop-disp-'+type);
+    if(valEl) valEl.textContent=val;
+    if(dispEl) dispEl.classList.remove('open');
+  }
+  const menu=document.getElementById('cdrop-menu-'+type);
+  if(menu){
+    menu.classList.remove('open');
+    menu.querySelectorAll('.cdrop-item').forEach(el=>{
+      el.classList.toggle('active', parseInt(el.textContent)===val);
+    });
+  }
+  if(appReady && (type==='goal-push'||type==='goal-pull')) saveSettings();
+  if(type==='body-age'||type==='body-height'||type==='body-weight') calcKcal();
+}
+
+document.addEventListener('click', function(e){
+  ALL_CDROPS.forEach(type=>{
+    const wrap=document.getElementById('cdrop-wrap-'+type);
+    if(wrap&&!wrap.contains(e.target)){
+      const d=document.getElementById('cdrop-disp-'+type);
+      const m=document.getElementById('cdrop-menu-'+type);
+      if(d) d.classList.remove('open');
+      if(m) m.classList.remove('open');
+    }
+  });
+});
+function addEntry(){
+  if(settings.soundEnabled) try{_getAC();}catch(e){}
+  const date=getEntryDate();
+  const push=cdropSelected.push;
+  const pull=cdropSelected.pull;
+  if(push===0&&pull===0){toast('Bitte einen Wert auswählen');return}
+  entries.push({date,push,pull,id:Date.now()});save();
+  cdropSelect('push',0);
+  cdropSelect('pull',0);
+  const {todayPush,todayPull}=render();
+  toast('Einheit eingetragen ✓');
+  if(date===todayStr()) checkMilestones(todayPush,todayPull);
+}
+function deleteDay(date){
+  if(!confirm('Tag '+date.split('-').reverse().join('.')+' wirklich löschen?'))return;
+  entries=entries.filter(e=>e.date!==date);save();render();toast('Tag gelöscht');
+}
+
+function exportData(){
+  const bodyData=JSON.parse(localStorage.getItem('ft_body')||'{}');
+  // Collect all celebration keys for today (milestones etc.)
+  const celKeys={};
+  Object.keys(localStorage).filter(k=>k.startsWith('cel_')||k.startsWith('goal_cel_')).forEach(k=>{
+    try{celKeys[k]=JSON.parse(localStorage.getItem(k));}catch(e){}
+  });
+  const data=JSON.stringify({
+    version:3,
+    exported:new Date().toISOString(),
+    entries,
+    settings:{
+      goalPush:settings.goalPush,
+      goalPull:settings.goalPull,
+      darkMode:settings.darkMode,
+      showBadges:settings.showBadges,
+      soundEnabled:settings.soundEnabled
+    },
+    xp:getTotalXP(),
+    name:localStorage.getItem('ft_name')||'',
+    body:bodyData,
+    celebrationKeys:celKeys
+  },null,2);
+  const blob=new Blob([data],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;a.download='fitness-backup-'+todayStr()+'.json';a.click();URL.revokeObjectURL(url);
+  toast('Datensicherung gespeichert ✓');
+}
+function importData(event){
+  const file=event.target.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=function(e){
+    try{
+      const data=JSON.parse(e.target.result);
+      const imported=data.entries||data;
+      if(!Array.isArray(imported))throw new Error();
+
+      // 1) Einträge zusammenführen
+      const existing=new Set(entries.map(e=>e.date+'_'+e.push+'_'+e.pull+'_'+e.id));
+      let added=0;
+      imported.forEach(function(entry){
+        const key=entry.date+'_'+entry.push+'_'+entry.pull+'_'+entry.id;
+        if(!existing.has(key)){entries.push(entry);added++}
+      });
+      save();
+
+      // 2) Settings vollständig wiederherstellen
+      if(data.settings){
+        settings={...settings,...data.settings};
+        if(settings.showBadges===undefined) settings.showBadges=true;
+        if(settings.soundEnabled===undefined) settings.soundEnabled=true;
+        localStorage.setItem('ft_settings',JSON.stringify(settings));
+      }
+
+      // 3) XP: nimm den höchsten Wert aus aktuell, Backup und Retroberechnung
+      const currentXP=getTotalXP();
+      const backupXP=parseInt(data.xp)||0;
+      const gPush=settings.goalPush||0;
+      const gPull=settings.goalPull||0;
+      const grouped={};
+      imported.forEach(function(en){
+        if(!grouped[en.date]) grouped[en.date]={push:0,pull:0};
+        grouped[en.date].push+=en.push; grouped[en.date].pull+=en.pull;
+      });
+      let retroXP=0;
+      Object.values(grouped).forEach(function(day){
+        MILESTONES.forEach(function(m){if(day.push>=m) retroXP+=5;});
+        MILESTONES.forEach(function(m){if(day.pull>=m) retroXP+=5;});
+        if(gPush>0&&day.push>=gPush) retroXP+=15;
+        if(gPull>0&&day.pull>=gPull) retroXP+=15;
+      });
+      setTotalXP(Math.max(currentXP, backupXP, retroXP));
+
+      // 4) Name wiederherstellen
+      if(data.name) localStorage.setItem('ft_name',data.name);
+
+      // 5) Körperdaten vollständig wiederherstellen
+      if(data.body&&Object.keys(data.body).length)
+        localStorage.setItem('ft_body',JSON.stringify(data.body));
+
+      // 6) Meilenstein-Keys wiederherstellen
+      if(data.celebrationKeys){
+        Object.keys(data.celebrationKeys).forEach(k=>{
+          localStorage.setItem(k,JSON.stringify(data.celebrationKeys[k]));
+        });
+      }
+
+      // 7) UI komplett neu aufbauen
+      applyTheme();
+      appReady=false;
+      cdropSelect('goal-push',settings.goalPush||0);
+      cdropSelect('goal-pull',settings.goalPull||0);
+      appReady=true;
+      document.getElementById('toggle-dark').checked=settings.darkMode;
+      document.getElementById('toggle-badges').checked=settings.showBadges!==false;
+      document.getElementById('toggle-sound').checked=settings.soundEnabled!==false;
+      try{_getAC();}catch(e){}
+      loadName();
+      loadBodyData();
+      render();
+      renderLevelCard();
+      toast(added+' Einträge importiert ✓');
+    }catch(err){toast('Fehler: Ungültige Datei')}
+  };
+  reader.readAsText(file);event.target.value='';
+}
+function deleteAll(){
+  // Clear ALL localStorage keys used by this app
+  localStorage.removeItem('training_log');
+  localStorage.removeItem('ft_settings');
+  localStorage.removeItem('ft_body');
+  localStorage.removeItem('ft_goals_v2');
+  localStorage.removeItem('ft_xp');
+  localStorage.removeItem('ft_name');
+  Object.keys(localStorage).filter(k=>
+    k.startsWith('cel_')||k.startsWith('goal_cel_')
+  ).forEach(k=>localStorage.removeItem(k));
+
+  // Reset entries
+  entries=[];
+
+  // Reset settings to defaults
+  settings={goalPush:0,goalPull:0,darkMode:true,showBadges:true};
+  localStorage.setItem('ft_goals_v2','1');
+
+  // Reset goal dropdowns
+  appReady=false;
+  cdropSelect('goal-push',0);
+  cdropSelect('goal-pull',0);
+  appReady=true;
+
+  // Reset toggles
+  document.getElementById('toggle-dark').checked=true;
+
+  // Reset progress bars
+  const fp=document.getElementById('progress-fill-push');if(fp){fp.style.width='0%';fp.style.background='';}
+  const fpl=document.getElementById('progress-fill-pull');if(fpl){fpl.style.width='0%';fpl.style.background='';}
+  const pc=document.getElementById('progress-combined');if(pc)pc.style.display='none';
+
+  // Reset profile / body data
+  cdropSelected['body-age']=null;
+  cdropSelected['body-height']=null;
+  cdropSelected['body-weight']=null;
+  bodyGender='male';
+  bodyActivity=1.55;
+  const bage=document.getElementById('inp-body-age');if(bage)bage.value='';
+  const bheight=document.getElementById('inp-body-height');if(bheight)bheight.value='';
+  const bweight=document.getElementById('inp-body-weight');if(bweight)bweight.value='';
+  cdropSelectGender('male');
+  cdropSelectActivity('1.55','Moderat aktiv');
+  document.getElementById('kcal-cards').style.display='none';
+
+  // Reset training input dropdowns
+  cdropSelect('push',0);
+  cdropSelect('pull',0);
+
+  // Reset name
+  localStorage.removeItem('ft_name');
+  renderLevelCard();
+
+  // Reset date to today
+  document.getElementById('inp-date').value=todayStr();
+
+  // Switch back to Einstellungen tab
+  switchTab('einstellungen');
+  settings.soundEnabled=true;
+  document.getElementById('toggle-sound').checked=true;
+  try{_getAC();}catch(e){}
+  render();
+  renderLevelCard();
+  toast('App auf Startzustand zurückgesetzt');
+}
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+document.getElementById('inp-date').value=todayStr();
+document.getElementById('toggle-badges').checked=settings.showBadges!==false;
+document.getElementById('toggle-sound').checked=settings.soundEnabled!==false;
+applyTheme();
+cdropBuild('push');
+cdropBuild('pull');
+cdropBuild('goal-push');
+cdropBuild('goal-pull');
+cdropBuild('body-age');
+cdropBuild('body-height');
+cdropBuild('body-weight');
+cdropSelect('goal-push', settings.goalPush);
+cdropSelect('goal-pull', settings.goalPull);
+loadBodyData();
+loadName();
+initDateDisplay();
+render();
+renderLevelCard();
+appReady = true;
+
+// Prevent overscroll/bounce on iOS
+document.body.addEventListener('touchmove', function(e){
+  if(e.target.closest('.level-legend-body, .help-body, #log-list, .cdrop-menu, .shop-items, .help-box, .level-box')) return;
+  const el=e.target.closest('[style*="overflow"],.cdrop-menu');
+  if(!el) return;
+}, {passive:true});
+</script>
+</body>
+</html>
