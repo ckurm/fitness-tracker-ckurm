@@ -1766,8 +1766,8 @@ function renderLog(){
       +'</div>'
     +'</div>';
 
-    // Individual entries
-    dayEntries.forEach(function(e){
+    // Individual entries – neueste zuerst
+    dayEntries.slice().sort(function(a,b){return b.id-a.id;}).forEach(function(e){
       const t=e.id?new Date(e.id):null;
       const timeStr=t?t.toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'}):'';
       html+='<div class="log-item" style="padding:7px 0 7px 12px;border-bottom:0.5px solid var(--border)">'
