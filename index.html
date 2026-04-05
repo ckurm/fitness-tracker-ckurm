@@ -1734,16 +1734,55 @@ function renderLog(){
   const searchVal=(document.getElementById('log-search')?document.getElementById('log-search').value.trim():'').toLowerCase();
   const today=todayStr();
   const log=document.getElementById('log-list');
-  if(!entries.length){log.innerHTML='<div class="empty">Noch keine Einträge</div>';return}
+  if(!entries.length){log.innerHTML='<div class="empty">Noch keine Einträge</div>';return;}
+
+  // Group entries by day but keep individual entries inside
   const grouped={};
-  entries.forEach(e=>{if(!grouped[e.date])grouped[e.date]={push:0,pull:0,count:0};grouped[e.date].push+=e.push;grouped[e.date].pull+=e.pull;grouped[e.date].count++});
+  entries.forEach(function(e){
+    if(!grouped[e.date]) grouped[e.date]=[];
+    grouped[e.date].push(e);
+  });
   let days=Object.keys(grouped).sort().reverse();
-  if(searchVal)days=days.filter(d=>formatDate(d).includes(searchVal)||d.includes(searchVal));
-  if(!days.length){log.innerHTML='<div class="empty">Kein Eintrag gefunden</div>';return}
-  log.innerHTML=days.map(d=>{
-    const g=grouped[d];const isToday=d===today;
-    return`<div class="log-item"><div><div class="log-date-main">${formatDate(d)}${isToday?'<span class="today-tag">heute</span>':''}</div><div class="log-date-sub">${g.count} Einheit${g.count!==1?'en':''}</div></div><div class="log-right"><span class="badge badge-push">${g.push} LS</span>${g.pull>0?`<span class="badge badge-pull">${g.pull} KZ</span>`:''}<button class="del-btn" onclick="deleteDay('${d}')">✕</button></div></div>`;
-  }).join('');
+  if(searchVal) days=days.filter(function(d){return formatDate(d).toLowerCase().includes(searchVal)||d.includes(searchVal);});
+  if(!days.length){log.innerHTML='<div class="empty">Kein Eintrag gefunden</div>';return;}
+
+  let html='';
+  days.forEach(function(d){
+    const dayEntries=grouped[d];
+    const isToday=d===today;
+    const totalPush=dayEntries.reduce(function(a,e){return a+e.push;},0);
+    const totalPull=dayEntries.reduce(function(a,e){return a+e.pull;},0);
+
+    // Day header
+    html+='<div style="display:flex;align-items:center;justify-content:space-between;padding:9px 0 5px">'
+      +'<div>'
+        +'<span style="font-size:14px;font-weight:600">'+formatDate(d)+(isToday?'<span class="today-tag">heute</span>':'')+'</span>'
+        +'<span style="font-size:11px;color:var(--text3);margin-left:8px">'+dayEntries.length+' Einheit'+(dayEntries.length!==1?'en':'')+'</span>'
+      +'</div>'
+      +'<div style="display:flex;align-items:center;gap:6px">'
+        +'<span class="badge badge-push">'+totalPush+' LS</span>'
+        +(totalPull>0?'<span class="badge badge-pull">'+totalPull+' KZ</span>':'')
+        +'<button class="del-btn" onclick="deleteDay(\''+d+'\')" title="Ganzen Tag löschen" style="color:var(--red);opacity:0.5;font-size:13px">✕ Tag</button>'
+      +'</div>'
+    +'</div>';
+
+    // Individual entries
+    dayEntries.forEach(function(e){
+      const t=e.id?new Date(e.id):null;
+      const timeStr=t?t.toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'}):'';
+      html+='<div class="log-item" style="padding:7px 0 7px 12px;border-bottom:0.5px solid var(--border)">'
+        +'<div style="flex:1">'
+          +(timeStr?'<span style="font-size:11px;color:var(--text3);font-family:\'DM Mono\',monospace;margin-right:8px">'+timeStr+'</span>':'')
+          +(e.push>0?'<span class="badge badge-push" style="margin-right:4px">'+e.push+' LS</span>':'')
+          +(e.pull>0?'<span class="badge badge-pull">'+e.pull+' KZ</span>':'')
+        +'</div>'
+        +'<button class="del-btn" onclick="deleteEntry(\''+e.id+'\')" title="Einzelnen Eintrag löschen">✕</button>'
+      +'</div>';
+    });
+
+    html+='<div style="height:8px"></div>';
+  });
+  log.innerHTML=html;
 }
 
 // ── Render ────────────────────────────────────────────────────────────────────
@@ -1866,6 +1905,13 @@ function addEntry(){
 function deleteDay(date){
   if(!confirm('Tag '+date.split('-').reverse().join('.')+' wirklich löschen?'))return;
   entries=entries.filter(e=>e.date!==date);save();render();toast('Tag gelöscht');
+}
+function deleteEntry(id){
+  const entry=entries.find(e=>String(e.id)===String(id));
+  if(!entry)return;
+  entries=entries.filter(e=>String(e.id)!==String(id));
+  save();render();
+  toast('Eintrag rückgängig gemacht ✓');
 }
 
 function exportData(){
