@@ -369,7 +369,7 @@ body.light .combo-arrow-btn{border-left-color:rgba(0,0,0,0.1)}
     </div>
 
     <!-- Progress -->
-    <div class="progress-combined" id="progress-combined" style="display:none">
+    <div class="progress-combined" id="progress-combined">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
         <div style="font-size:11px;font-weight:500;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px">Tagesziel</div>
         <button class="settings-icon-btn" onclick="openGoalOverlay()" title="Tagesziel bearbeiten" style="margin-right:4px">
@@ -1271,39 +1271,47 @@ function updateProgress(todayPush, todayPull){
   const combined=document.getElementById('progress-combined');
   const rowPush=document.getElementById('progress-row-push');
   const rowPull=document.getElementById('progress-row-pull');
-  const hasPush=settings.goalPush>0;
-  const hasPull=settings.goalPull>0;
 
-  if(!hasPush&&!hasPull){combined.style.display='none';return;}
+  // Always show
   combined.style.display='flex';
 
   // Push row
-  if(hasPush){
-    rowPush.style.display='flex';
-    const pct=Math.min(100,Math.round((todayPush/settings.goalPush)*100));
+  const goalPush=settings.goalPush||0;
+  rowPush.style.display='flex';
+  if(goalPush>0){
+    const pct=Math.min(100,Math.round((todayPush/goalPush)*100));
     const fill=document.getElementById('progress-fill-push');
     fill.style.width=pct+'%';
     fill.style.background='linear-gradient(90deg,#3b82f6,#60a5fa)';
     fill.style.boxShadow=pct>0?'0 0 8px #60a5fa':'none';
-    document.getElementById('progress-nums-push').textContent=todayPush+'/'+settings.goalPush;
+    document.getElementById('progress-nums-push').textContent=todayPush+'/'+goalPush;
     document.getElementById('progress-label-push').textContent=pct+'%'+(pct>=100?' 🎯':'');
     if(pct>=100) checkGoalCelebration('push',todayPush);
-  } else rowPush.style.display='none';
-
-  // Divider only when both visible
+  } else {
+    const fill=document.getElementById('progress-fill-push');
+    fill.style.width='0%';fill.style.boxShadow='none';
+    document.getElementById('progress-nums-push').textContent=todayPush+' / –';
+    document.getElementById('progress-label-push').textContent='kein Ziel';
+  }
 
   // Pull row
-  if(hasPull){
-    rowPull.style.display='flex';
-    const pct=Math.min(100,Math.round((todayPull/settings.goalPull)*100));
+  const goalPull=settings.goalPull||0;
+  rowPull.style.display='flex';
+  if(goalPull>0){
+    const pct=Math.min(100,Math.round((todayPull/goalPull)*100));
     const fill=document.getElementById('progress-fill-pull');
     fill.style.width=pct+'%';
     fill.style.background='linear-gradient(90deg,#16a34a,#4ade80)';
     fill.style.boxShadow=pct>0?'0 0 8px #4ade80':'none';
-    document.getElementById('progress-nums-pull').textContent=todayPull+'/'+settings.goalPull;
+    document.getElementById('progress-nums-pull').textContent=todayPull+'/'+goalPull;
     document.getElementById('progress-label-pull').textContent=pct+'%'+(pct>=100?' 🎯':'');
     if(pct>=100) checkGoalCelebration('pull',todayPull);
-  } else rowPull.style.display='none';
+  } else {
+    const fill=document.getElementById('progress-fill-pull');
+    fill.style.width='0%';fill.style.boxShadow='none';
+    document.getElementById('progress-nums-pull').textContent=todayPull+' / –';
+    document.getElementById('progress-label-pull').textContent='kein Ziel';
+  }
 }
 
 
@@ -1777,7 +1785,6 @@ function deleteAll(){
   // Reset progress bars
   const fp=document.getElementById('progress-fill-push');if(fp){fp.style.width='0%';fp.style.background='';}
   const fpl=document.getElementById('progress-fill-pull');if(fpl){fpl.style.width='0%';fpl.style.background='';}
-  const pc=document.getElementById('progress-combined');if(pc)pc.style.display='none';
 
   // Reset profile / body data
   cdropSelected['body-age']=null;
