@@ -48,30 +48,24 @@ header p{font-size:12px;color:var(--text2);margin-top:2px}
 .tab-content{display:none}.tab-content.active{display:block}
 
 /* Stats */
-.stat-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:8px}
-.stat{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radius);padding:12px;text-align:center;position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:center;height:84px}
-.stat::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:var(--radius) var(--radius) 0 0}
+
 .stat-blue::before{background:linear-gradient(90deg,#3b82f6,#60a5fa)}
-.stat-blue .stat-val{color:#60a5fa}
-.stat-blue{border-color:rgba(96,165,250,0.2)}
+.stat-blue 
+
 .stat-green::before{background:linear-gradient(90deg,#16a34a,#4ade80)}
-.stat-green .stat-val{color:#4ade80}
-.stat-green{border-color:rgba(74,222,128,0.2)}
+.stat-green 
+
 .stat-orange::before{background:linear-gradient(90deg,#ea580c,#fb923c)}
-.stat-orange .stat-val{color:#fb923c}
-.stat-orange{border-color:rgba(251,146,60,0.2)}
+.stat-orange 
+
 .stat-purple::before{background:linear-gradient(90deg,#7c3aed,#a78bfa)}
-.stat-purple .stat-val{color:#a78bfa}
-.stat-purple{border-color:rgba(167,139,250,0.2)}
+.stat-purple 
+
 .stat-teal::before{background:linear-gradient(90deg,#0891b2,#22d3ee)}
-.stat-teal .stat-val{color:#22d3ee}
-.stat-teal{border-color:rgba(34,211,238,0.2)}
+.stat-teal 
+
 .stat-pink::before{background:linear-gradient(90deg,#be185d,#f472b6)}
-.stat-pink .stat-val{color:#f472b6}
-.stat-pink{border-color:rgba(244,114,182,0.2)}
-.stat-label{font-size:11px;color:var(--text2);line-height:1.3}
-.stat-val{font-family:'DM Mono',monospace;font-size:22px;font-weight:500;margin-top:4px}
-.streak-val{color:var(--orange)}
+.stat-pink 
 
 /* Week summary cards */
 .wsum-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -98,13 +92,13 @@ header p{font-size:12px;color:var(--text2);margin-top:2px}
 
 /* Combined progress card */
 .progress-combined{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radius);padding:8px 14px;margin-top:4px;margin-bottom:14px;display:flex;flex-direction:column;gap:6px}
-.progress-row{display:flex;flex-direction:column;gap:3px}
+.progress-row{display:flex;flex-direction:column;gap:3px;margin-bottom:10px}
+.progress-row:last-child{margin-bottom:0}
 .progress-row-header{display:flex;align-items:center;gap:6px}
 .progress-row-title{font-size:10px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px;min-width:72px}
 .progress-row-nums{font-size:11px;font-family:'DM Mono',monospace;color:var(--text2);flex:1}
 .progress-row-pct{font-size:10px;font-family:'DM Mono',monospace;color:var(--text3)}
 .progress-track-sm{height:7px;background:var(--bg3);border-radius:4px;overflow:hidden;position:relative}
-.progress-divider{height:0.5px;background:var(--border);margin:0 -2px}
 
 /* Progress bar (legacy kept) */
 
@@ -187,25 +181,8 @@ body.light input[type=time]{color-scheme:light}
 .record-sub{font-size:10px;color:var(--text3);margin-top:3px}
 
 /* Week chart */
-.week-bars{display:flex;align-items:flex-end;gap:4px;margin:8px 0 4px}
-.bar-legend{display:flex;justify-content:center;gap:16px;margin-top:10px;margin-bottom:2px}
-.bar-legend-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text2)}
-.bar-legend-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0}
 
 /* Week summary */
-.summary-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
-.summary-stat{background:var(--bg3);border-radius:var(--radius-sm);padding:10px;text-align:center;position:relative;overflow:hidden;border:0.5px solid var(--border)}
-.summary-stat::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
-.summary-stat.sblue::before{background:linear-gradient(90deg,#3b82f6,#60a5fa)}
-.summary-stat.sblue{border-color:rgba(96,165,250,0.2)}.summary-stat.sblue .summary-stat-val{color:#60a5fa}
-.summary-stat.sgreen::before{background:linear-gradient(90deg,#16a34a,#4ade80)}
-.summary-stat.sgreen{border-color:rgba(74,222,128,0.2)}.summary-stat.sgreen .summary-stat-val{color:#4ade80}
-.summary-stat.sorange::before{background:linear-gradient(90deg,#ea580c,#fb923c)}
-.summary-stat.sorange{border-color:rgba(251,146,60,0.2)}.summary-stat.sorange .summary-stat-val{color:#fb923c}
-.summary-stat.spurple::before{background:linear-gradient(90deg,#7c3aed,#a78bfa)}
-.summary-stat.spurple{border-color:rgba(167,139,250,0.2)}.summary-stat.spurple .summary-stat-val{color:#a78bfa}
-.summary-stat-label{font-size:11px;color:var(--text2);margin-bottom:4px;margin-top:4px}
-.summary-stat-val{font-size:18px;font-weight:500;font-family:'DM Mono',monospace}
 
 /* Combo box (input + dropdown) */
 .combo-box{display:flex;align-items:center;border-radius:var(--radius-sm);overflow:visible;flex:1;touch-action:manipulation}
@@ -356,7 +333,6 @@ body.light .combo-arrow-btn{border-left-color:rgba(0,0,0,0.1)}
     </div>
     <div class="tabs">
       <button class="tab-btn active" onclick="switchTab('training')">Training</button>
-      <button class="tab-btn" onclick="switchTab('berichte')">Berichte</button>
       <button class="tab-btn" onclick="switchTab('koerper')">Profil</button>
     </div>
   </header>
@@ -364,20 +340,42 @@ body.light .combo-arrow-btn{border-left-color:rgba(0,0,0,0.1)}
   <!-- ══ TRAINING TAB ══ -->
   <div class="tab-content active" id="tab-training">
 
-    <div class="stat-grid">
-      <div class="stat stat-blue"><div class="stat-label">LS heute</div><div class="stat-val" id="today-push">0</div></div>
-      <div class="stat stat-green"><div class="stat-label">KZ heute</div><div class="stat-val" id="today-pull">0</div></div>
-      <div class="stat stat-orange"><div class="stat-label">Tage in Folge</div><div class="stat-val streak-val" id="streak-val">0</div></div>
-    </div>
-    <div class="stat-grid divider">
-      <div class="stat stat-purple"><div class="stat-label">LS gesamt</div><div class="stat-val" id="total-push">0</div></div>
-      <div class="stat stat-teal"><div class="stat-label">KZ gesamt</div><div class="stat-val" id="total-pull">0</div></div>
-      <div class="stat stat-pink"><div class="stat-label">Trainingstage</div><div class="stat-val" id="total-days">0</div></div>
+    <!-- Stats compact -->
+    <div style="background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radius);margin-bottom:10px;overflow:hidden">
+      <!-- Heute -->
+      <div style="display:grid;grid-template-columns:1fr 0.5px 1fr;border-bottom:0.5px solid var(--border)">
+        <div style="padding:12px 16px">
+          <div style="font-size:11px;color:var(--text2);font-weight:500;margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px">Heute · Liegestütze</div>
+          <div style="font-size:28px;font-weight:700;color:var(--blue);font-family:'DM Mono',monospace;line-height:1" id="today-push">0</div>
+        </div>
+        <div style="background:var(--border)"></div>
+        <div style="padding:12px 16px">
+          <div style="font-size:11px;color:var(--text2);font-weight:500;margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px">Heute · Klimmzüge</div>
+          <div style="font-size:28px;font-weight:700;color:var(--green);font-family:'DM Mono',monospace;line-height:1" id="today-pull">0</div>
+        </div>
+      </div>
+      <!-- Gesamt -->
+      <div style="display:grid;grid-template-columns:1fr 0.5px 1fr">
+        <div style="padding:12px 16px">
+          <div style="font-size:11px;color:var(--text2);font-weight:500;margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px">Gesamt · Liegestütze</div>
+          <div style="font-size:28px;font-weight:700;color:var(--accent);font-family:'DM Mono',monospace;line-height:1" id="total-push">0</div>
+        </div>
+        <div style="background:var(--border)"></div>
+        <div style="padding:12px 16px">
+          <div style="font-size:11px;color:var(--text2);font-weight:500;margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px">Gesamt · Klimmzüge</div>
+          <div style="font-size:28px;font-weight:700;color:var(--orange);font-family:'DM Mono',monospace;line-height:1" id="total-pull">0</div>
+        </div>
+      </div>
     </div>
 
     <!-- Progress -->
     <div class="progress-combined" id="progress-combined" style="display:none">
-      <div style="font-size:11px;font-weight:500;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:8px">Tagesziel</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+        <div style="font-size:11px;font-weight:500;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px">Tagesziel</div>
+        <button class="settings-icon-btn" onclick="openGoalOverlay()" title="Tagesziel bearbeiten" style="margin-right:4px">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        </button>
+      </div>
       <div class="progress-row" id="progress-row-push">
         <div class="progress-row-header">
           <span class="progress-row-title">Liegestütze</span>
@@ -388,7 +386,6 @@ body.light .combo-arrow-btn{border-left-color:rgba(0,0,0,0.1)}
           <div class="progress-fill" id="progress-fill-push" style="width:0%"></div>
         </div>
       </div>
-      <div class="progress-divider" id="progress-divider" style="display:none"></div>
       <div class="progress-row" id="progress-row-pull">
         <div class="progress-row-header">
           <span class="progress-row-title">Klimmzüge</span>
@@ -442,56 +439,9 @@ body.light .combo-arrow-btn{border-left-color:rgba(0,0,0,0.1)}
   </div>
 
   <!-- ══ BERICHTE TAB ══ -->
-  <div class="tab-content" id="tab-berichte">
-
-    <div class="card">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
-        <span class="card-title" style="margin-bottom:0">Diese Woche</span>
-        <button class="settings-icon-btn" onclick="openBestenliste()" title="Bestenliste">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg>
-        </button>
-      </div>
-      <div class="summary-grid">
-        <div class="summary-stat sblue"><div class="summary-stat-label">LS</div><div class="summary-stat-val" id="week-push">0</div></div>
-        <div class="summary-stat sgreen"><div class="summary-stat-label">KZ</div><div class="summary-stat-val" id="week-pull">0</div></div>
-        <div class="summary-stat sorange"><div class="summary-stat-label">Trainingstage</div><div class="summary-stat-val" id="week-days">0</div></div>
-        <div class="summary-stat spurple"><div class="summary-stat-label">Ø pro Tag</div><div class="summary-stat-val" id="week-avg">0</div></div>
-      </div>
-      <div style="position:relative;margin:12px 0 4px">
-        <svg id="week-graph" width="100%" height="150" style="overflow:visible"></svg>
-      </div>
-      <div class="bar-legend">
-        <div class="bar-legend-item"><div class="bar-legend-dot" style="background:#60a5fa"></div>LS</div>
-        <div class="bar-legend-item"><div class="bar-legend-dot" style="background:#4ade80"></div>KZ</div>
-      </div>
-    </div>
-
-  </div>
-
+<!-- Berichte Overlay -->
   <!-- ══ EINSTELLUNGEN TAB ══ -->
   <div class="tab-content" id="tab-einstellungen">
-
-    <div class="card">
-      <div class="card-title">Tagesziel</div>
-      <div class="input-row">
-        <label>Liegestütze</label>
-        <div class="cdrop-wrap" id="cdrop-wrap-goal-push" style="position:relative;flex:1;display:flex">
-          <div class="combo-box sel-blue" style="flex:1;cursor:pointer" onclick="openNumpad('goal-push')">
-            <input type="number" id="inp-goal-push" class="combo-input" min="0" max="500" value="0" placeholder="0" readonly style="cursor:pointer">
-          </div>
-          <div class="cdrop-menu" id="cdrop-menu-goal-push"></div>
-        </div>
-      </div>
-      <div class="input-row">
-        <label>Klimmzüge</label>
-        <div class="cdrop-wrap" id="cdrop-wrap-goal-pull" style="position:relative;flex:1;display:flex">
-          <div class="combo-box sel-green" style="flex:1;cursor:pointer" onclick="openNumpad('goal-pull')">
-            <input type="number" id="inp-goal-pull" class="combo-input" min="0" max="500" value="0" placeholder="0" readonly style="cursor:pointer">
-          </div>
-          <div class="cdrop-menu" id="cdrop-menu-goal-pull"></div>
-        </div>
-      </div>
-    </div>
 
     <div class="card">
       <div class="card-title">Darstellung</div>
@@ -505,28 +455,7 @@ body.light .combo-arrow-btn{border-left-color:rgba(0,0,0,0.1)}
           <span class="toggle-slider"></span>
         </label>
       </div>
-      <div class="setting-row">
-        <div>
-          <div class="setting-label">Abzeichen & Level</div>
-          <div class="setting-sub">XP, Levelaufstieg und Badges im Profil</div>
-        </div>
-        <label class="toggle">
-          <input type="checkbox" id="toggle-badges" checked onchange="saveBadgesSetting()">
-          <span class="toggle-slider"></span>
-        </label>
-      </div>
-      <div class="setting-row">
-        <div>
-          <div class="setting-label">Töne</div>
-          <div class="setting-sub">Sound bei Meilensteinen & Zielen</div>
-        </div>
-        <label class="toggle">
-          <input type="checkbox" id="toggle-sound" checked onchange="saveSoundSetting()">
-          <span class="toggle-slider"></span>
-        </label>
-      </div>
     </div>
-
     <div class="card">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
         <span class="card-title" style="margin-bottom:0">Daten sichern</span>
@@ -587,6 +516,36 @@ body.light .combo-arrow-btn{border-left-color:rgba(0,0,0,0.1)}
 
 </div><!-- end scroll-wrap -->
 
+<!-- Tagesziel Overlay -->
+<div class="level-overlay" id="goal-overlay" onclick="if(event.target===this)closeGoalOverlay()">
+  <div class="level-box">
+    <div class="level-legend-header">
+      <span class="level-legend-title">🎯 Tagesziel</span>
+      <button class="level-legend-close" onclick="closeGoalOverlay()">✕</button>
+    </div>
+    <div class="input-row">
+      <label>Liegestütze</label>
+      <div class="cdrop-wrap" id="cdrop-wrap-goal-push" style="position:relative;flex:1;display:flex">
+        <div class="combo-box sel-blue" style="flex:1;cursor:pointer" onclick="openNumpad('goal-push')">
+          <input type="number" id="inp-goal-push" class="combo-input" min="0" max="500" value="0" placeholder="0" readonly style="cursor:pointer">
+        </div>
+        <div class="cdrop-menu" id="cdrop-menu-goal-push"></div>
+      </div>
+    </div>
+    <div class="input-row" style="margin-top:8px">
+      <label>Klimmzüge</label>
+      <div class="cdrop-wrap" id="cdrop-wrap-goal-pull" style="position:relative;flex:1;display:flex">
+        <div class="combo-box sel-green" style="flex:1;cursor:pointer" onclick="openNumpad('goal-pull')">
+          <input type="number" id="inp-goal-pull" class="combo-input" min="0" max="500" value="0" placeholder="0" readonly style="cursor:pointer">
+        </div>
+        <div class="cdrop-menu" id="cdrop-menu-goal-pull"></div>
+      </div>
+    </div>
+    <p class="hint" style="margin-top:10px">Auf 0 setzen um das Ziel zu deaktivieren</p>
+    <button onclick="closeGoalOverlay()" class="cel-btn" style="width:100%;margin-top:12px">Eingeben</button>
+  </div>
+</div>
+
 <!-- Log Overlay -->
 <div class="level-overlay" id="log-overlay">
   <div class="level-box" style="height:85vh;display:flex;flex-direction:column">
@@ -641,18 +600,6 @@ body.light .combo-arrow-btn{border-left-color:rgba(0,0,0,0.1)}
       <button class="btn" onclick="closeDeleteConfirm()" style="flex:1;background:var(--bg3);color:var(--text2);border:0.5px solid var(--border2)">Abbrechen</button>
       <button class="btn btn-danger" onclick="deleteAll();closeDeleteConfirm()" style="flex:1">Löschen</button>
     </div>
-  </div>
-</div>
-
-<!-- Bestenliste Overlay -->
-<div class="level-overlay" id="bestenliste-overlay">
-  <div class="level-box">
-    <div class="level-legend-header">
-      <span class="level-legend-title">🏆 Bestenliste</span>
-      <button class="level-legend-close" onclick="closeBestenliste()">✕</button>
-    </div>
-    <div class="level-legend-body" id="bestenliste-body"></div>
-    <button class="cel-btn" onclick="closeBestenliste()" style="width:100%;margin-top:12px">Schließen</button>
   </div>
 </div>
 
@@ -756,10 +703,8 @@ body.light .combo-arrow-btn{border-left-color:rgba(0,0,0,0.1)}
         <div class="help-icon">📋</div>
         <div>
           <div class="help-h">Training</div>
-          <div class="help-p">Hier trägst du deine Einheiten ein. Wähle Datum, LS und KZ aus dem Dropdown und tippe auf <b>+ Eintragen</b>. Die Statistiken oben aktualisieren sich automatisch.<br><br>
-          <b>Abkürzungen:</b><br>
-          <b>LS</b> = Liegestütze<br>
-          <b>KZ</b> = Klimmzüge</div>
+          <div class="help-p">Wähle Datum, Liegestütze und Klimmzüge und tippe auf <b>+ Eintragen</b>. Die Statistiken oben aktualisieren sich automatisch.<br><br>
+          <b>LS</b> = Liegestütze &nbsp;|&nbsp; <b>KZ</b> = Klimmzüge</div>
         </div>
       </div>
 
@@ -767,7 +712,7 @@ body.light .combo-arrow-btn{border-left-color:rgba(0,0,0,0.1)}
         <div class="help-icon">🎯</div>
         <div>
           <div class="help-h">Tagesziel & Fortschrittsbalken</div>
-          <div class="help-p">Setze in den Einstellungen ein Tagesziel für LS und/oder KZ. Sobald ein Ziel gesetzt ist, erscheint unterhalb der Stat-Karten ein gemeinsamer Kasten mit zwei Fortschrittsbalken – blau für Liegestütze, grün für Klimmzüge. Bei Erreichen des Ziels gibt es ein Feuerwerk! 🎯</div>
+          <div class="help-p">Tippe auf das ✏️ Stift-Symbol oben rechts im Fortschrittsbalken-Kasten um dein Tagesziel für Liegestütze und Klimmzüge einzustellen. Sobald ein Ziel gesetzt ist, erscheint der Kasten mit zwei Balken – blau für LS, grün für KZ. Bei Erreichen des Ziels gibt es Feuerwerk! 🎯</div>
         </div>
       </div>
 
@@ -775,15 +720,7 @@ body.light .combo-arrow-btn{border-left-color:rgba(0,0,0,0.1)}
         <div class="help-icon">🏆</div>
         <div>
           <div class="help-h">Meilensteine</div>
-          <div class="help-p">Bei 25, 50, 100, 150 ... bis 500 Liegestützen <b>oder</b> Klimmzügen pro Tag erscheint automatisch eine Erfolgsmeldung mit Feuerwerk. Beide werden unabhängig voneinander erkannt und hintereinander angezeigt. Jeder Meilenstein wird nur einmal pro Tag angezeigt.</div>
-        </div>
-      </div>
-
-      <div class="help-section">
-        <div class="help-icon">📊</div>
-        <div>
-          <div class="help-h">Berichte</div>
-          <div class="help-p">Zeigt deine Wochenstatistik als Balkendiagramm, die Bestenliste mit deinen Rekorden sowie eine Zusammenfassung der aktuellen Woche.</div>
+          <div class="help-p">Bei 25, 50, 100, 150 … bis 500 Liegestützen oder Klimmzügen pro Tag erscheint automatisch eine Erfolgsmeldung mit Feuerwerk. Jeder Meilenstein wird nur einmal pro Tag angezeigt.</div>
         </div>
       </div>
 
@@ -791,7 +728,15 @@ body.light .combo-arrow-btn{border-left-color:rgba(0,0,0,0.1)}
         <div class="help-icon">⚙️</div>
         <div>
           <div class="help-h">Einstellungen</div>
-          <div class="help-p">Hier kannst du dein Tagesziel für LS und KZ festlegen sowie Töne, Abzeichen und den dunklen Modus ein- und ausschalten. Die Datensicherung befindet sich ebenfalls hier – exportiere deine Daten als Backup und importiere sie auf einem neuen Gerät.</div>
+          <div class="help-p">Über das Zahnrad-Symbol oben rechts erreichst du die Einstellungen. Dort kannst du den dunklen Modus umschalten sowie Daten exportieren und importieren. Die rote Mülltonne löscht alle gespeicherten Daten.</div>
+        </div>
+      </div>
+
+      <div class="help-section">
+        <div class="help-icon">🕐</div>
+        <div>
+          <div class="help-h">Verlauf</div>
+          <div class="help-p">Das Uhr-Symbol oben rechts in der „Einheit eintragen"-Karte öffnet den Verlauf. Dort siehst du alle Einträge nach Datum, kannst einzelne Einträge löschen oder ganze Tage entfernen.</div>
         </div>
       </div>
 
@@ -807,7 +752,7 @@ body.light .combo-arrow-btn{border-left-color:rgba(0,0,0,0.1)}
         <div class="help-icon">👤</div>
         <div>
           <div class="help-h">Profil &amp; Kalorienberechnung</div>
-          <div class="help-p">Trage dein Geschlecht, Alter, Größe, Gewicht und Aktivitätslevel ein. Der Tracker berechnet daraus automatisch deinen täglichen Kalorienverbrauch. Grundumsatz (BMR) ist der Verbrauch im Ruhezustand, Gesamtumsatz (TDEE) der tatsächliche Tagesverbrauch inkl. Aktivität. Das Training von heute wird zusätzlich eingerechnet. Berechnung nach der Harris-Benedict Formel – Werte sind Schätzwerte.</div>
+          <div class="help-p">Im Reiter <b>Profil</b> trägst du Geschlecht, Alter, Größe, Gewicht und Aktivitätslevel ein. Der Tracker berechnet daraus Grundumsatz (BMR) und Gesamtumsatz (TDEE) nach der Harris-Benedict Formel. Das heutige Training wird zusätzlich eingerechnet.</div>
         </div>
       </div>
 
@@ -815,14 +760,13 @@ body.light .combo-arrow-btn{border-left-color:rgba(0,0,0,0.1)}
         <div class="help-icon">⭐</div>
         <div>
           <div class="help-h">Level &amp; XP System</div>
-          <div class="help-p">Im Profil siehst du dein aktuelles Level mit Fortschrittsbalken. XP sammelst du so:<br><br>
-          🎯 <b>Tagesziel LS erreicht</b> → +15 XP<br>
-          🎯 <b>Tagesziel KZ erreicht</b> → +15 XP<br>
+          <div class="help-p">Im Profil siehst du dein Level. XP sammelst du so:<br><br>
+          🎯 <b>Tagesziel erreicht</b> → +15 XP<br>
           🏆 <b>Meilenstein</b> → +5 XP<br><br>
-          Jedes Level braucht <b>100 XP</b>. Das Sonderlevel 🌟 <b>Mythos</b> (Level 101) erreichst du bei 20.000 XP.<br><br>
+          Jedes Level braucht <b>100 XP</b>. Bei 20.000 XP erreichst du 🌟 Mythos (Level 101).<br><br>
           <b>Level-Übersicht:</b></div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px 12px;margin-top:8px;font-size:12px;color:var(--text2)">
-            <div>🌱 1–9 &nbsp;Einsteiger</div>
+            <div>🌱 1–9 &nbsp;&nbsp;Einsteiger</div>
             <div>⚡ 10–19 Aktiv</div>
             <div>🔥 20–29 Enthusiast</div>
             <div>💪 30–39 Stark</div>
@@ -1046,67 +990,9 @@ function closeDeleteConfirm(){
   document.getElementById('delete-overlay').classList.remove('show');
 }
 
-function openBestenliste(){
-  // Build content dynamically
-  const body=document.getElementById('bestenliste-body');
-  if(!body) return;
 
-  if(!entries||!entries.length){
-    body.innerHTML='<div class="empty" style="padding:2rem 0;text-align:center;color:var(--text3)">Noch keine Einträge vorhanden</div>';
-    document.getElementById('bestenliste-overlay').classList.add('show');
-    return;
-  }
-
-  const grouped={};
-  entries.forEach(e=>{
-    if(!grouped[e.date])grouped[e.date]={push:0,pull:0};
-    grouped[e.date].push+=e.push;grouped[e.date].pull+=e.pull;
-  });
-  const days=Object.keys(grouped).sort();
-  const maxDayPush=Math.max(...days.map(d=>grouped[d].push));
-  const maxDayPull=Math.max(...days.map(d=>grouped[d].pull));
-  const dayPush=days.find(d=>grouped[d].push===maxDayPush)||'';
-  const dayPull=days.find(d=>grouped[d].pull===maxDayPull)||'';
-
-  const weeks={};
-  days.forEach(d=>{const ws=getWeekStart(d);if(!weeks[ws])weeks[ws]=0;weeks[ws]+=grouped[d].push});
-  const maxWeekPush=Object.values(weeks).length?Math.max(...Object.values(weeks)):0;
-
-  let bestStreak=0,cur=0,prev=null;
-  days.forEach(d=>{
-    if(!prev){cur=1;}else{const diff=Math.round((new Date(d)-new Date(prev))/86400000);cur=diff===1?cur+1:1;}
-    if(cur>bestStreak)bestStreak=cur;prev=d;
-  });
-
-  body.innerHTML=`
-    <div class="records-grid" style="margin-top:4px">
-      <div class="record-card gold">
-        <div class="record-label">Tagesrekord LS</div>
-        <div class="record-val" style="color:#fbbf24">${maxDayPush>0?maxDayPush:'—'}</div>
-        <div class="record-sub">${dayPush?'am '+formatDate(dayPush):''}</div>
-      </div>
-      <div class="record-card blue">
-        <div class="record-label">Tagesrekord KZ</div>
-        <div class="record-val" style="color:#60a5fa">${maxDayPull>0?maxDayPull:'—'}</div>
-        <div class="record-sub">${dayPull?'am '+formatDate(dayPull):''}</div>
-      </div>
-      <div class="record-card green">
-        <div class="record-label">Längste Serie</div>
-        <div class="record-val" style="color:#4ade80">${bestStreak>0?bestStreak:'—'}</div>
-        <div class="record-sub">${bestStreak>0?'Tage in Folge':''}</div>
-      </div>
-      <div class="record-card purple">
-        <div class="record-label">Beste Woche LS</div>
-        <div class="record-val" style="color:#a78bfa">${maxWeekPush>0?maxWeekPush:'—'}</div>
-        <div class="record-sub">${maxWeekPush>0?'Liegestütze':''}</div>
-      </div>
-    </div>`;
-  document.getElementById('bestenliste-overlay').classList.add('show');
-}
-function closeBestenliste(){
-  document.getElementById('bestenliste-overlay').classList.remove('show');
-}
-
+function openGoalOverlay(){document.getElementById('goal-overlay').classList.add('show');}
+function closeGoalOverlay(){document.getElementById('goal-overlay').classList.remove('show');}
 function openLog(){
   renderLog();
   document.getElementById('log-overlay').classList.add('show');
@@ -1283,16 +1169,6 @@ function renderLevelCard(){
     </div>
   `;
 }
-function saveSoundSetting(){
-  settings.soundEnabled=document.getElementById('toggle-sound').checked;
-  localStorage.setItem('ft_settings',JSON.stringify(settings));
-  if(settings.soundEnabled) playMilestoneSound();
-}
-function saveBadgesSetting(){
-  settings.showBadges = document.getElementById('toggle-badges').checked;
-  localStorage.setItem('ft_settings',JSON.stringify(settings));
-  renderLevelCard();
-}
 function playLevelUpSound(){
   if(!settings.soundEnabled)return;
   _tone(523,0,0.12,0.25);_tone(659,0.12,0.12,0.25);
@@ -1395,7 +1271,6 @@ function updateProgress(todayPush, todayPull){
   const combined=document.getElementById('progress-combined');
   const rowPush=document.getElementById('progress-row-push');
   const rowPull=document.getElementById('progress-row-pull');
-  const divider=document.getElementById('progress-divider');
   const hasPush=settings.goalPush>0;
   const hasPull=settings.goalPull>0;
 
@@ -1416,7 +1291,6 @@ function updateProgress(todayPush, todayPull){
   } else rowPush.style.display='none';
 
   // Divider only when both visible
-  if(divider) divider.style.display=(hasPush&&hasPull)?'block':'none';
 
   // Pull row
   if(hasPull){
@@ -1486,157 +1360,11 @@ function launchGoalFireworks(){
 }
 
 // ── Week chart ────────────────────────────────────────────────────────────────
-function renderWeek(){
-  const weekStart=getWeekStart(todayStr());
-  const days=['Mo','Di','Mi','Do','Fr','Sa','So'];
-  const data=[];
-  let weekPush=0,weekPull=0,weekDays=0;
-  for(let i=0;i<7;i++){
-    const d=addDays(weekStart,i);
-    const dayEntries=entries.filter(e=>e.date===d);
-    const push=dayEntries.reduce((a,e)=>a+e.push,0);
-    const pull=dayEntries.reduce((a,e)=>a+e.pull,0);
-    data.push({day:days[i],push,pull,date:d});
-    weekPush+=push;weekPull+=pull;
-    if(push>0||pull>0)weekDays++;
-  }
-  document.getElementById('week-push').textContent=weekPush;
-  document.getElementById('week-pull').textContent=weekPull;
-  document.getElementById('week-days').textContent=weekDays;
-  document.getElementById('week-avg').textContent=weekDays>0?Math.round(weekPush/weekDays):0;
-
-  // Use ONE shared max so bars are proportional to each other
-  const maxVal=Math.max(...data.map(d=>Math.max(d.push,d.pull)),1);
-  const svg=document.getElementById('week-graph');
-  const W=svg.parentElement.offsetWidth||320;
-  const H=150;
-  svg.setAttribute('viewBox',`0 0 ${W} ${H}`);
-  const today=todayStr();
-  const numDays=7;
-  const slotW=W/numDays;
-  const barW=Math.max(slotW*0.3,5);
-  const gap=slotW*0.06;
-  const maxBarH=100;
-  const baseY=H-18;
-  const labelSpace=14;
-
-  let html='';
-
-  data.forEach((d,i)=>{
-    const cx=slotW*i+slotW/2;
-    const isToday=d.date===today;
-    const opacity=isToday?'1':'0.75';
-
-    // Push bar (blue, left) – scaled against shared maxVal
-    const pushH=d.push>0?Math.max((d.push/maxVal)*maxBarH,4):0;
-    const pushX=cx-barW-gap/2;
-    if(pushH>0){
-      html+=`<rect x="${pushX}" y="${baseY-pushH}" width="${barW}" height="${pushH}" rx="3" fill="#60a5fa" opacity="${opacity}"/>`;
-      // Number above bar
-      html+=`<text x="${pushX+barW/2}" y="${baseY-pushH-4}" text-anchor="middle" font-size="8" font-family="monospace" fill="#60a5fa" font-weight="600">${d.push}</text>`;
-    } else {
-      html+=`<rect x="${pushX}" y="${baseY-3}" width="${barW}" height="3" rx="1.5" fill="rgba(96,165,250,0.15)"/>`;
-    }
-
-    // Pull bar (green, right) – scaled against shared maxVal
-    const pullH=d.pull>0?Math.max((d.pull/maxVal)*maxBarH,4):0;
-    const pullX=cx+gap/2;
-    if(pullH>0){
-      html+=`<rect x="${pullX}" y="${baseY-pullH}" width="${barW}" height="${pullH}" rx="3" fill="#4ade80" opacity="${opacity}"/>`;
-      // Number above bar
-      html+=`<text x="${pullX+barW/2}" y="${baseY-pullH-4}" text-anchor="middle" font-size="8" font-family="monospace" fill="#4ade80" font-weight="600">${d.pull}</text>`;
-    } else {
-      html+=`<rect x="${pullX}" y="${baseY-3}" width="${barW}" height="3" rx="1.5" fill="rgba(74,222,128,0.15)"/>`;
-    }
-
-    // Day label
-    const dayColor=isToday?'#7c6ef5':'rgba(144,144,160,0.8)';
-    html+=`<text x="${cx}" y="${H-3}" text-anchor="middle" font-size="9" fill="${dayColor}" font-weight="${isToday?'700':'400'}" font-family="sans-serif">${d.day}</text>`;
-  });
-
-  svg.innerHTML=html;
-
-  // Weekly summary
-  const summaryEl=document.getElementById('weekly-summary');
-  if(weekPush===0){summaryEl.innerHTML='<div class="empty">Noch nicht genug Daten</div>';return}
-  const avg=weekDays>0?Math.round(weekPush/weekDays):0;
-  const goalMet=data.filter(d=>d.push>=settings.goalPush).length;
-  summaryEl.innerHTML=`
-    <div class="wsum-grid">
-      <div class="wsum-card wblue">
-        
-        <div class="wsum-label">LS diese Woche</div>
-        <div class="wsum-val">${weekPush}</div>
-        <div class="wsum-sub">gesamt</div>
-      </div>
-      <div class="wsum-card wgreen">
-        
-        <div class="wsum-label">KZ diese Woche</div>
-        <div class="wsum-val">${weekPull}</div>
-        <div class="wsum-sub">gesamt</div>
-      </div>
-      <div class="wsum-card worange">
-        
-        <div class="wsum-label">Ziel erreicht</div>
-        <div class="wsum-val">${goalMet} / ${weekDays}</div>
-        <div class="wsum-sub">Trainingstagen</div>
-      </div>
-      <div class="wsum-card wpurple">
-        
-        <div class="wsum-label">Ø pro Trainingstag</div>
-        <div class="wsum-val">${avg}</div>
-        <div class="wsum-sub">LS</div>
-      </div>
-    </div>
-  `;
-}
-
-function renderRecords(){
-  const setEl=(id,val)=>{const el=document.getElementById(id);if(el)el.textContent=val;};
-
-  if(!entries||!entries.length){
-    setEl('rec-day-push','—');setEl('rec-day-push-date','');
-    setEl('rec-day-pull','—');setEl('rec-day-pull-date','');
-    setEl('rec-week-push','—');setEl('rec-week-push-label','');
-    setEl('rec-streak','—');
-    return;
-  }
-
-  const grouped={};
-  entries.forEach(e=>{
-    if(!grouped[e.date])grouped[e.date]={push:0,pull:0};
-    grouped[e.date].push+=e.push;grouped[e.date].pull+=e.pull;
-  });
-  const days=Object.keys(grouped);
-  const maxDayPush=Math.max(...days.map(d=>grouped[d].push));
-  const maxDayPull=Math.max(...days.map(d=>grouped[d].pull));
-
-  const weeks={};
-  days.forEach(d=>{const ws=getWeekStart(d);if(!weeks[ws])weeks[ws]=0;weeks[ws]+=grouped[d].push});
-  const maxWeekPush=Object.values(weeks).length?Math.max(...Object.values(weeks)):0;
-
-  setEl('rec-day-push', maxDayPush>0?maxDayPush:'—');
-  setEl('rec-day-push-date', maxDayPush>0?'am '+formatDate(days.find(d=>grouped[d].push===maxDayPush)||''):'');
-  setEl('rec-day-pull', maxDayPull>0?maxDayPull:'—');
-  setEl('rec-day-pull-date', maxDayPull>0?'am '+formatDate(days.find(d=>grouped[d].pull===maxDayPull)||''):'');
-  setEl('rec-week-push', maxWeekPush>0?maxWeekPush:'—');
-  setEl('rec-week-push-label', maxWeekPush>0?'Liegestütze':'');
-
-  const sortedDays=[...new Set(days)].sort();
-  let bestStreak=0,cur=0,prev=null;
-  sortedDays.forEach(d=>{
-    if(!prev){cur=1;}else{const diff=Math.round((new Date(d)-new Date(prev))/86400000);cur=diff===1?cur+1:1;}
-    if(cur>bestStreak)bestStreak=cur;prev=d;
-  });
-  setEl('rec-streak', bestStreak>0?bestStreak:'—');
-}
-
 // ── Tab / Log ─────────────────────────────────────────────────────────────────
 function switchTab(tab){
-  const tabs=['training','berichte','koerper','einstellungen'];
-  document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',['training','berichte','koerper'][i]===tab));
-  tabs.forEach(t=>document.getElementById('tab-'+t).classList.toggle('active',t===tab));
-  if(tab==='berichte'){renderWeek();renderRecords()}
+  const tabs=['training','koerper','einstellungen'];
+  document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',['training','koerper'][i]===tab));
+  tabs.forEach(t=>{const el=document.getElementById('tab-'+t);if(el)el.classList.toggle('active',t===tab);});
   if(tab==='koerper'){calcKcal()}
 }
 
@@ -1795,8 +1523,8 @@ function render(){
   document.getElementById('today-pull').textContent=todayPull;
   document.getElementById('total-push').textContent=entries.reduce((a,e)=>a+e.push,0);
   document.getElementById('total-pull').textContent=entries.reduce((a,e)=>a+e.pull,0);
-  document.getElementById('total-days').textContent=new Set(entries.map(e=>e.date)).size;
-  document.getElementById('streak-val').textContent=calcStreak();
+  const tdEl=document.getElementById('total-days');if(tdEl)tdEl.textContent=new Set(entries.map(e=>e.date)).size;
+  const svEl=document.getElementById('streak-val');if(svEl)svEl.textContent=calcStreak();
   updateProgress(todayPush, todayPull);
   if(document.getElementById('log-overlay').classList.contains('show')) renderLog();
   return {todayPush, todayPull};
@@ -2008,9 +1736,7 @@ function importData(event){
       cdropSelect('goal-pull',settings.goalPull||0);
       appReady=true;
       document.getElementById('toggle-dark').checked=settings.darkMode;
-      document.getElementById('toggle-badges').checked=settings.showBadges!==false;
-      document.getElementById('toggle-sound').checked=settings.soundEnabled!==false;
-      try{_getAC();}catch(e){}
+            try{_getAC();}catch(e){}
       loadName();
       loadBodyData();
       render();
@@ -2080,8 +1806,7 @@ function deleteAll(){
   // Switch back to Einstellungen tab
   switchTab('einstellungen');
   settings.soundEnabled=true;
-  document.getElementById('toggle-sound').checked=true;
-  try{_getAC();}catch(e){}
+    try{_getAC();}catch(e){}
   render();
   renderLevelCard();
   toast('App auf Startzustand zurückgesetzt');
@@ -2089,8 +1814,6 @@ function deleteAll(){
 
 // ── Init ──────────────────────────────────────────────────────────────────────
 document.getElementById('inp-date').value=todayStr();
-document.getElementById('toggle-badges').checked=settings.showBadges!==false;
-document.getElementById('toggle-sound').checked=settings.soundEnabled!==false;
 applyTheme();
 cdropBuild('push');
 cdropBuild('pull');
