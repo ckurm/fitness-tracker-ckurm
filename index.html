@@ -808,13 +808,11 @@ function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t
 
 // ── State ─────────────────────────────────────────────────────────────────────
 let entries=[];
-let settings={goalPush:0,goalPull:0,darkMode:true,showBadges:true,soundEnabled:true};
+let settings={goalPush:0,goalPull:0,darkMode:true,showBadges:true};
 try{entries=JSON.parse(localStorage.getItem('training_log')||'[]')}catch(e){entries=[]}
 try{
   const s=JSON.parse(localStorage.getItem('ft_settings')||'{}');
   settings={...settings,...s};
-  // Always default soundEnabled to true unless explicitly saved as false
-  if(s.soundEnabled===undefined) settings.soundEnabled=true;
   if(!localStorage.getItem('ft_goals_v2')){
     settings.goalPush=0;settings.goalPull=0;
     localStorage.setItem('ft_goals_v2','1');
@@ -1031,42 +1029,7 @@ const MILESTONE_DATA={
   500:{emoji:'🏆',title:'500 Liegestütze!',sub:'Legendär. Kein anderes Wort dafür!'},
 };
 // ── Audio ─────────────────────────────────────────────────────────────────────
-let _ac=null;
-function _getAC(){
-  if(!_ac) _ac=new(window.AudioContext||window.webkitAudioContext)();
-  if(_ac.state==='suspended') _ac.resume();
-  return _ac;
-}
-// Keep AudioContext alive on every interaction
-['click','touchend','keydown'].forEach(ev=>{
-  document.addEventListener(ev,()=>{
-    if(!_ac){try{_ac=new(window.AudioContext||window.webkitAudioContext)();}catch(e){}}
-    if(_ac&&_ac.state==='suspended') _ac.resume();
-  });
-});
-function _tone(freq,start,dur,vol){
-  try{
-    const a=_getAC(),o=a.createOscillator(),g=a.createGain();
-    o.connect(g);g.connect(a.destination);
-    o.type='sine';o.frequency.value=freq;
-    g.gain.setValueAtTime(vol||0.3,a.currentTime+start);
-    g.gain.exponentialRampToValueAtTime(0.001,a.currentTime+start+dur);
-    o.start(a.currentTime+start);o.stop(a.currentTime+start+dur+0.05);
-  }catch(e){}
-}
-function playMilestoneSound(){
-  if(!settings.soundEnabled)return;
-  if(_ac&&_ac.state==='suspended')_ac.resume();
-  _tone(523,0,0.15,0.25);_tone(659,0.15,0.15,0.25);
-  _tone(784,0.3,0.15,0.25);_tone(1047,0.45,0.25,0.3);
-}
-function playGoalSound(){
-  if(!settings.soundEnabled)return;
-  if(_ac&&_ac.state==='suspended')_ac.resume();
-  _tone(392,0,0.12,0.25);_tone(523,0.12,0.12,0.25);
-  _tone(659,0.24,0.12,0.25);_tone(784,0.36,0.12,0.3);
-  _tone(1047,0.48,0.12,0.3);_tone(1319,0.6,0.3,0.35);
-}
+
 
 // ── XP / Level System ────────────────────────────────────────────────────────
 const XP_PER_LEVEL = 100;
@@ -1109,7 +1072,6 @@ function addXP(amount, reason){
     const info = getLevelInfo(newLevel);
     setTimeout(()=>{
       queueCelebration('levelup', {level:newLevel, info});
-      playLevelUpSound();
     }, 1800);
   } else {
     setTimeout(()=>toast('+'+amount+' XP – '+reason), 1800);
@@ -1169,11 +1131,6 @@ function renderLevelCard(){
     </div>
   `;
 }
-function playLevelUpSound(){
-  if(!settings.soundEnabled)return;
-  _tone(523,0,0.12,0.25);_tone(659,0.12,0.12,0.25);
-  _tone(784,0.24,0.12,0.25);_tone(1047,0.36,0.12,0.3);_tone(1319,0.48,0.3,0.35);
-}
 
 function getCelebrated(type){try{return JSON.parse(localStorage.getItem('cel_'+(type||'push')+'_'+todayStr())||'[]')}catch(e){return[]}}
 function markCelebrated(type,m){const a=getCelebrated(type);if(!a.includes(m))a.push(m);localStorage.setItem('cel_'+type+'_'+todayStr(),JSON.stringify(a))}
@@ -1200,7 +1157,6 @@ function playNextCelebration(){
     document.getElementById('cel-title').textContent=d.title;
     document.getElementById('cel-sub').textContent=d.sub;
     document.getElementById('celebration').classList.add('show');
-    playMilestoneSound();
     launchFireworks();
   } else if(item.type==='milestone-pull'){
     const d=MILESTONE_DATA[item.data]||{emoji:'🎉',title:'Super!',sub:'Weiter so!'};
@@ -1208,21 +1164,18 @@ function playNextCelebration(){
     document.getElementById('cel-title').textContent=item.data+' KZ heute!';
     document.getElementById('cel-sub').textContent=d.sub;
     document.getElementById('celebration').classList.add('show');
-    playMilestoneSound();
     launchFireworks();
   } else if(item.type==='goal-push'){
     document.getElementById('cel-emoji').textContent='🎯';
     document.getElementById('cel-title').textContent='Tagesziel Liegestütze!';
     document.getElementById('cel-sub').textContent=item.data+' LS heute – Ziel geschafft! Absolute Maschine!';
     document.getElementById('celebration').classList.add('show');
-    playGoalSound();
     launchGoalFireworks();
   } else if(item.type==='goal-pull'){
     document.getElementById('cel-emoji').textContent='🏅';
     document.getElementById('cel-title').textContent='Tagesziel Klimmzüge!';
     document.getElementById('cel-sub').textContent=item.data+' KZ heute – Ziel erreicht! Stark!';
     document.getElementById('celebration').classList.add('show');
-    playGoalSound();
     launchGoalFireworks();
   } else if(item.type==='levelup'){
     const {level, info} = item.data;
@@ -1231,7 +1184,7 @@ function playNextCelebration(){
     document.getElementById('cel-title').textContent = 'Level '+level+' erreicht!';
     document.getElementById('cel-sub').textContent = info.title+(isMythos?' – Du hast das Höchste erreicht. Absolute Legende!':' – Stark, weiter so!');
     document.getElementById('celebration').classList.add('show');
-    if(isMythos){ playLevelUpSound(); launchGoalFireworks(); }
+    if(isMythos){ launchGoalFireworks(); }
     else { launchFireworks(); }
   }
 }
@@ -1242,7 +1195,6 @@ function showCelebration(milestone){ queueCelebration('milestone',milestone); }
 function closeCelebration(){
   document.getElementById('celebration').classList.remove('show');
   stopFireworks();
-  if(_ac&&_ac.state==='suspended') _ac.resume();
   setTimeout(playNextCelebration,400);
 }
 function launchFireworks(){
@@ -1626,7 +1578,6 @@ document.addEventListener('click', function(e){
   });
 });
 function addEntry(){
-  if(settings.soundEnabled) try{_getAC();}catch(e){}
   const date=getEntryDate();
   const push=cdropSelected.push;
   const pull=cdropSelected.pull;
@@ -1666,7 +1617,6 @@ function exportData(){
       goalPull:settings.goalPull,
       darkMode:settings.darkMode,
       showBadges:settings.showBadges,
-      soundEnabled:settings.soundEnabled
     },
     xp:getTotalXP(),
     name:localStorage.getItem('ft_name')||'',
@@ -1700,7 +1650,6 @@ function importData(event){
       if(data.settings){
         settings={...settings,...data.settings};
         if(settings.showBadges===undefined) settings.showBadges=true;
-        if(settings.soundEnabled===undefined) settings.soundEnabled=true;
         localStorage.setItem('ft_settings',JSON.stringify(settings));
       }
 
@@ -1744,8 +1693,7 @@ function importData(event){
       cdropSelect('goal-pull',settings.goalPull||0);
       appReady=true;
       document.getElementById('toggle-dark').checked=settings.darkMode;
-            try{_getAC();}catch(e){}
-      loadName();
+            loadName();
       loadBodyData();
       render();
       renderLevelCard();
@@ -1812,8 +1760,6 @@ function deleteAll(){
 
   // Switch back to Einstellungen tab
   switchTab('einstellungen');
-  settings.soundEnabled=true;
-    try{_getAC();}catch(e){}
   render();
   renderLevelCard();
   toast('App auf Startzustand zurückgesetzt');
