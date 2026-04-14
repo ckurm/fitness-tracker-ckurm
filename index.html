@@ -30,7 +30,7 @@ body.light{
 *::-webkit-scrollbar{width:0;height:0;background:transparent}
 body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);
   transition:background .3s,color .3s;overflow:hidden;height:100%;overscroll-behavior:none}
-.scroll-wrap{height:100vh;overflow-y:auto;overflow-x:hidden;
+.scroll-wrap{height:100vh;overflow:hidden;
   padding:1.5rem 1rem 2rem;overscroll-behavior:none;-webkit-overflow-scrolling:touch}
 .container{max-width:480px;margin:0 auto}
 
@@ -931,7 +931,7 @@ function updateProgress(todayPush,todayPull){
     if(goal>0){
       const done=toPct>=100;
       if(pctEl){
-        pctEl.textContent=val+' / '+goal+(done?' 🎯':'');
+        pctEl.textContent=val+' / '+goal;
         pctEl.style.color=id==='push'?'#60a5fa':'#4ade80';
         pctEl.style.background=id==='push'?'rgba(96,165,250,0.12)':'rgba(74,222,128,0.12)';
         pctEl.style.borderColor=id==='push'?'rgba(96,165,250,0.3)':'rgba(74,222,128,0.3)';
