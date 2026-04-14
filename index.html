@@ -379,10 +379,7 @@ header p{font-size:12px;color:var(--text2);margin-top:2px}
         <div class="cdrop-menu" id="cdrop-menu-pull"></div>
       </div>
     </div>
-    <div class="input-row" style="margin-top:4px;margin-bottom:8px">
-      <div style="min-width:80px"></div>
-      <button class="cel-btn" onclick="addEntry()" style="flex:1">+ Eintragen</button>
-    </div>
+    <button class="cel-btn" onclick="addEntry()" style="width:100%;margin-top:4px">+ Eintragen</button>
   </div>
 
 </div><!-- end container -->
@@ -934,7 +931,7 @@ function updateProgress(todayPush,todayPull){
     if(goal>0){
       const done=toPct>=100;
       if(pctEl){
-        pctEl.textContent=val+' / '+goal+(done?' 🎯':' · '+toPct+'%');
+        pctEl.textContent=val+' / '+goal+(done?' 🎯':'');
         pctEl.style.color=id==='push'?'#60a5fa':'#4ade80';
         pctEl.style.background=id==='push'?'rgba(96,165,250,0.12)':'rgba(74,222,128,0.12)';
         pctEl.style.borderColor=id==='push'?'rgba(96,165,250,0.3)':'rgba(74,222,128,0.3)';
